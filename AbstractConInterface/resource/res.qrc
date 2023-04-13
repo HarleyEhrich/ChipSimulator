@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>default _electronic_component.png</file>
+    </qresource>
+</RCC>

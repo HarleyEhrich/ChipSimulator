@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/mainwindow">
+        <file>home.png</file>
+        <file>menu.png</file>
+        <file>settings.png</file>
+        <file>file.png</file>
+        <file>component.png</file>
+        <file>open_page.png</file>
+        <file>test.png</file>
+    </qresource>
+</RCC>

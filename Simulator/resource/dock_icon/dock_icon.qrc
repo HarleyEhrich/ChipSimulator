@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/dock">
+        <file>close.svg</file>
+        <file>float.svg</file>
+    </qresource>
+</RCC>

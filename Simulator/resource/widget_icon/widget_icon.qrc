@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/widget_icon">
+        <file>comment.svg</file>
+        <file>drag.svg</file>
+        <file>lock.svg</file>
+        <file>lock_is_open.svg</file>
+        <file>options.svg</file>
+        <file>zoom_in.svg</file>
+        <file>zoom_out.svg</file>
+    </qresource>
+    <qresource prefix="/toast_info">
+        <file>toastinfoicon/close.png</file>
+        <file>toastinfoicon/defalut.png</file>
+        <file>toastinfoicon/error.png</file>
+        <file>toastinfoicon/fold_info.png</file>
+        <file>toastinfoicon/expand_info.png</file>
+        <file>toastinfoicon/info.png</file>
+        <file>toastinfoicon/tip.png</file>
+        <file>toastinfoicon/warning.png</file>
+    </qresource>
+</RCC>
