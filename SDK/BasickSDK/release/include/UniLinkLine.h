@@ -12,6 +12,7 @@
 #include <QGraphicsEffect>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsScene>
 #include <QGraphicsSceneDragDropEvent>
@@ -35,7 +36,7 @@
 
 #include "GlobalInclude.h"
 
-class Q_DECL_EXPORT UniLinkLine : public QGraphicsObject
+class BASICSDK_EXPORT UniLinkLine : public QObject , public QGraphicsItem
 {
     Q_OBJECT
 

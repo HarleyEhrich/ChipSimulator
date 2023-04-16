@@ -1,6 +1,8 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+#include "BasicSDK_global.h"
+
 #include <QColor>
 #include <QPointF>
 #include <QTime>

@@ -4,17 +4,37 @@
 #include <QWidget>
 
 namespace Ui {
-class ViewControllUnit;
+    class ViewControllUnit;
 }
+
+
+#define VIEW_LOCK true
+#define VIEW_UNLOCK false
+
+#define MOVE_MODEL false
+#define SELECT_MOVE_MODEL true
 
 class ViewControllUnit : public QWidget
 {
     Q_OBJECT
+public:
+
+
+public:
+    explicit ViewControllUnit(QWidget *parent = nullptr);
+    virtual ~ViewControllUnit();
+
 signals:
-    void zoom(qreal factor);
+    void tellLockStatusChange(bool locked);
+
+    void tellModelChange(bool model);
+
+    void tellZoom(qreal factor);
 
 private slots:
+    void on_lock_view_btn_clicked(bool checked);
 
+    void on_model_btn_clicked(bool checked);
 
     void on_zoom_in_btn_clicked();
 
@@ -22,11 +42,12 @@ private slots:
 
     void on_scale_ratio_dsp_valueChanged(double arg1);
 
-public:
-    explicit ViewControllUnit(QWidget *parent = nullptr);
-    ~ViewControllUnit();
 
+public:
     void setCurZoomRatio(qreal newCurZoomRatio);
+
+private:
+
 
 private:
     Ui::ViewControllUnit *ui;

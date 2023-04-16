@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     // [[1]] 安装消息处理函数
-    LogHandler::Get().installMessageHandler();
+//    LogHandler::Get().installMessageHandler();
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();

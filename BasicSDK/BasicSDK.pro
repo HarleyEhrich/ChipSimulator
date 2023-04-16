@@ -24,6 +24,7 @@ HEADERS += \
 
 RESOURCES +=
 
+
 # Default rules for deployment.
 unix {
     target.path = /usr/lib

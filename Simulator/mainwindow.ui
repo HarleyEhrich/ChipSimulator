@@ -42,29 +42,46 @@
    <property name="styleSheet">
     <string notr="true"/>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
-    <property name="spacing">
-     <number>4</number>
-    </property>
+   <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
-     <number>2</number>
+     <number>0</number>
     </property>
     <property name="topMargin">
-     <number>2</number>
+     <number>0</number>
     </property>
     <property name="rightMargin">
-     <number>2</number>
+     <number>0</number>
     </property>
     <property name="bottomMargin">
-     <number>2</number>
+     <number>0</number>
     </property>
-    <item>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="0" column="0" rowspan="2">
      <widget class="QFrame" name="sidebar_frame">
+      <property name="maximumSize">
+       <size>
+        <width>49</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="styleSheet">
-       <string notr="true">#sidebar_container{
+       <string notr="true">#sidebar_frame{
+	border: 0px;
+	margin: 0px;
+	padding: 0px;
+/*
+	margin-left: -2px;
+	margin-top: -2px;
+	margin-bottom: -2px;
+*/
+}
+
+#sidebar_container{
 	background-color:  rgb(0, 43, 91);
-	border: 1px solid transparent;
-	border-radius: 6px;
+	border: 0px solid transparent;
+	/*border-radius: 6px;*/
 	margin: 0px;
 	padding: 0px;
 }
@@ -91,21 +108,24 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="spacing">
         <number>0</number>
        </property>
        <property name="leftMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="QWidget" name="sidebar_container" native="true">
@@ -114,16 +134,16 @@
            <number>0</number>
           </property>
           <property name="leftMargin">
-           <number>4</number>
+           <number>0</number>
           </property>
           <property name="topMargin">
-           <number>8</number>
+           <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>0</number>
           </property>
           <property name="bottomMargin">
-           <number>8</number>
+           <number>0</number>
           </property>
           <item>
            <widget class="QToolButton" name="open_name_tbtn">
@@ -137,7 +157,7 @@
              <string>展开</string>
             </property>
             <property name="icon">
-             <iconset resource="resource/main_window_icon/mainwindow_icon.qrc">
+             <iconset resource="Resource/main_window_icon/mainwindow_icon.qrc">
               <normaloff>:/mainwindow/menu.png</normaloff>:/mainwindow/menu.png</iconset>
             </property>
             <property name="iconSize">
@@ -169,7 +189,7 @@
              <string>主页</string>
             </property>
             <property name="icon">
-             <iconset resource="resource/main_window_icon/mainwindow_icon.qrc">
+             <iconset resource="Resource/main_window_icon/mainwindow_icon.qrc">
               <normaloff>:/mainwindow/home.png</normaloff>:/mainwindow/home.png</iconset>
             </property>
             <property name="iconSize">
@@ -201,7 +221,7 @@
              <string>组件</string>
             </property>
             <property name="icon">
-             <iconset resource="resource/main_window_icon/mainwindow_icon.qrc">
+             <iconset resource="Resource/main_window_icon/mainwindow_icon.qrc">
               <normaloff>:/mainwindow/open_page.png</normaloff>:/mainwindow/open_page.png</iconset>
             </property>
             <property name="iconSize">
@@ -230,7 +250,7 @@
              <string>文件</string>
             </property>
             <property name="icon">
-             <iconset resource="resource/main_window_icon/mainwindow_icon.qrc">
+             <iconset resource="Resource/main_window_icon/mainwindow_icon.qrc">
               <normaloff>:/mainwindow/file.png</normaloff>:/mainwindow/file.png</iconset>
             </property>
             <property name="iconSize">
@@ -259,7 +279,7 @@
              <string>组件</string>
             </property>
             <property name="icon">
-             <iconset resource="resource/main_window_icon/mainwindow_icon.qrc">
+             <iconset resource="Resource/main_window_icon/mainwindow_icon.qrc">
               <normaloff>:/mainwindow/component.png</normaloff>:/mainwindow/component.png</iconset>
             </property>
             <property name="iconSize">
@@ -288,7 +308,7 @@
              <string>测试页</string>
             </property>
             <property name="icon">
-             <iconset resource="resource/main_window_icon/mainwindow_icon.qrc">
+             <iconset resource="Resource/main_window_icon/mainwindow_icon.qrc">
               <normaloff>:/mainwindow/test.png</normaloff>:/mainwindow/test.png</iconset>
             </property>
             <property name="iconSize">
@@ -330,7 +350,7 @@
              <string>设置</string>
             </property>
             <property name="icon">
-             <iconset resource="resource/main_window_icon/mainwindow_icon.qrc">
+             <iconset resource="Resource/main_window_icon/mainwindow_icon.qrc">
               <normaloff>:/mainwindow/settings.png</normaloff>:/mainwindow/settings.png</iconset>
             </property>
             <property name="iconSize">
@@ -356,97 +376,408 @@
       </layout>
      </widget>
     </item>
-    <item>
-     <widget class="QStackedWidget" name="main_container_widget">
+    <item row="0" column="1">
+     <widget class="QFrame" name="tab_container">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>32</height>
+       </size>
+      </property>
       <property name="styleSheet">
-       <string notr="true">#main_container_widget{
+       <string notr="true">background-color: #002b5b;
+border: 0px;</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QWidget" name="tab_widget" native="true"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QFrame" name="main_container_frame">
+      <property name="styleSheet">
+       <string notr="true">#main_container_frame{
+	border: 0px;
+}
+
+/*-----------------------------------------------------------------------------------------------------*/
+/*主要页面的样式表*/
+/*-----------------------------------------------------------------------------------------------------*/
+#page_swidget{
 	background-color:  transparent;
 	margin: 0px;
 	padding: 0px;
-	border: 1px solid transparent;
+	border: 0px solid transparent;
+	/*注意到不应该在stackwidget上做样式表，那个就默认是一个不可见的页面管理器就好了*/
 }
 
-#main_container_widget QWidget{
+#page_swidget QWidget{/*Page 本身不可避免携带的widget*/
 	background-color: transparent;
-	border: 1px solid transparent;
-	border-radius: 6px;
+	border: 0px solid transparent;
 }
 
-#main_container_widget QWidget QFrame{
+#page_swidget QWidget QFrame{/*Page Container*/
 	background-color: rgb(255, 255, 255);
-	border: 1px solid transparent;
+	border: 0px solid transparent;
 	border-radius: 6px;
 }
 
+
+/*特例电路图的样式表*/
 #elec_view{
 	background-color: rgb(253, 253, 253);
 	border: 1px;
 	border-radius: 6px;
 } 
+
+
+/* 整个滚动条区域样式 */
+QScrollBar:vertical {
+ 	background-color: transparent;
+ 	width: 12px;/*将会设置到滑块的大小*/
+	margin: 12px 0 12px 0;/*上下按钮可占据0-24这个上下范围*/
+}
+/*-------------------------向上按钮区域------------------------------*/
+QScrollBar::sub-line:vertical {/* 向上按钮的背景区域 */
+	background-color: transparent;
+	border: 1px solid transparent;
+	height: 12px;
+	margin-top: 0px;
+  	subcontrol-position: top;
+  	subcontrol-origin: margin;
+}
+QScrollBar::up-arrow:vertical {/* 向上箭头样式 */
+  	background-color: transparent;
+	height: 8px;
+	width: 8px;
+}
+QScrollBar::up-arrow:vertical:hover {/* 当鼠标放到向上箭头上的时候 */
+   	border-image:url(:/triangle_up.png);
+}
+
+/*-------------------------滑块上方区域------------------------------*/
+QScrollBar::sub-page:vertical {/* 滑块上面区域样式 */
+ 	background-color: transparent;
+	border: 1px solid transparent;
+}
+QScrollBar::sub-line:vertical:hover {}/* 当鼠标放到向上区域的时候 */
+
+/*-------------------------滑块区域------------------------------*/
+QScrollBar::handle:vertical {	/* 滑块区域样式 */
+	background-color: #dfe0e1;
+	border: 1px transprent;
+	border-radius: 2px;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+QScrollBar::handle:vertical:hover,
+QScrollBar::handle:vertical:pressed {/* 鼠标滑过滑块样式 */
+	background-color: #959596;
+	margin-left: 2px;
+	margin-right: 2px;
+	border-radius: 3px;
+
+QScrollBar::up-arrow:vertical {/* 当鼠标放到向上箭头上的时候 */
+   	border-image:url(:/triangle_up.png);
+}
+}
+/*-------------------------滑块下方区域------------------------------*/
+/* 滑块下面区域样式 */
+QScrollBar::add-page:vertical {
+ 	background-color: transparent;
+	border: 1px solid transparent;
+}
+/* 当鼠标放到向下区域的时候 */
+QScrollBar::add-line:vertical:hover {}
+/*-------------------------向下按钮区域------------------------------*/
+QScrollBar::add-line:vertical {/*下方的按钮的背景*/
+	background-color: transparent;
+	border: 1px solid transparent;
+	height: 12px;
+	margin-bottom: 0px;
+ 	subcontrol-position: bottom;
+ 	subcontrol-origin: margin;
+}
+QScrollBar::down-arrow:vertical {/* 向下箭头样式 */
+	background-color: transparent;
+	height: 8px;
+	width: 8px;
+}
+QScrollBar::down-arrow:vertical:hover {/* 当鼠标放到向下箭头上的时候 */
+ 	border-image:url(:/triangle_down.png);
+}
+
+/************下方滑条******************************************/
+/* 整个滚动条区域样式 */
+QScrollBar:horizontal {
+ 	background-color: transparent;
+ 	height: 12px;/*将会设置到滑块的大小*/
+	margin: 0 12px 0 12px;/*左右按钮可占据0-12这个范围*/
+}
+
+QScrollBar:horizontal:hover {
+	QScrollBar::left-arrow:horizontal {/* 当鼠标放到向左箭头上的时候 */
+   		border-image:url(:/triangle_left.png);
+	}
+
+	QScrollBar::right-arrow:horizontal {/* 当鼠标放到向右箭头上的时候 */
+ 		border-image:url(:/triangle_right.png);
+	}
+
+	QScrollBar::handle:horizontal {/* 鼠标滑过滑块样式 */
+		background-color: #959596;
+		margin-top: 2px;
+		margin-bottom: 2px;
+		border-radius: 3px;
+	}
+}
+
+/*-------------------------向左按钮区域------------------------------*/
+QScrollBar::sub-line:horizontal {/* 向左按钮的背景区域 */
+	background-color: transparent;
+	border: 1px solid transparent;
+	width: 12px;
+	margin-left: 0px;
+  	subcontrol-position: left;
+  	subcontrol-origin: margin;
+}
+QScrollBar::left-arrow:horizontal {/* 向左箭头样式 */
+  	background-color: transparent;
+	height: 8px;
+	width: 8px;
+}
+QScrollBar::left-arrow:horizontal:hover {/* 当鼠标放到向左箭头上的时候 */
+   	border-image:url(:/triangle_left.png);
+}
+
+/*-------------------------滑块左侧区域------------------------------*/
+QScrollBar::sub-page:horizontal {/* 滑块左侧区域样式 */
+ 	background-color: transparent;
+	border: 1px solid transparent;
+}
+QScrollBar::sub-line:vertical:hover {}/* 当鼠标放到左侧区域的时候 */
+
+/*-------------------------滑块区域------------------------------*/
+QScrollBar::handle:horizontal {	/* 滑块区域样式 */
+	background-color: #dfe0e1;
+	border: 1px transprent;
+	border-radius: 2px;
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+QScrollBar::handle:horizontal:hover,
+QScrollBar::handle:horizontal:pressed {/* 鼠标滑过滑块样式 */
+	background-color: #959596;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border-radius: 3px;
+}
+
+/*-------------------------滑块下方区域------------------------------*/
+QScrollBar::add-page:horizontal {/* 滑块下面区域样式 */
+ 	background-color: transparent;
+	border: 1px solid transparent;
+}
+QScrollBar::add-line:vertical:hover {}/* 当鼠标放到向下区域的时候 */
+
+/*-------------------------向右侧按钮区域------------------------------*/
+QScrollBar::add-line:horizontal {/*右侧的按钮的背景*/
+	background-color: transparent;
+	border: 1px solid transparent;
+	width: 12px;
+	margin-right: 0px;
+ 	subcontrol-position: right;
+ 	subcontrol-origin: margin;
+}
+QScrollBar::right-arrow:horizontal {/* 向下箭头样式 */
+	background-color: transparent;
+	height: 8px;
+	width: 8px;
+}
+QScrollBar::right-arrow:horizontal:hover {/* 当鼠标放到向下箭头上的时候 */
+ 	border-image:url(:/triangle_right.png);
+}
+
+
+
+/*-----------------------------------------------------------------------------------------------------*/
+/*下方info组件的样式表*/
+/*-----------------------------------------------------------------------------------------------------*/
+
+#page_info_spliter::handle {
+	background-color: #d9d9d9;
+	height: 3px;
+	margin-left: 4px;
+	margin-right: 4px;
+	
+	background-color: transparent;
+	border: 0px;
+	margin: 0px;
+}
+
+#page_info_spliter::handle:hover   {
+	background-color: #93a1a1;
+}
+
+#page_info_spliter::handle:pressed   {
+	background-color: #93a1a1;
+}
+
 </string>
       </property>
-      <widget class="QWidget" name="test_page_container">
-       <property name="styleSheet">
-        <string notr="true"/>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>0</number>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <property name="leftMargin">
-         <number>4</number>
-        </property>
-        <property name="topMargin">
-         <number>4</number>
-        </property>
-        <property name="rightMargin">
-         <number>4</number>
-        </property>
-        <property name="bottomMargin">
-         <number>4</number>
-        </property>
-        <item>
-         <widget class="QFrame" name="test_page_frame">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QSplitter" name="page_info_spliter">
+         <property name="lineWidth">
+          <number>0</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="opaqueResize">
+          <bool>true</bool>
+         </property>
+         <property name="childrenCollapsible">
+          <bool>false</bool>
+         </property>
+         <widget class="QStackedWidget" name="page_swidget">
           <property name="styleSheet">
            <string notr="true"/>
           </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+          <property name="lineWidth">
+           <number>0</number>
           </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+          <property name="currentIndex">
+           <number>1</number>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <property name="spacing">
-            <number>0</number>
+          <widget class="QWidget" name="home_page"/>
+          <widget class="QWidget" name="test_page">
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
-           <property name="leftMargin">
-            <number>4</number>
-           </property>
-           <property name="topMargin">
-            <number>8</number>
-           </property>
-           <property name="rightMargin">
-            <number>4</number>
-           </property>
-           <property name="bottomMargin">
-            <number>8</number>
-           </property>
-           <item>
-            <widget class="AmtlGraphicsView" name="elec_view">
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="renderHints">
-              <set>QPainter::Antialiasing|QPainter::TextAntialiasing|QPainter::VerticalSubpixelPositioning</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>4</number>
+            </property>
+            <property name="topMargin">
+             <number>4</number>
+            </property>
+            <property name="rightMargin">
+             <number>4</number>
+            </property>
+            <property name="bottomMargin">
+             <number>4</number>
+            </property>
+            <item>
+             <widget class="QFrame" name="test_page_container">
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>4</number>
+               </property>
+               <property name="topMargin">
+                <number>4</number>
+               </property>
+               <property name="rightMargin">
+                <number>4</number>
+               </property>
+               <property name="bottomMargin">
+                <number>4</number>
+               </property>
+               <item>
+                <widget class="AmtlGraphicsView" name="elec_view">
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="renderHints">
+                  <set>QPainter::Antialiasing|QPainter::TextAntialiasing|QPainter::VerticalSubpixelPositioning</set>
+                 </property>
+                 <property name="cacheMode">
+                  <set>QGraphicsView::CacheBackground</set>
+                 </property>
+                 <property name="viewportUpdateMode">
+                  <enum>QGraphicsView::SmartViewportUpdate</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
-        </item>
-       </layout>
-      </widget>
+         <widget class="QFrame" name="info_container">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(170, 85, 255);</string>
+          </property>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
@@ -476,7 +807,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="resource/main_window_icon/mainwindow_icon.qrc"/>
+  <include location="Resource/main_window_icon/mainwindow_icon.qrc"/>
  </resources>
  <connections/>
 </ui>

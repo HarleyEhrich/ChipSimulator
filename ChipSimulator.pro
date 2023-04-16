@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    AbstractConInterface \
     BasicSDK \
+    AbstractConInterface \
     Simulator

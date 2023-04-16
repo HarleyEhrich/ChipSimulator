@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/widget_icon">
+    <qresource prefix="/">
         <file>comment.svg</file>
         <file>drag.svg</file>
         <file>lock.svg</file>
@@ -17,5 +17,20 @@
         <file>toastinfoicon/info.png</file>
         <file>toastinfoicon/tip.png</file>
         <file>toastinfoicon/warning.png</file>
+    </qresource>
+    <qresource prefix="/vcu_icon">
+        <file>ViewControllUnitIcon/move_model.svg</file>
+        <file>ViewControllUnitIcon/select_model.svg</file>
+        <file>ViewControllUnitIcon/unlock.svg</file>
+        <file>ViewControllUnitIcon/zoom-in.svg</file>
+        <file>ViewControllUnitIcon/zoom-out.svg</file>
+        <file>ViewControllUnitIcon/lock_notify.png</file>
+        <file>ViewControllUnitIcon/lock.svg</file>
+        <file>ViewControllUnitIcon/align-bottom.svg</file>
+        <file>ViewControllUnitIcon/align-center.svg</file>
+        <file>ViewControllUnitIcon/align-end.svg</file>
+        <file>ViewControllUnitIcon/align-middle.svg</file>
+        <file>ViewControllUnitIcon/align-start.svg</file>
+        <file>ViewControllUnitIcon/align-top.svg</file>
     </qresource>
 </RCC>

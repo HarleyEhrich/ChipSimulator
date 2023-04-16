@@ -37,7 +37,7 @@ using TextDriection = AMTL::DIRECTION;
 using COOR_POS = AMTL::DIRECTION;
 using UniConnectionPointPtr = QWeakPointer<UniConnectionPoint>;
 
-class Q_DECL_EXPORT UniConnectionPoint : public QGraphicsObject
+class BASICSDK_EXPORT UniConnectionPoint : public QObject , public QGraphicsItem
 {
     Q_OBJECT
 

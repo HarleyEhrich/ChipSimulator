@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     Log/LogHandler.cpp \
     Test/DevAssistance.cpp \
+    Widgets/Containers/AmtlTabController.cpp \
     Widgets/Containers/amtldrawerwidget.cpp \
     Widgets/FloatWidgets/ToastInfoWidget.cpp \
     Widgets/Graphics/amtlgraphicsscene.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
     Include/project_include.h \
     Log/LogHandler.h \
     Test/DevAssistance.h \
+    Widgets/Containers/AmtlTabController.h \
     Widgets/Containers/amtldrawerwidget.h \
     Widgets/FloatWidgets/ToastInfoWidget.h \
     Widgets/Graphics/amtlgraphicsscene.h \
@@ -33,16 +35,28 @@ HEADERS += \
     mainwindow.h
 
 FORMS += \
+    Widgets/Containers/AmtlTabController.ui \
     Widgets/FloatWidgets/ToastInfoWidget.ui \
     Widgets/Graphics/viewcontrollunit.ui \
     Widgets/Multiplexed/circuitdiagramui.ui \
     mainwindow.ui
 
+RESOURCES += \
+    Resource/dock_icon/dock_icon.qrc \
+    Resource/icon.qrc \
+    Resource/main_window_icon/mainwindow_icon.qrc \
+    Resource/widget_icon/widget_icon.qrc
+
+
+
+UI_DIR = $${OUT_PWD}/Ui/
+
+
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
 
 #---------Import basic lib----------------------
 unix|win32{
@@ -53,26 +67,26 @@ unix|win32{
     }
 
     CONFIG(release, debug|release){
-        LIBS += -L$$PWD/../../SDK/BasickSDK/release/bin/ -lBasicSDK
-        INCLUDEPATH += $$PWD/../../SDK/BasickSDK/release/include
-        DEPENDPATH += $$PWD/../../SDK/BasickSDK/release/include
+        LIBS += -L$$PWD/../SDK/BasickSDK/release/bin/ -lBasicSDK
+        INCLUDEPATH += $$PWD/../SDK/BasickSDK/release/include
+        DEPENDPATH += $$PWD/../SDK/BasickSDK/release/include
     }
 }
 
 
 
 
-##---------Import abstractconinterface lib----------------------
-#unix|win32{
-#    CONFIG(debug, debug|release){
-#        LIBS += -L$$PWD/../SDK/AbstractConInterfaceSDK/debug/bin/ -AbstractConInterface
-#        INCLUDEPATH += $$PWD/../SDK/AbstractConInterfaceSDK/debug/include
-#        DEPENDPATH += $$PWD/../SDK/AbstractConInterfaceSDK/debug/include
-#    }
+#---------Import abstractconinterface lib----------------------
+unix|win32{
+    CONFIG(debug, debug|release){
+        LIBS += -L$$PWD/../SDK/AbstractConInterfaceSDK/debug/bin/ -lAbstractConInterface
+        INCLUDEPATH += $$PWD/../SDK/AbstractConInterfaceSDK/debug/include
+        DEPENDPATH += $$PWD/../SDK/AbstractConInterfaceSDK/debug/include
+    }
+    CONFIG(release, debug|release){
+    LIBS += -L$$PWD/../SDK/AbstractConInterfaceSDK/release/bin/ -lAbstractConInterface
+    INCLUDEPATH += $$PWD/../SDK/AbstractConInterfaceSDK/release/include
+    DEPENDPATH += $$PWD/../SDK/AbstractConInterfaceSDK/release/include
+    }
+}
 
-#    CONFIG(release, debug|release){
-#    LIBS += -L$$PWD/../SDK/AbstractConInterfaceSDK/release/bin/ -AbstractConInterface
-#    INCLUDEPATH += $$PWD/../SDK/AbstractConInterfaceSDK/release/include
-#    DEPENDPATH += $$PWD/../SDK/AbstractConInterfaceSDK/release/include
-#    }
-#}

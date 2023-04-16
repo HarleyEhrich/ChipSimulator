@@ -6,41 +6,55 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>219</width>
-    <height>32</height>
+    <width>516</width>
+    <height>46</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>HarmonyOS Sans</family>
+    <pointsize>10</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
   </property>
   <property name="styleSheet">
    <string notr="true">#container{
 	background-color: rgb(255, 255, 255);
 	border: 0px;
 	border-radius: 4px;
-	padding: 4px 4px;
 }
 
-.QToolButton{
+#container .QToolButton{
 	background-color: transparent;
-	border: 0px;
+	border: 1px transparent;
 	border-radius: 4px;
-	padding: 4px 4px 4px 4px;
+	padding: 8px 8px 8px 8px;
 }
 
-.QToolButton:hover{
+#container .QToolButton:hover{
 	background-color: rgba(231, 231, 231,220);
 }
 
-.QDoubleSpinBox{
+#container .QDoubleSpinBox{
 	background-color: transparent;
-	border: 0px;
 	border-radius: 4px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	width: 48px;
+}
+
+#lock_view_btn:checked{
+	border: 1px solid #ea5455;
 }</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
    <property name="spacing">
-    <number>0</number>
+    <number>4</number>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -54,96 +68,107 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+   <item>
     <widget class="QFrame" name="container">
+     <property name="font">
+      <font>
+       <family>HarmonyOS Sans</family>
+      </font>
+     </property>
+     <property name="contextMenuPolicy">
+      <enum>Qt::NoContextMenu</enum>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
-       <number>6</number>
+       <number>8</number>
       </property>
       <property name="leftMargin">
-       <number>0</number>
+       <number>8</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>4</number>
       </property>
       <property name="rightMargin">
-       <number>0</number>
+       <number>8</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>4</number>
       </property>
       <item>
-       <widget class="QToolButton" name="toolButton">
+       <widget class="QToolButton" name="lock_view_btn">
         <property name="minimumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>38</width>
+          <height>38</height>
          </size>
         </property>
-        <property name="text">
-         <string>更多</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resource/widget_icon/widget_icon.qrc">
-          <normaloff>:/widget_icon/drag.svg</normaloff>:/widget_icon/drag.svg</iconset>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonIconOnly</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="lock_btn">
-        <property name="minimumSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
+        <property name="toolTip">
+         <string/>
         </property>
         <property name="text">
          <string>锁定</string>
         </property>
         <property name="icon">
-         <iconset resource="../../resource/widget_icon/widget_icon.qrc">
-          <normaloff>:/widget_icon/lock_is_open.svg</normaloff>:/widget_icon/lock_is_open.svg</iconset>
+         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+          <normaloff>:/vcu_icon/ViewControllUnitIcon/unlock.svg</normaloff>
+          <normalon>:/vcu_icon/ViewControllUnitIcon/unlock.svg</normalon>:/vcu_icon/ViewControllUnitIcon/unlock.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
         </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonIconOnly</enum>
+        <property name="checked">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="view_mode_btn">
+       <widget class="QToolButton" name="model_btn">
         <property name="minimumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>38</width>
+          <height>38</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>移动模式</string>
+        </property>
         <property name="text">
-         <string>编辑</string>
+         <string>更多</string>
         </property>
         <property name="icon">
-         <iconset resource="../../resource/widget_icon/widget_icon.qrc">
-          <normaloff>:/widget_icon/comment.svg</normaloff>:/widget_icon/comment.svg</iconset>
+         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+          <normaloff>:/vcu_icon/ViewControllUnitIcon/move_model.svg</normaloff>
+          <normalon>:/vcu_icon/ViewControllUnitIcon/select_model.svg</normalon>:/vcu_icon/ViewControllUnitIcon/move_model.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
         </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
         <property name="toolButtonStyle">
          <enum>Qt::ToolButtonIconOnly</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -151,16 +176,25 @@
        <widget class="QToolButton" name="zoom_in_btn">
         <property name="minimumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>38</width>
+          <height>38</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>缩小视图</string>
         </property>
         <property name="text">
          <string>放大</string>
         </property>
         <property name="icon">
-         <iconset resource="../../resource/widget_icon/widget_icon.qrc">
-          <normaloff>:/widget_icon/zoom_in.svg</normaloff>:/widget_icon/zoom_in.svg</iconset>
+         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+          <normaloff>:/vcu_icon/ViewControllUnitIcon/zoom-in.svg</normaloff>:/vcu_icon/ViewControllUnitIcon/zoom-in.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -177,16 +211,25 @@
        <widget class="QToolButton" name="zoom_out_btn">
         <property name="minimumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>38</width>
+          <height>38</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>放大视图</string>
         </property>
         <property name="text">
          <string>缩小</string>
         </property>
         <property name="icon">
-         <iconset resource="../../resource/widget_icon/widget_icon.qrc">
-          <normaloff>:/widget_icon/zoom_out.svg</normaloff>:/widget_icon/zoom_out.svg</iconset>
+         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+          <normaloff>:/vcu_icon/ViewControllUnitIcon/zoom-out.svg</normaloff>:/vcu_icon/ViewControllUnitIcon/zoom-out.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -201,6 +244,25 @@
       </item>
       <item>
        <widget class="QDoubleSpinBox" name="scale_ratio_dsp">
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>HarmonyOS Sans</family>
+          <pointsize>10</pointsize>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
         <property name="suffix">
          <string>%</string>
         </property>
@@ -221,13 +283,151 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QToolButton" name="aligin_top_tbtn">
+        <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+          <normaloff>:/vcu_icon/ViewControllUnitIcon/align-top.svg</normaloff>:/vcu_icon/ViewControllUnitIcon/align-top.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="align_middle_tbtn">
+        <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+          <normaloff>:/vcu_icon/ViewControllUnitIcon/align-middle.svg</normaloff>:/vcu_icon/ViewControllUnitIcon/align-middle.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="align_bottom_tbtn">
+        <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+          <normaloff>:/vcu_icon/ViewControllUnitIcon/align-bottom.svg</normaloff>:/vcu_icon/ViewControllUnitIcon/align-bottom.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="aligin_start_tbtn">
+        <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+          <normaloff>:/vcu_icon/ViewControllUnitIcon/align-start.svg</normaloff>:/vcu_icon/ViewControllUnitIcon/align-start.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="align_end_tbtn">
+        <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+          <normaloff>:/vcu_icon/ViewControllUnitIcon/align-center.svg</normaloff>:/vcu_icon/ViewControllUnitIcon/align-center.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="align_center_tbtn">
+        <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+          <normaloff>:/vcu_icon/ViewControllUnitIcon/align-end.svg</normaloff>:/vcu_icon/ViewControllUnitIcon/align-end.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
  <resources>
-  <include location="../../resource/widget_icon/widget_icon.qrc"/>
+  <include location="../../Resource/widget_icon/widget_icon.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -21,7 +21,7 @@ class ToastInfoWidget : public QWidget
 
 public:
     explicit ToastInfoWidget(QWidget *parent = nullptr);
-    ~ToastInfoWidget();
+    virtual ~ToastInfoWidget();
 
     void popInfo();
 
