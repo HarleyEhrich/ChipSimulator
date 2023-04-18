@@ -87,17 +87,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_page_info_spliter_splitterMoved(int pos, int index)
 {
-    qDebug()<<index<<"  "<<pos<<" "<<ui->page_info_spliter->height();
+//    qDebug()<<index<<"  "<<pos<<" "<<ui->page_info_spliter->height();
 
     //事实证明在视觉上是可行的方案，记得考虑一下如何处理能更节省资源
     if(ui->page_info_spliter->handleWidth() && pos == ui->page_info_spliter->height() - ui->page_info_spliter->handleWidth()){
         //Time to hide the handle
         ui->page_info_spliter->setHandleWidth(0);
-        qDebug()<<DEBUGINFO<<"Handle set 0"<<ui->page_info_spliter->handleWidth();
+//        qDebug()<<DEBUGINFO<<"Handle set 0"<<ui->page_info_spliter->handleWidth();
     }else{
         if(ui->page_info_spliter->handleWidth()==0 && pos <= ui->page_info_spliter->height()-3){
             ui->page_info_spliter->setHandleWidth(3);
-            qDebug()<<"Set handle 3"<<pos;
+//            qDebug()<<"Set handle 3"<<pos;
         }
     }
 

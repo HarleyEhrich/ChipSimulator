@@ -37,7 +37,7 @@ using TextDriection = AMTL::DIRECTION;
 using COOR_POS = AMTL::DIRECTION;
 using UniConnectionPointPtr = QWeakPointer<UniConnectionPoint>;
 
-class BASICSDK_EXPORT UniConnectionPoint : public QObject , public QGraphicsItem
+class BASICSDK_EXPORT UniConnectionPoint : public UniGraphicsItemObject /*public QObject, public QGraphicsItem*/
 {
     Q_OBJECT
 
@@ -187,10 +187,16 @@ private:
 
 
 //----Interface and override
+    // UniGraphicsItemObject interface
+public:
+    virtual QPointF getRealItemCenterScenePos() override;
+    virtual QRectF getRealBoudingRect() override;
+
 public:
     // QGraphicsItem interface
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    virtual QPainterPath shape() const override;
 
 protected:
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
@@ -223,6 +229,7 @@ private:
     inline static QColor __shadowColor;
 
     inline static QRectF __mainBodyRect;//整体圆
+    inline static QRectF __mainBodyRectCll;//主体圆的碰撞区域
     inline static QRectF __centerCircleRect;//中心连接中的圆形
 
     inline static QPen __uniNorPen;//通用画笔
@@ -235,6 +242,10 @@ private:
     inline static QBrush __centerCircleBrush;//画刷
     inline static QPen __textPen;//画笔
     inline static QBrush __textBrush;//画刷
+
+
+
+
 };
 
 

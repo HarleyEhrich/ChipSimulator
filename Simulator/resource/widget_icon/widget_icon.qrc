@@ -32,5 +32,6 @@
         <file>ViewControllUnitIcon/align-middle.svg</file>
         <file>ViewControllUnitIcon/align-start.svg</file>
         <file>ViewControllUnitIcon/align-top.svg</file>
+        <file>ViewControllUnitIcon/lock_withe.svg</file>
     </qresource>
 </RCC>

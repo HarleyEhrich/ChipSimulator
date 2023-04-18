@@ -6,7 +6,15 @@
 #include <QColor>
 #include <QPointF>
 #include <QTime>
+#include <QDateTime>
 
+#ifdef QT_DEBUG
+#define DEBUGINFO qPrintable(QDateTime::currentDateTime().toString("[ yy/MM/dd hh:mm:ss ]("))<<QT_MESSAGELOG_FILE<<":"<<QT_MESSAGELOG_LINE<<"@"<<QT_MESSAGELOG_FUNC<<"):"
+#else
+
+#define DEBUGINFO ""
+
+#endif
 namespace AMTL {
 
 enum class DIRECTION{
@@ -48,8 +56,6 @@ const QColor MAIN_COLOR_DARK{0,0,0};//纯黑色
 const QColor NOTIFY_COLOR{22, 133, 169};//石青-#1685a9
 //TODO 暗夜模式未定强调颜色
 const QColor NOTIFY_COLOR_DARK{22, 133, 169};//石青-#1685a9
-
-
 
 }
 

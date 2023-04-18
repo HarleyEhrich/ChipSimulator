@@ -13,6 +13,7 @@ CONFIG += c++17
 
 SOURCES += \
     UniConnectionPoint.cpp \
+    UniGraphicsItemObject.cpp \
     UniLinkLine.cpp
 
 HEADERS += \
@@ -20,6 +21,7 @@ HEADERS += \
     BasicSDK_global.h \
     GlobalInclude.h \
     UniConnectionPoint.h \
+    UniGraphicsItemObject.h \
     UniLinkLine.h
 
 RESOURCES +=

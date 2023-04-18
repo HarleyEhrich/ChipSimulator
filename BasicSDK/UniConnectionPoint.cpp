@@ -3,7 +3,7 @@
 using namespace AMTL;
 
 UniConnectionPoint::UniConnectionPoint(int id, COOR_POS pos, bool outputPoint, QString pointName,int dataBits ,int maxBindItemNumber, QGraphicsItem *parent)
-    : QGraphicsItem(parent),
+    : UniGraphicsItemObject(nullptr,parent),
     _id(id),
     _pointName(pointName),
     _selfPos(pos),
@@ -12,7 +12,6 @@ UniConnectionPoint::UniConnectionPoint(int id, COOR_POS pos, bool outputPoint, Q
     _maxBindItemNumber(maxBindItemNumber),
     _linkStautes(UNREQUEST_LINK)//This deafault is fine
 {
-
     innit();
 }
 
@@ -200,7 +199,7 @@ void UniConnectionPoint::setBindStautes(bool newLinkStautes)
     if(newLinkStautes == _linkStautes) return;
     _linkStautes = newLinkStautes;
     emit tellBindStatusChange(_linkStautes, _selfSharedPtr);
-    gneratePainterPath();
+    update();
 }
 
 qsizetype UniConnectionPoint::inputDataValue(QBitArray value, qsizetype indexStart)
@@ -424,6 +423,7 @@ void UniConnectionPoint::innit()
 
     //make sure this can be update shape
     this->setFlags(ItemSendsGeometryChanges | ItemIsSelectable);
+    this->setFlag(ItemIsMovable,false);//不可移动
 }
 
 void UniConnectionPoint::gneratePainterPath()
@@ -445,13 +445,7 @@ void UniConnectionPoint::gneratePainterPath()
 
     //Main body
     _itemPainterPath.moveTo(ZERO_POINT);
-    _itemPainterPath.addEllipse(__mainBodyRect);
-
-    //center circle
-    if(_bindPointVec.size()){
-        _itemPainterPath.moveTo(ZERO_POINT);
-        _itemPainterPath.addEllipse(__centerCircleRect);
-    }
+    _itemPainterPath.addRect(__mainBodyRectCll);
 
     //Text
     if(Q_LIKELY(_showPointName)){
@@ -589,7 +583,7 @@ bool UniConnectionPoint::bindConnectionPointImpl(UniConnectionPoint *targetConne
     if(_bindPointVec.size() >= _maxBindItemNumber) return false;
 
     if(_outputConnectionPoint){
-        auto linePointList  = gnerateLinePointList(targetConnectionPoint);
+        auto linePointList  =gnerateLinePointList(targetConnectionPoint);
         UniLinkLine* lineHead=nullptr,*lineTail=nullptr;
         if(creatNewLine(linePointList,&lineHead,&lineTail)){
             _bindPointVec.push_back(targetConnectionPoint);
@@ -615,7 +609,7 @@ bool UniConnectionPoint::bindConnectionPointImpl(UniConnectionPoint *targetConne
         return targetConnectionPoint->bindConnectionPointImpl(this);
     }
 
-    qInfo()<<"The data connection point was successfully bound. Output("<<_id<<":"<<_pointName<<"]-Input("<<targetConnectionPoint->_id<<":"<<targetConnectionPoint->_pointName<<")";
+    qInfo()<<"The data connection point was successfully bound. Output("<<_id<<":"<<_pointName<<")-Input("<<targetConnectionPoint->_id<<":"<<targetConnectionPoint->_pointName<<")";
 
     _linkStautes = false;
     gneratePainterPath();
@@ -674,9 +668,9 @@ bool UniConnectionPoint::unBindConnectionPointInputImpl(UniConnectionPoint *targ
     if(index==-1) return false;
 
     //Pop out all resources stored here.
-    _bindPointVec.erase(_bindPointVec.begin()+index);
-    _lineHeadVec.erase(_lineHeadVec.begin()+index);
-    _lineTailVec.erase(_lineTailVec.begin()+index);
+    _bindPointVec.erase(_bindPointVec.constBegin()+index);
+    _lineHeadVec.erase(_lineHeadVec.constBegin()+index);
+    _lineTailVec.erase(_lineTailVec.constBegin()+index);
 
     gneratePainterPath();
     return true;
@@ -690,6 +684,17 @@ bool UniConnectionPoint::unBindConnectionPointInputImpl(UniConnectionPoint *targ
 * Class Interface and override function definition
 *
 *************************************************/
+
+
+QPointF UniConnectionPoint::getRealItemCenterScenePos()
+{
+    return mapToScene(AMTL::ZERO_POINTF);
+}
+QRectF UniConnectionPoint::getRealBoudingRect()
+{
+    return __mainBodyRect;
+}
+
 QRectF UniConnectionPoint::boundingRect() const
 {
     return _boudingRect;
@@ -703,9 +708,19 @@ void UniConnectionPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing);//抗锯齿
 
+    if(isSelected()){
+        painter->setPen(Qt::DashDotLine);
+        painter->drawRoundedRect(_boudingRect,8,8);
+    }
+
+//    painter->setPen(Qt::green);
+//    painter->drawRect(_boudingRect);
+//    painter->setPen(Qt::blue);
+//    painter->drawRect(__mainBodyRectCll);
+
     if(_linkStautes){
         painter->setPen(Qt::DashLine);
-        painter->drawRoundedRect(_boudingRect,8,8);
+        painter->drawRoundedRect(__mainBodyRectCll,4,4);
     }
 
     //Link Line
@@ -743,17 +758,27 @@ void UniConnectionPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem
     painter->restore();
 }
 
+QPainterPath UniConnectionPoint::shape() const
+{
+    return _itemPainterPath;
+}
+
 QVariant UniConnectionPoint::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if(change == GraphicsItemChange::ItemPositionHasChanged){
         gneratePainterPath();
+    }
+    if(GraphicsItemChange::ItemSelectedHasChanged ==change){
+        if(false == value.toBool()){
+            setBindStautes(false);
+        }
     }
     return value;
 }
 
 void UniConnectionPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(event->button() == Qt::LeftButton /*&& event->modifiers() == Qt::ControlModifier*/ && __mainBodyRect.contains(event->pos())){
+    if(event->button() == Qt::LeftButton /*&& event->modifiers() == Qt::ControlModifier*/ && __mainBodyRectCll.contains(event->pos())){
         //Link request
         if(_bindPointVec.size() < _maxBindItemNumber){
             setBindStautes(!_linkStautes);
@@ -801,6 +826,10 @@ void UniConnectionPoint::innitSta()
     __mainBodyRect.setTopLeft(QPointF{(qreal)(-__mainBodyWH /2),(qreal)(-__mainBodyWH/2)});
     __mainBodyRect.setWidth(__mainBodyWH);
     __mainBodyRect.setHeight(__mainBodyWH);
+
+    __mainBodyRectCll.setTopLeft(QPointF{(qreal)(-__mainBodyWH),(qreal)(-__mainBodyWH)});
+    __mainBodyRectCll.setWidth(__mainBodyWH*2);
+    __mainBodyRectCll.setHeight(__mainBodyWH*2);
 
     __centerCircleRect.setTopLeft(QPointF{(qreal)(-__centerCircleWH /2),(qreal)(-__centerCircleWH/2)});
     __centerCircleRect.setWidth(__centerCircleWH);
@@ -858,4 +887,9 @@ void UniConnectionPoint::innitSta()
 //QBrush UniConnectionPoint::__centerCircleBrush;//画刷
 //QPen UniConnectionPoint::__textPen;//画笔
 //QBrush UniConnectionPoint::__textBrush;//画刷
+
+
+
+
+
 

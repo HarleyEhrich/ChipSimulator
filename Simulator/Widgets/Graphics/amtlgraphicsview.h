@@ -3,16 +3,19 @@
 
 #include <QDebug>
 #include <QGraphicsEffect>
+#include <QGraphicsItem>
 #include <QGraphicsView>
+#include <QList>
 #include <QMouseEvent>
 #include <QObject>
 #include <QPaintEvent>
+#include <QPoint>
+#include <QPointF>
 #include <QPushButton>
 #include <QWidget>
 
 #include "include/project_include.h"
 #include "viewcontrollunit.h"
-
 
 class AmtlGraphicsView : public QGraphicsView
 {
@@ -28,14 +31,62 @@ public:
 
 
     //__ Signals && Slots __//
+public slots:
+    //水平对齐底部
+    void alignBottom();
 
+    //垂直对齐中间
+    void alignCenter();
+
+    //垂直对齐右侧
+    void alignEnd();
+
+    //水平对齐中间
+    void alignMiddle();
+
+    //垂直对齐左侧
+    void alignStart();
+
+    //水平对齐顶部
+    void alignTop();
 
 
     //__ Class Functions __//
 private:
     void init();
 
-    void moveCenterImpl(QPointF delta);
+    void initViewControlWidget();
+
+    bool isMoveAndSelect();
+
+    void moveSceneCenterImpl(QPointF delta);
+
+    bool moveItemToPos(QGraphicsItem* targetItem,const QPoint& scenePos);
+
+    //水平对齐底部
+    void alignBottomImpl();
+
+    //垂直对齐中间
+    void alignCenterImpl();
+
+    //垂直对齐右侧
+    void alignEndImpl();
+
+    //水平对齐中间
+    void alignMiddleImpl();
+
+    //垂直对齐左侧
+    void alignStartImpl();
+
+    //水平对齐顶部
+    void alignTopImpl();
+
+    void setLockViewImpl(const bool& locked);
+
+    void setModelImpl(const bool& model);
+
+    void setZoomRatioImpl(const qreal& ratio);
+
 
 
     //__ Class Variable __//

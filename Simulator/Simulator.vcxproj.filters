@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Widgets\Containers\AmtlTabController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test\DevAssistance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Log\LogHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\FloatWidgets\ToastInfoWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Containers\amtldrawerwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Graphics\amtlgraphicsscene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Graphics\amtlgraphicsview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Multiplexed\circuitdiagram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mainwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Graphics\viewcontrollunit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="Widgets\Containers\AmtlTabController.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Test\DevAssistance.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="Log\LogHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="Widgets\FloatWidgets\ToastInfoWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Widgets\Containers\amtldrawerwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Widgets\Graphics\amtlgraphicsscene.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Widgets\Graphics\amtlgraphicsview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Widgets\Multiplexed\circuitdiagram.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="mainwindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="Include\project_include.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="Widgets\Graphics\viewcontrollunit.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <CustomBuild Include="debug\moc_predefs.h.cbt">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="release\moc_predefs.h.cbt">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="Widgets\Containers\AmtlTabController.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Widgets\FloatWidgets\ToastInfoWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Widgets\Multiplexed\circuitdiagramui.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="mainwindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Widgets\Graphics\viewcontrollunit.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\align-bottom.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\align-center.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\align-end.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\align-middle.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\align-start.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\align-top.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\toastinfoicon\close.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\dock_icon\close.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\comment.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\main_window_icon\component.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\toastinfoicon\defalut.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <QtRcc Include="Resource\dock_icon\dock_icon.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <None Include="Resource\widget_icon\drag.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\toastinfoicon\error.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\toastinfoicon\expand_info.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\main_window_icon\file.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\dock_icon\float.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\toastinfoicon\fold_info.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\main_window_icon\home.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <QtRcc Include="Resource\icon.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <None Include="Resource\widget_icon\toastinfoicon\info.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\lock.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\lock.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\lock_is_open.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\lock_notify.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <QtRcc Include="Resource\main_window_icon\mainwindow_icon.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <None Include="Resource\main_window_icon\menu.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\move_model.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\main_window_icon\open_page.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\options.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\select_model.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\main_window_icon\settings.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\main_window_icon\test.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\toastinfoicon\tip.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\triangle_down.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\triangle_left.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\triangle_right.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\triangle_up.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\unlock.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\toastinfoicon\warning.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <QtRcc Include="Resource\widget_icon\widget_icon.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\zoom-in.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\ViewControllUnitIcon\zoom-out.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\zoom_in.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\widget_icon\zoom_out.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

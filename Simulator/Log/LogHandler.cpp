@@ -14,7 +14,11 @@ LogHandlerPrivate::LogHandlerPrivate() {
     renameLogFileTimer.setInterval(1000 *  2);
     renameLogFileTimer.start();
 
-    QObject::connect(&renameLogFileTimer, &QTimer::timeout, [this] {
+    //
+    QObject::connect(&renameLogFileTimer,
+            &QTimer::timeout,
+
+            [this](){
         QMutexLocker locker(&LogHandlerPrivate::_logMutex);
         openAndBackupLogFile(); // 打开日志文件
         checkLogFiles(); // 检测当前日志文件大小

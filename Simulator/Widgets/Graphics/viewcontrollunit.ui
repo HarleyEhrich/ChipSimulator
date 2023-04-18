@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
+    <width>534</width>
     <height>46</height>
    </rect>
   </property>
@@ -48,9 +48,23 @@
 	width: 48px;
 }
 
-#lock_view_btn:checked{
-	border: 1px solid #ea5455;
-}</string>
+.QFrame#line, .QFrame#line_2{
+	background-color:  gray;
+	border: 0px;;
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+
+#container .QToolButton#lock_view_btn:checked{
+	background-color: #ea5455;
+	border-color: #ea5455;
+}
+
+
+
+
+</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <property name="spacing">
@@ -70,6 +84,12 @@
    </property>
    <item>
     <widget class="QFrame" name="container">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="font">
       <font>
        <family>HarmonyOS Sans</family>
@@ -111,6 +131,12 @@
           <height>38</height>
          </size>
         </property>
+        <property name="maximumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
         <property name="toolTip">
          <string/>
         </property>
@@ -120,7 +146,7 @@
         <property name="icon">
          <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
           <normaloff>:/vcu_icon/ViewControllUnitIcon/unlock.svg</normaloff>
-          <normalon>:/vcu_icon/ViewControllUnitIcon/unlock.svg</normalon>:/vcu_icon/ViewControllUnitIcon/unlock.svg</iconset>
+          <normalon>:/vcu_icon/ViewControllUnitIcon/lock_withe.svg</normalon>:/vcu_icon/ViewControllUnitIcon/unlock.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -139,6 +165,12 @@
       <item>
        <widget class="QToolButton" name="model_btn">
         <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="maximumSize">
          <size>
           <width>38</width>
           <height>38</height>
@@ -173,119 +205,42 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="zoom_in_btn">
+       <widget class="Line" name="line">
         <property name="minimumSize">
          <size>
-          <width>38</width>
-          <height>38</height>
+          <width>1</width>
+          <height>0</height>
          </size>
         </property>
-        <property name="toolTip">
-         <string>缩小视图</string>
-        </property>
-        <property name="text">
-         <string>放大</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
-          <normaloff>:/vcu_icon/ViewControllUnitIcon/zoom-in.svg</normaloff>:/vcu_icon/ViewControllUnitIcon/zoom-in.svg</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>18</width>
-          <height>18</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonIconOnly</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="zoom_out_btn">
-        <property name="minimumSize">
-         <size>
-          <width>38</width>
-          <height>38</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>放大视图</string>
-        </property>
-        <property name="text">
-         <string>缩小</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
-          <normaloff>:/vcu_icon/ViewControllUnitIcon/zoom-out.svg</normaloff>:/vcu_icon/ViewControllUnitIcon/zoom-out.svg</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>18</width>
-          <height>18</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonIconOnly</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDoubleSpinBox" name="scale_ratio_dsp">
         <property name="maximumSize">
          <size>
-          <width>40</width>
+          <width>1</width>
           <height>16777215</height>
          </size>
         </property>
-        <property name="font">
-         <font>
-          <family>HarmonyOS Sans</family>
-          <pointsize>10</pointsize>
-          <underline>false</underline>
-         </font>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+        <property name="lineWidth">
+         <number>1</number>
         </property>
-        <property name="buttonSymbols">
-         <enum>QAbstractSpinBox::NoButtons</enum>
+        <property name="midLineWidth">
+         <number>0</number>
         </property>
-        <property name="suffix">
-         <string>%</string>
-        </property>
-        <property name="decimals">
-         <number>2</number>
-        </property>
-        <property name="minimum">
-         <double>0.300000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>8.000000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-        <property name="value">
-         <double>1.000000000000000</double>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="aligin_top_tbtn">
+       <widget class="QToolButton" name="align_top_tbtn">
         <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="maximumSize">
          <size>
           <width>38</width>
           <height>38</height>
@@ -314,6 +269,12 @@
           <height>38</height>
          </size>
         </property>
+        <property name="maximumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -337,6 +298,12 @@
           <height>38</height>
          </size>
         </property>
+        <property name="maximumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
         <property name="text">
          <string>...</string>
         </property>
@@ -353,8 +320,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="aligin_start_tbtn">
+       <widget class="QToolButton" name="align_start_tbtn">
         <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="maximumSize">
          <size>
           <width>38</width>
           <height>38</height>
@@ -376,8 +349,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="align_end_tbtn">
+       <widget class="QToolButton" name="align_center_tbtn">
         <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="maximumSize">
          <size>
           <width>38</width>
           <height>38</height>
@@ -399,8 +378,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="align_center_tbtn">
+       <widget class="QToolButton" name="align_end_tbtn">
         <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="maximumSize">
          <size>
           <width>38</width>
           <height>38</height>
@@ -418,6 +403,157 @@
           <width>18</width>
           <height>18</height>
          </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="minimumSize">
+         <size>
+          <width>1</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>1</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="zoom_in_btn">
+        <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>缩小视图</string>
+        </property>
+        <property name="text">
+         <string>放大</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+          <normaloff>:/vcu_icon/ViewControllUnitIcon/zoom-in.svg</normaloff>:/vcu_icon/ViewControllUnitIcon/zoom-in.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonIconOnly</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="scale_ratio_dsp">
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>HarmonyOS Sans</family>
+          <pointsize>10</pointsize>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="wrapping">
+         <bool>true</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
+        <property name="accelerated">
+         <bool>false</bool>
+        </property>
+        <property name="showGroupSeparator" stdset="0">
+         <bool>false</bool>
+        </property>
+        <property name="suffix">
+         <string>%</string>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="minimum">
+         <double>0.300000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>8.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="value">
+         <double>1.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="zoom_out_btn">
+        <property name="minimumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>38</width>
+          <height>38</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>放大视图</string>
+        </property>
+        <property name="text">
+         <string>缩小</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+          <normaloff>:/vcu_icon/ViewControllUnitIcon/zoom-out.svg</normaloff>:/vcu_icon/ViewControllUnitIcon/zoom-out.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonIconOnly</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>false</bool>
         </property>
        </widget>
       </item>

@@ -36,11 +36,16 @@
 
 #include "GlobalInclude.h"
 
-class BASICSDK_EXPORT UniLinkLine : public QObject , public QGraphicsItem
+class BASICSDK_EXPORT UniLinkLine : public UniGraphicsItemObject
 {
     Q_OBJECT
 
+//    Q_INTERFACES(UniGraphicsItemObject)
+
     friend class ConLinkPointItem;
+public:
+    explicit UniLinkLine(QGraphicsItem *parent = nullptr);
+    virtual ~UniLinkLine();
 
 signals:
     /// \brief [Sig] 连线该节点下一个节点发生变化
@@ -100,8 +105,6 @@ private slots:
     void deleteThisNode();
 
 public:
-    explicit UniLinkLine(QGraphicsItem *parent = nullptr);
-    virtual ~UniLinkLine();
 
     UniLinkLine *getNextItem() const;
     UniLinkLine *getPreItem() const;
@@ -110,10 +113,6 @@ public:
 
 private:
     void initial();
-
-#ifdef QT_DEBUG
-    void testInitial();
-#endif
 
     //Some function for shape caculater, there need tun  of rewrite.
     inline QPolygon gnerateItemLineCllBoundingPoly(const QPointF &newPos);
@@ -153,6 +152,14 @@ private:
     UniLinkLine* _preItem;//上一个连接点
 
     QGraphicsDropShadowEffect* _shadowEffect;//本体的阴影
+
+
+
+
+public:
+    // UniGraphicsItemObject interface
+    virtual QPointF getRealItemCenterScenePos() override;
+    virtual QRectF getRealBoudingRect() override;
 
     // QGraphicsItem interface
 public:
@@ -206,6 +213,8 @@ private:
     inline static QPen __dotActPen;//连接节点画笔
     inline static QPen __dotPen;//节点活动颜色
     inline static QBrush __dotBrush;//连接节点画刷
+
+
 
 };
 

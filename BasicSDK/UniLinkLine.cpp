@@ -1,6 +1,7 @@
 #include "UniLinkLine.h"
 
 using AMTL::ZERO_POINT;
+using AMTL::ZERO_POINTF;
 
 //------------------------------------------------------------------------
 
@@ -60,7 +61,7 @@ void UniLinkLine::deleteThisNode()
 
 
 UniLinkLine::UniLinkLine(QGraphicsItem *parent)
-    : QGraphicsItem(parent)
+    : UniGraphicsItemObject(nullptr,parent)
     ,_startEnd(true)
     ,_nextItem(nullptr)
     ,_preItem(nullptr)
@@ -125,10 +126,13 @@ QPolygon UniLinkLine::gnerateItemLineCllBoundingPoly(const QPointF &newPos){
     double offset = __norLineWitdh*3;
     double sinAlpha = qSin(line.angle()/180*M_PI), cosAlpha=qCos(line.angle()/180*M_PI);
     int sinOffset=sinAlpha*offset,cosOffset=cosAlpha*offset;
+    int targetPointOffset = (newPos == ZERO_POINTF) ? 0 : 4;
 
     resPoly << QPoint{-sinOffset,-cosOffset};
-    resPoly << QPoint{(int)newPos.x()-sinOffset,(int)newPos.y()-cosOffset};
-    resPoly << QPoint{(int)newPos.x()+sinOffset,(int)newPos.y()+cosOffset};
+    resPoly << QPoint{(int)newPos.x()-targetPointOffset*cosOffset-sinOffset,
+                      (int)newPos.y()+targetPointOffset*sinOffset-cosOffset};
+    resPoly << QPoint{(int)newPos.x()-targetPointOffset*cosOffset+sinOffset,
+                      (int)newPos.y()+targetPointOffset*sinOffset+cosOffset};
     resPoly << QPoint{sinOffset,cosOffset};
 
     return resPoly;
@@ -143,7 +147,9 @@ void UniLinkLine::gnerateItemPainterPath(const QPointF &newPos)
     _shape.clear();
     _shape.addEllipse(__dotRect);
     _shape.addRect(__dotRectCll);//扩大一点命中范围
-    _shape.moveTo(ZERO_POINT);
+    _shape.moveTo(ZERO_POINTF);
+    _shape.lineTo(newPos);
+    _shape.moveTo(ZERO_POINTF);
     _shape.addPolygon(gnerateItemLineCllBoundingPoly(newPos));
     _shape.closeSubpath();
 
@@ -163,9 +169,10 @@ void UniLinkLine::updateStatus()
     }else{
         this->_startEnd=true;
         if(isLineVisibleImpl()){
-            gnerateItemPainterPath(_nextItem==nullptr ? ZERO_POINT : mapFromScene(_nextItem->scenePos()));
+            //起始/末尾节点，并且线路可见，如果起始节点输入下一节点的位置映射到该节点的位置，否则为0
+            gnerateItemPainterPath(_nextItem==nullptr ? ZERO_POINTF : mapFromScene(_nextItem->scenePos()));
         }else{
-            gnerateItemPainterPath(ZERO_POINT);
+            gnerateItemPainterPath(ZERO_POINTF);
         }
 
     }
@@ -433,7 +440,15 @@ void UniLinkLine::setLineSelectedAllImpl(bool selected)
 
 
 //------------------------------------------------------------------------
+QPointF UniLinkLine::getRealItemCenterScenePos()
+{
+    return mapToScene(AMTL::ZERO_POINTF);
+}
 
+QRectF UniLinkLine::getRealBoudingRect()
+{
+    return __dotRect;
+}
 
 QRectF UniLinkLine::boundingRect() const
 {
@@ -458,13 +473,13 @@ void UniLinkLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing);//抗锯齿
 
-//#ifdef QT_DEBUG
+#ifdef QT_DEBUG
 //    painter->setPen(Qt::green);
 //    painter->drawRect(_boudingRect);
 //    painter->setPen(Qt::blue);
 //    painter->drawRect(_shape.boundingRect());
 //    painter->drawPath(_shape);
-//#endif
+#endif
 
     if(this->_nextItem!=nullptr && this->_nextItem->isVisible()){//连接线
         painter->setPen(UniLinkLine::__lineNorPen);
@@ -811,3 +826,6 @@ void UniLinkLine::initialSta()
 //QPen UniLinkLine::__dotActPen;
 //QPen UniLinkLine::__dotPen;
 //QBrush UniLinkLine::__dotBrush;
+
+
+

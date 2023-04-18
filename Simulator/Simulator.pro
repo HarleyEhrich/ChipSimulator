@@ -11,7 +11,8 @@ CONFIG += c++17
 SOURCES += \
     Log/LogHandler.cpp \
     Test/DevAssistance.cpp \
-    Widgets/Containers/AmtlTabController.cpp \
+    Widgets/Containers/AmtlTab.cpp \
+    Widgets/Containers/AmtlTabPageWidget.cpp \
     Widgets/Containers/amtldrawerwidget.cpp \
     Widgets/FloatWidgets/ToastInfoWidget.cpp \
     Widgets/Graphics/amtlgraphicsscene.cpp \
@@ -25,7 +26,8 @@ HEADERS += \
     Include/project_include.h \
     Log/LogHandler.h \
     Test/DevAssistance.h \
-    Widgets/Containers/AmtlTabController.h \
+    Widgets/Containers/AmtlTab.h \
+    Widgets/Containers/AmtlTabPageWidget.h \
     Widgets/Containers/amtldrawerwidget.h \
     Widgets/FloatWidgets/ToastInfoWidget.h \
     Widgets/Graphics/amtlgraphicsscene.h \
@@ -35,7 +37,9 @@ HEADERS += \
     mainwindow.h
 
 FORMS += \
-    Widgets/Containers/AmtlTabController.ui \
+    Pages/HomePage.ui \
+    Widgets/Containers/AmtlTabPageWidget.ui \
+    Widgets/Containers/amtltab.ui \
     Widgets/FloatWidgets/ToastInfoWidget.ui \
     Widgets/Graphics/viewcontrollunit.ui \
     Widgets/Multiplexed/circuitdiagramui.ui \
@@ -89,4 +93,7 @@ unix|win32{
     DEPENDPATH += $$PWD/../SDK/AbstractConInterfaceSDK/release/include
     }
 }
+
+DISTFILES += \
+    Test/testQml.qml
 

@@ -1,15 +1,21 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include "BasicSDK_global.h"
-
 #include <QColor>
 #include <QPointF>
 #include <QTime>
 #include <QDateTime>
 
-#define DEBUGINFO qPrintable(QDateTime::currentDateTime().toString("[ yy/MM/dd hh:mm:ss ]("))<<QT_MESSAGELOG_FILE<<":"<<QT_MESSAGELOG_LINE<<"@"<<QT_MESSAGELOG_FUNC<<"):"
+#include "BasicSDK_global.h"
+#include "UniGraphicsItemObject.h"
 
+#ifdef QT_DEBUG
+#define DEBUGINFO qPrintable(QDateTime::currentDateTime().toString("[ yy/MM/dd hh:mm:ss ]("))<<QT_MESSAGELOG_FILE<<":"<<QT_MESSAGELOG_LINE<<"@"<<QT_MESSAGELOG_FUNC<<"):"
+#else
+
+#define DEBUGINFO ""
+
+#endif
 namespace AMTL {
 
 enum class DIRECTION{
