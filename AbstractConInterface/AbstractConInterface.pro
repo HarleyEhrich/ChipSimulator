@@ -23,7 +23,6 @@ RESOURCES += \
 TRANSLATIONS += \
     AbstractConInterface_zh_CN.ts
 
-
 #---------Import basic lib----------------------
 unix|win32{
     CONFIG(debug, debug|release){

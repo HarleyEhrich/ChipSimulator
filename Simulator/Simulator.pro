@@ -10,48 +10,36 @@ CONFIG += c++17
 
 SOURCES += \
     Log/LogHandler.cpp \
-    Test/DevAssistance.cpp \
-    Widgets/Containers/AmtlTab.cpp \
-    Widgets/Containers/AmtlTabPageWidget.cpp \
-    Widgets/Containers/amtldrawerwidget.cpp \
+    Pages/InfoPages/AmtlInfoWidget.cpp \
     Widgets/FloatWidgets/ToastInfoWidget.cpp \
-    Widgets/Graphics/amtlgraphicsscene.cpp \
-    Widgets/Graphics/amtlgraphicsview.cpp \
-    Widgets/Graphics/viewcontrollunit.cpp \
-    Widgets/Multiplexed/circuitdiagram.cpp \
+    Widgets/Graphics/MultiplexedScendaryWidget/ViewControlUnitWidget.cpp \
+    Widgets/Graphics/AmtlGraphicsScene.cpp \
+    Widgets/Graphics/AmtlGraphicsView.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
-    Include/project_include.h \
+    Include/ProjectInclude.h \
     Log/LogHandler.h \
-    Test/DevAssistance.h \
-    Widgets/Containers/AmtlTab.h \
-    Widgets/Containers/AmtlTabPageWidget.h \
-    Widgets/Containers/amtldrawerwidget.h \
+    Pages/InfoPages/AmtlInfoWidget.h \
     Widgets/FloatWidgets/ToastInfoWidget.h \
-    Widgets/Graphics/amtlgraphicsscene.h \
-    Widgets/Graphics/amtlgraphicsview.h \
-    Widgets/Graphics/viewcontrollunit.h \
-    Widgets/Multiplexed/circuitdiagram.h \
+    Widgets/Graphics/MultiplexedScendaryWidget/ViewControlUnitWidget.h \
+    Widgets/Graphics/AmtlGraphicsScene.h \
+    Widgets/Graphics/AmtlGraphicsView.h \
     mainwindow.h
 
 FORMS += \
-    Pages/HomePage.ui \
-    Widgets/Containers/AmtlTabPageWidget.ui \
-    Widgets/Containers/amtltab.ui \
     Widgets/FloatWidgets/ToastInfoWidget.ui \
-    Widgets/Graphics/viewcontrollunit.ui \
-    Widgets/Multiplexed/circuitdiagramui.ui \
+    Widgets/Graphics/MultiplexedScendaryWidget/ViewControlUnitWidget.ui \
     mainwindow.ui
 
 RESOURCES += \
-    Resource/dock_icon/dock_icon.qrc \
     Resource/icon.qrc \
     Resource/main_window_icon/mainwindow_icon.qrc \
     Resource/widget_icon/widget_icon.qrc
 
 
+include(3rdParty/FlatTabWidget/FlatTabWidget.pri)
 
 UI_DIR = $${OUT_PWD}/Ui/
 
@@ -95,5 +83,10 @@ unix|win32{
 }
 
 DISTFILES += \
-    Test/testQml.qml
+    3rdParty/FlatTabWidget/3rdparty/LICENSE \
+    3rdParty/FlatTabWidget/3rdparty/README.md \
+    3rdParty/FlatTabWidget/FlatTabWidget.pri \
+    3rdParty/FlatTabWidget/LICENSE \
+    3rdParty/FlatTabWidget/README.md \
+    Widgets/MultiplexedScendaryWidget/在此文件夹写入一下可以重复使用的界面文件.txt
 

@@ -12,10 +12,11 @@
 #include <QPoint>
 #include <QPointF>
 #include <QPushButton>
+#include <QResizeEvent>
 #include <QWidget>
 
-#include "include/project_include.h"
-#include "viewcontrollunit.h"
+#include "Include/ProjectInclude.h"
+#include "MultiplexedScendaryWidget/ViewControlUnitWidget.h"
 
 class AmtlGraphicsView : public QGraphicsView
 {
@@ -91,7 +92,7 @@ private:
 
     //__ Class Variable __//
 private:
-    ViewControllUnit* _cuniWidget =nullptr;
+    ViewControlUnitWidget* _cuniWidget =nullptr;
 
     bool _viewLoked=false;
     bool _moveAndSelectModel=true;

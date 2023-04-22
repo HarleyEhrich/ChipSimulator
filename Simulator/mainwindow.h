@@ -1,9 +1,19 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
 #include <QGraphicsDropShadowEffect>
+#include <QGraphicsScene>
+#include <QList>
+#include <QMainWindow>
+#include <QTextBrowser>
+#include <QWidget>
 
+#include "include/ProjectInclude.h"
+
+#include "Widgets/Graphics/AmtlGraphicsScene.h"
+#include "Widgets/Graphics/AmtlGraphicsView.h"
+
+#include "Widgets/FloatWidgets/ToastInfoWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,10 +34,12 @@ private slots:
 private:
     void init();
 
+    void initMenu();
+
 private:
     Ui::MainWindow *ui;
 
-    QGraphicsDropShadowEffect* _sidebarShadow;
-    QGraphicsDropShadowEffect* _pageStackWidgetContainerShadow;
+//    QGraphicsDropShadowEffect* _sidebarShadow;
+//    QGraphicsDropShadowEffect* _pageStackWidgetContainerShadow;
 };
 #endif // MAINWINDOW_H

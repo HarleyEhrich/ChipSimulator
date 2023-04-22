@@ -25,7 +25,7 @@ class ABSTRACTCONINTERFACE_EXPORT AbstractConInterface : public QObject ,public 
     Q_INTERFACES(QGraphicsItem)
 
 signals:
-    //日志发送入口
+    //日志发送入口--使用qDebug()等
     void newLog(const QString& senderMsg, const QString& msg, AMTL::MSGTYPE msgType);
 
     //显示新的窗口

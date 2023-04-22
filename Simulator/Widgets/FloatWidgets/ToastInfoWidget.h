@@ -4,11 +4,10 @@
 #include <QGraphicsDropShadowEffect>
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
-#include <QPropertyAnimation >
 #include <QWidget>
 
 
-#include "include/project_include.h"
+#include "Include/ProjectInclude.h"
 
 
 namespace Ui {

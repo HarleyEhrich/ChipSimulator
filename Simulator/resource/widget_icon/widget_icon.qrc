@@ -1,13 +1,5 @@
 <RCC>
-    <qresource prefix="/">
-        <file>comment.svg</file>
-        <file>drag.svg</file>
-        <file>lock.svg</file>
-        <file>lock_is_open.svg</file>
-        <file>options.svg</file>
-        <file>zoom_in.svg</file>
-        <file>zoom_out.svg</file>
-    </qresource>
+    <qresource prefix="/"/>
     <qresource prefix="/toast_info">
         <file>toastinfoicon/close.png</file>
         <file>toastinfoicon/defalut.png</file>
@@ -33,5 +25,12 @@
         <file>ViewControllUnitIcon/align-start.svg</file>
         <file>ViewControllUnitIcon/align-top.svg</file>
         <file>ViewControllUnitIcon/lock_withe.svg</file>
+    </qresource>
+    <qresource prefix="/tab_widget">
+        <file>TabWidget/add_ori.svg</file>
+        <file>TabWidget/add_white.svg</file>
+        <file>TabWidget/add_grey.svg</file>
+        <file>TabWidget/close_grey.svg</file>
+        <file>TabWidget/close_ori.svg</file>
     </qresource>
 </RCC>

@@ -13,8 +13,7 @@
 #include <QTimer>
 #include <QWeakPointer>
 
-#include "include/project_include.h"
-
+#include "Include/ProjectInclude.h"
 
 class AmtlGraphicsScene : public QGraphicsScene
 {
@@ -55,12 +54,7 @@ private slots:
 
 
 private:
-    QTimer _doubleClickTimer;
-    int _clickInterval=100;
-    QGraphicsSceneMouseEvent *_clickEvent;
-
     UniConnectionPointPtr _firstPair;
-//    QVector<UniConnectionPointPtr> _pairUniConPointVec;
 };
 
 #endif // AMTLGRAPHICSSCENE_H

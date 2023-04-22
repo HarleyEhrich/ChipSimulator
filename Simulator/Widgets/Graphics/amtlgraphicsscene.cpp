@@ -1,4 +1,4 @@
-#include "amtlgraphicsscene.h"
+#include "AmtlGraphicsScene.h"
 
 
 void AmtlGraphicsScene::pairUniConnectionPoint(bool linkStatus, UniConnectionPointPtr target)
@@ -42,13 +42,13 @@ void AmtlGraphicsScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
     Q_UNUSED(painter);
     Q_UNUSED(rect);
-//    QGraphicsScene::drawBackground(painter,rect);
+    QGraphicsScene::drawBackground(painter,rect);
 //    static QPen linePen;
 //    linePen.setColor(QColor(60,60,60,120));
 //    linePen.setWidth(0);
 //    linePen.setStyle(Qt::DashLine);
 
-//    static int lineSpace =128;
+//    static int lineSpace =64;
 
 //    qreal left=rect.left();
 //    qreal right=rect.right();
@@ -59,8 +59,6 @@ void AmtlGraphicsScene::drawBackground(QPainter *painter, const QRectF &rect)
 //    painter->setRenderHint(QPainter::Antialiasing);//抗锯齿
 
 //    painter->setPen(linePen);
-
-//    LOG<<rect<<"  L"<<left<<"R"<<right<<"T"<<top<<"B"<<bottom;
 
 //    //绘制横线
 //    if(abs(top)>abs(bottom)){

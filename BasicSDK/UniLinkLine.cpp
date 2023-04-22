@@ -126,7 +126,7 @@ QPolygon UniLinkLine::gnerateItemLineCllBoundingPoly(const QPointF &newPos){
     double offset = __norLineWitdh*3;
     double sinAlpha = qSin(line.angle()/180*M_PI), cosAlpha=qCos(line.angle()/180*M_PI);
     int sinOffset=sinAlpha*offset,cosOffset=cosAlpha*offset;
-    int targetPointOffset = (newPos == ZERO_POINTF) ? 0 : 4;
+    int targetPointOffset = 4;
 
     resPoly << QPoint{-sinOffset,-cosOffset};
     resPoly << QPoint{(int)newPos.x()-targetPointOffset*cosOffset-sinOffset,
@@ -145,12 +145,15 @@ void UniLinkLine::gnerateItemPainterPath(const QPointF &newPos)
     prepareGeometryChange();//Make sure the bouding rect will be right
 
     _shape.clear();
-    _shape.addEllipse(__dotRect);
     _shape.addRect(__dotRectCll);//扩大一点命中范围
     _shape.moveTo(ZERO_POINTF);
-    _shape.lineTo(newPos);
-    _shape.moveTo(ZERO_POINTF);
-    _shape.addPolygon(gnerateItemLineCllBoundingPoly(newPos));
+
+    if(ZERO_POINTF != newPos){
+        _shape.lineTo(newPos);
+        _shape.moveTo(ZERO_POINTF);
+        _shape.addPolygon(gnerateItemLineCllBoundingPoly(newPos));
+    }
+
     _shape.closeSubpath();
 
     //Expand this border make sure every thing can be coverd.

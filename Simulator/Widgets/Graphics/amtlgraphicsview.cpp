@@ -1,8 +1,4 @@
-#include "amtlgraphicsview.h"
-
-#include <QResizeEvent>
-
-
+#include "AmtlGraphicsView.h"
 
 AmtlGraphicsView::AmtlGraphicsView(QWidget *parent)
     : QGraphicsView(parent)
@@ -63,22 +59,22 @@ void AmtlGraphicsView::init()
 
 void AmtlGraphicsView::initViewControlWidget()
 {
-    _cuniWidget=new ViewControllUnit(this);
+    _cuniWidget=new ViewControlUnitWidget(this);
 
-    connect(_cuniWidget,&ViewControllUnit::tellAlignBottom,this,&AmtlGraphicsView::alignBottom);
-    connect(_cuniWidget,&ViewControllUnit::tellAlignCenter,this,&AmtlGraphicsView::alignCenter);
-    connect(_cuniWidget,&ViewControllUnit::tellAlignEnd,this,&AmtlGraphicsView::alignEnd);
-    connect(_cuniWidget,&ViewControllUnit::tellAlignMiddle,this,&AmtlGraphicsView::alignMiddle);
-    connect(_cuniWidget,&ViewControllUnit::tellAlignStart,this,&AmtlGraphicsView::alignStart);
-    connect(_cuniWidget,&ViewControllUnit::tellAlignTop,this,&AmtlGraphicsView::alignTop);
-    connect(_cuniWidget,&ViewControllUnit::tellLockStatusChange,this,[=](bool locked){
+    connect(_cuniWidget,&ViewControlUnitWidget::tellAlignBottom,this,&AmtlGraphicsView::alignBottom);
+    connect(_cuniWidget,&ViewControlUnitWidget::tellAlignCenter,this,&AmtlGraphicsView::alignCenter);
+    connect(_cuniWidget,&ViewControlUnitWidget::tellAlignEnd,this,&AmtlGraphicsView::alignEnd);
+    connect(_cuniWidget,&ViewControlUnitWidget::tellAlignMiddle,this,&AmtlGraphicsView::alignMiddle);
+    connect(_cuniWidget,&ViewControlUnitWidget::tellAlignStart,this,&AmtlGraphicsView::alignStart);
+    connect(_cuniWidget,&ViewControlUnitWidget::tellAlignTop,this,&AmtlGraphicsView::alignTop);
+    connect(_cuniWidget,&ViewControlUnitWidget::tellLockStatusChange,this,[=](bool locked){
 
         setLockViewImpl(locked);
     });
-    connect(_cuniWidget,&ViewControllUnit::tellModelChange,this,[=](bool selectMoveModel){
+    connect(_cuniWidget,&ViewControlUnitWidget::tellModelChange,this,[=](bool selectMoveModel){
         setModelImpl(selectMoveModel);
     });
-    connect(_cuniWidget,&ViewControllUnit::tellZoom,this,[=](qreal factor){
+    connect(_cuniWidget,&ViewControlUnitWidget::tellZoom,this,[=](qreal factor){
         setZoomRatioImpl(factor);
     });
 }
