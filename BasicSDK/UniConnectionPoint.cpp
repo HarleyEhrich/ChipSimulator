@@ -1,6 +1,7 @@
 #include "UniConnectionPoint.h"
 
 using namespace AMTL;
+using namespace AMTL::COLOR;
 
 UniConnectionPoint::UniConnectionPoint(int id, COOR_POS pos, bool outputPoint, QString pointName,int dataBits ,int maxBindItemNumber, QGraphicsItem *parent)
     : UniGraphicsItemObject(nullptr,parent),
@@ -821,7 +822,7 @@ void UniConnectionPoint::innitSta()
     __centerCircleColor = NOTIFY_COLOR;
     __centerCircleBorderColor = NOTIFY_COLOR.darker(24);
 
-    __shadowColor = SHADOW_COLOR;
+    __shadowColor = COLOR::SHADOW_COLOR;
 
     __mainBodyRect.setTopLeft(QPointF{(qreal)(-__mainBodyWH /2),(qreal)(-__mainBodyWH/2)});
     __mainBodyRect.setWidth(__mainBodyWH);

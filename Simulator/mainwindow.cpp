@@ -14,7 +14,11 @@ MainWindow::MainWindow(QWidget *parent)
 //    ToastInfoWidget* testInfo = new ToastInfoWidget(this);
 //    testInfo->move(10,50);
 //    testInfo->show();
+
+
+    AmtlGraphicsView* newView = new AmtlGraphicsView();
     AmtlGraphicsScene* newScene=new AmtlGraphicsScene;
+
     newScene->setObjectName("scene");
     UniConnectionPoint* pointLinkItem = new UniConnectionPoint(2,COOR_POS::RIGHT,true,"输出连接点",1,2);
     newScene->addItem(pointLinkItem);
@@ -31,9 +35,11 @@ MainWindow::MainWindow(QWidget *parent)
     pointLinkItem2->setPos(150,130);
     pointLinkItem2->show();
 
-    this->ui->elec_view->setScene(newScene);
+    newView->setScene(newScene);
     newScene->setSceneRect(-500,-500,1000,1000);
-    this->ui->elec_view->show();  
+    newView->show();
+
+    ui->page_tab_widget->addPage(newView->getViewBox(),"电路图");
 }
 
 MainWindow::~MainWindow()

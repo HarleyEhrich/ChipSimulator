@@ -14,9 +14,13 @@
 #include <QPushButton>
 #include <QResizeEvent>
 #include <QWidget>
+#include <QLayout>
+#include <QSharedPointer>
+#include <QWeakPointer>
 
 #include "Include/ProjectInclude.h"
 #include "MultiplexedScendaryWidget/ViewControlUnitWidget.h"
+#include "AmtlGraphicsScene.h"
 
 class AmtlGraphicsView : public QGraphicsView
 {
@@ -25,11 +29,15 @@ class AmtlGraphicsView : public QGraphicsView
 
 
 
+
     //__ Construct && Destroy__//
 public:
+
     AmtlGraphicsView(QWidget *parent = nullptr);
     virtual ~AmtlGraphicsView();
 
+
+    using QGraphicsView::setScene;
 
     //__ Signals && Slots __//
 public slots:
@@ -53,6 +61,25 @@ public slots:
 
 
     //__ Class Functions __//
+public:
+    QWidget* getViewBox(){
+        return _box;
+    }
+
+    void setScene(AmtlGraphicsScene* scene){
+        _scene = QSharedPointer<AmtlGraphicsScene>::create(scene);
+
+        setScene((QGraphicsScene*)scene);
+    }
+
+    //Recomended way to set scene.
+    void setScene(const QSharedPointer<AmtlGraphicsScene>& scene){
+        _scene = scene;
+    }
+
+    QWeakPointer<AmtlGraphicsScene> getScene(){
+        return _scene;
+    }
 private:
     void init();
 
@@ -92,6 +119,12 @@ private:
 
     //__ Class Variable __//
 private:
+    QFrame* _box;
+    QHBoxLayout* _boxLay;
+    QWidget* _container;
+    QHBoxLayout* _containerLay;
+
+
     ViewControlUnitWidget* _cuniWidget =nullptr;
 
     bool _viewLoked=false;
@@ -101,6 +134,7 @@ private:
     QPoint _mousePressedDownPos;
     QPointF _centerScenePos;
 
+    QSharedPointer<AmtlGraphicsScene> _scene;
 
 
     //__ Interface && Override __//
@@ -119,6 +153,24 @@ protected://QWidget
 };
 
 #endif // AMTLGRAPHICSVIEW_H
+
+
+//#elec_view_box{
+//background-color: transparent;
+//border: 0px;
+//}
+//#elec_view_container{/*Page Container*/
+//background-color: transparent;
+//border: 0px solid transparent;
+//border-radius: 0px;
+//}
+///*特例电路图的样式表*/
+//#elec_view{
+//background-color: rgb(253, 253, 253);
+//border: 1px solid transparent;
+//border-radius: 6px;
+//padding: 4px;
+//}
 
 
 ///* 整个滚动条区域样式 */

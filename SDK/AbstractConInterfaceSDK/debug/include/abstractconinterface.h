@@ -3,6 +3,7 @@
 
 #include "AbstractConInterface_global.h"
 
+#include <QDateTime>
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QObject>
@@ -23,6 +24,16 @@ class ABSTRACTCONINTERFACE_EXPORT AbstractConInterface : public QObject ,public 
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
+public:
+    /// \brief the global time tick type
+    enum class TICK_TYPE{
+        ZERO_HIGH,
+        HIGH_ZERO
+    };
+
+public:
+    explicit AbstractConInterface(QGraphicsItem *parent = nullptr);
+    virtual ~AbstractConInterface(){;}
 
 signals:
     //日志发送入口--使用qDebug()等
@@ -31,11 +42,11 @@ signals:
     //显示新的窗口
     void newPannelWidget(const QString& senderMsg, const QString& pannelTitle, QWidget* pannel);
 
-public:
-    explicit AbstractConInterface(QGraphicsItem *parent = nullptr);
-
     //Function which can be override by all kinds of plugin
 public slots:
+    /// \brief creat a new instance, and return this new instance
+    virtual AbstractConInterface* instance(long sceneID) =0 ;
+
     //创建接口，返回该实例
     virtual AbstractConInterface* creat(long sceneId) =0 ;
 
@@ -66,21 +77,21 @@ protected:
 
     // Basic un-override function
 public:
-    //基本信息设置
-    bool isIntial();
+//    //基本信息设置
+//    bool isIntial();
 
-    const QString& getConIid();
+//    const QString& getConIid();
 
-    const QString& getCreatTime();
+//    const QString& getCreatTime();
 
-    const QString& getConName();
+//    const QString& getConName();
 
-    const QString& getAuthor();
+//    const QString& getAuthor();
 
-    const QString& getConImgaePath();
-    const QPixmap& getConImage();
+//    const QString& getConImgaePath();
+//    const QPixmap& getConImage();
 
-    const QString& getConDescribe();
+//    const QString& getConDescribe();
 
     //从文本内加载控件信息
     bool loadFromTextAbstract(const QString& abText);
@@ -94,38 +105,75 @@ public:
     long sceneId() const;
     void setSceneId(long newScenceId);
 
-private:
-    bool innitial(const QString& creatTime,const QString& author,const QString& conName, const QString& conImagePath=":/default _electronic_component.png");
+    virtual void tick(TICK_TYPE tickType){
+        switch (tickType){
+        case TICK_TYPE::HIGH_ZERO:{
+            run();
+            break;
+        }
+
+        case TICK_TYPE::ZERO_HIGH:{
+            run();
+            break;
+        }
+
+        }
+    }
+
 
 private:
-    //是否初始化，未初始化不允许加载入。
-    bool _isInitial=false;
-
-    //控件唯一标识，反射时将使用该标识来创建实例对象
-    QString _conId;
-    QString _conDescribeInfo;
-
-    QString _creatTime;
-    QString _author;
-    QString _conName;
-    QString _conImagePath;
-    QPixmap _conImage;
-
     //控件别名
     QString _conNickName;
 
     //控件设置
     long _sceneId=-1;
 
+    bool _tickNew = false;
+
+    TICK_TYPE _curTickType;
+
     //是否可移动--默认可移动
     bool _isMoveable=true;
-
     //鼠标处于按下状态
     bool _mousePressed=false;
-
     //鼠标点击事件发生点
     QPointF _mousePressedPoint;
 
+public:
+    static bool initial();
+    static QString comId();
+    static QString comName();
+    static QString componentDesInfo();
+    static QString comAuthor();
+    static QString comCreatTimeStr();
+    static QDateTime comCreatTime();
+    static QString comImagePath();
+    static QPixmap comImage();
+
+protected:
+    static void intialComponentInfo(
+        const QString& cid,
+        const QString& cName,
+        const QString& cDesInfo,
+        const QString& author,
+        const QString& creatTime,
+        const QString& cImagePath,
+        const QString& timeFormat="yyyy-mm-dd");
+
+protected:
+    inline static bool __initial=false;//是否初始化，未初始化不允许加载入。
+
+    inline static QString __comId;//component的唯一编号
+    inline static QString __comName;//组件默认名称
+    inline static QString __comDesInfo;
+
+    inline static QString __comAuthor;//组件作者
+
+    inline static QString __comCreatTimeStr;
+    inline static QDateTime __comCreatTime;//组件创建时间
+
+    inline static QString __comImagePath;
+    inline static QPixmap __comImage;//组件图片
 };
 
 //    //注册设置按钮，提供按钮名称，以及对应的设置函数，注意到该函数仅能接收到点击事件产生的true，false，两个值
@@ -134,6 +182,7 @@ private:
 
 
 #define AbstractConInterface_iid "com.amtl.plugin.abstractconinterface"
+
 Q_DECLARE_INTERFACE(AbstractConInterface, AbstractConInterface_iid)
 
 #endif // ABSTRACTCONINTERFACE_H

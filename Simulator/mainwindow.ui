@@ -429,13 +429,30 @@ QMenuBar::item:selected {
 
 .QWidget#page_tab_container{
 /*Tab widget的容器*/
-	background-color: rgb(255, 255, 255);
+	background-color: transparent;
 	border: 0px solid transparent;
 	border-radius: 6px;
 }
 
-.QWidget#page_tab_widget{
-/*Tab widget的主体，qss应当由其本身完成*/
+/*.QWidget#page_tab_widget{
+Tab widget的主体，qss应当由其本身完成
+}*/
+
+#elec_view_box{
+background-color: transparent;
+border: 0px;
+}
+#elec_view_container{/*Page Container*/
+background-color: transparent;
+border: 0px solid transparent;
+border-radius: 0px;
+}
+/*特例电路图的样式表*/
+#elec_view{
+background-color: rgb(253, 253, 253);
+border: 0px solid transparent;
+border-radius: 0px;
+padding: 4px;
 }
 
 /*-----------------------------------------------------------------------------------------------------*/
@@ -468,209 +485,7 @@ QMenuBar::item:selected {
 }
 
 /*#info_tab_widget{}/*
-/*Tab widget的主体，qss应当由其本身完成*/
-
-
-
-
-
-
-
-
-
-
-
-
-/*特殊qss 后期删除*/
-#elec_view_box{
-	background-color: transparent;
-	border: 0px;
-}
-#elec_view_container{/*Page Container*/
-	background-color: transparent;
-	border: 0px solid transparent;
-	border-radius: 0px;
-
-}
-/*特例电路图的样式表*/
-#elec_view{
-	background-color: rgb(253, 253, 253);
-	border: 1px solid transparent;
-	border-radius: 6px;
-	padding: 4px;
-} 
-
-
-
-/* 整个滚动条区域样式 */
-.QScrollBar:vertical {
- 	background-color: transparent;
- 	width: 12px;/*将会设置到滑块的大小*/
-	margin: 12px 0 12px 0;/*上下按钮可占据0-24这个上下范围*/
-}
-/*-------------------------向上按钮区域------------------------------*/
-.QScrollBar::sub-line:vertical {/* 向上按钮的背景区域 */
-	background-color: transparent;
-	border: 1px solid transparent;
-	height: 12px;
-	margin-top: 0px;
-  	subcontrol-position: top;
-  	subcontrol-origin: margin;
-}
-.QScrollBar::up-arrow:vertical {/* 向上箭头样式 */
-  	background-color: transparent;
-	height: 8px;
-	width: 8px;
-}
-.QScrollBar::up-arrow:vertical:hover {/* 当鼠标放到向上箭头上的时候 */
-   	border-image:url(:/triangle_up.png);
-}
-
-/*-------------------------滑块上方区域------------------------------*/
-.QScrollBar::sub-page:vertical {/* 滑块上面区域样式 */
- 	background-color: transparent;
-	border: 1px solid transparent;
-}
-.QScrollBar::sub-line:vertical:hover {}/* 当鼠标放到向上区域的时候 */
-
-/*-------------------------滑块区域------------------------------*/
-.QScrollBar::handle:vertical {	/* 滑块区域样式 */
-	background-color: #dfe0e1;
-	border: 1px transparent;
-	border-radius: 2px;
-	margin-left: 3px;
-	margin-right: 3px;
-}
-.QScrollBar::handle:vertical:hover,
-.QScrollBar::handle:vertical:pressed {/* 鼠标滑过滑块样式 */
-	background-color: #959596;
-	margin-left: 2px;
-	margin-right: 2px;
-	border-radius: 3px;
-
-QScrollBar::up-arrow:vertical {/* 当鼠标放到向上箭头上的时候 */
-   	border-image:url(:/triangle_up.png);
-}
-}
-/*-------------------------滑块下方区域------------------------------*/
-/* 滑块下面区域样式 */
-.QScrollBar::add-page:vertical {
- 	background-color: transparent;
-	border: 1px solid transparent;
-}
-/* 当鼠标放到向下区域的时候 */
-.QScrollBar::add-line:vertical:hover {}
-/*-------------------------向下按钮区域------------------------------*/
-.QScrollBar::add-line:vertical {/*下方的按钮的背景*/
-	background-color: transparent;
-	border: 1px solid transparent;
-	height: 12px;
-	margin-bottom: 0px;
- 	subcontrol-position: bottom;
- 	subcontrol-origin: margin;
-}
-.QScrollBar::down-arrow:vertical {/* 向下箭头样式 */
-	background-color: transparent;
-	height: 8px;
-	width: 8px;
-}
-.QScrollBar::down-arrow:vertical:hover {/* 当鼠标放到向下箭头上的时候 */
- 	border-image:url(:/triangle_down.png);
-}
-
-/************下方滑条******************************************/
-/* 整个滚动条区域样式 */
-.QScrollBar:horizontal {
- 	background-color: transparent;
- 	height: 12px;/*将会设置到滑块的大小*/
-	margin: 0 12px 0 12px;/*左右按钮可占据0-12这个范围*/
-}
-
-.QScrollBar:horizontal:hover {
-	QScrollBar::left-arrow:horizontal {/* 当鼠标放到向左箭头上的时候 */
-   		border-image:url(:/triangle_left.png);
-	}
-
-.QScrollBar::right-arrow:horizontal {/* 当鼠标放到向右箭头上的时候 */
- 		border-image:url(:/triangle_right.png);
-	}
-
-.QScrollBar::handle:horizontal {/* 鼠标滑过滑块样式 */
-		background-color: #959596;
-		margin-top: 2px;
-		margin-bottom: 2px;
-		border-radius: 3px;
-	}
-}
-
-/*-------------------------向左按钮区域------------------------------*/
-.QScrollBar::sub-line:horizontal {/* 向左按钮的背景区域 */
-	background-color: transparent;
-	border: 1px solid transparent;
-	width: 12px;
-	margin-left: 0px;
-  	subcontrol-position: left;
-  	subcontrol-origin: margin;
-}
-.QScrollBar::left-arrow:horizontal {/* 向左箭头样式 */
-  	background-color: transparent;
-	height: 8px;
-	width: 8px;
-}
-.QScrollBar::left-arrow:horizontal:hover {/* 当鼠标放到向左箭头上的时候 */
-   	border-image:url(:/triangle_left.png);
-}
-
-/*-------------------------滑块左侧区域------------------------------*/
-.QScrollBar::sub-page:horizontal {/* 滑块左侧区域样式 */
- 	background-color: transparent;
-	border: 1px solid transparent;
-}
-.QScrollBar::sub-line:vertical:hover {}/* 当鼠标放到左侧区域的时候 */
-
-/*-------------------------滑块区域------------------------------*/
-.QScrollBar::handle:horizontal {	/* 滑块区域样式 */
-	background-color: #dfe0e1;
-	border: 1px transparent;
-	border-radius: 2px;
-	margin-top: 3px;
-	margin-bottom: 3px;
-}
-.QScrollBar::handle:horizontal:hover,
-.QScrollBar::handle:horizontal:pressed {/* 鼠标滑过滑块样式 */
-	background-color: #959596;
-	margin-top: 2px;
-	margin-bottom: 2px;
-	border-radius: 3px;
-}
-
-/*-------------------------滑块下方区域------------------------------*/
-.QScrollBar::add-page:horizontal {/* 滑块下面区域样式 */
- 	background-color: transparent;
-	border: 1px solid transparent;
-}
-.QScrollBar::add-line:vertical:hover {}/* 当鼠标放到向下区域的时候 */
-
-/*-------------------------向右侧按钮区域------------------------------*/
-.QScrollBar::add-line:horizontal {/*右侧的按钮的背景*/
-	background-color: transparent;
-	border: 1px solid transparent;
-	width: 12px;
-	margin-right: 0px;
- 	subcontrol-position: right;
- 	subcontrol-origin: margin;
-}
-.QScrollBar::right-arrow:horizontal {/* 向下箭头样式 */
-	background-color: transparent;
-	height: 8px;
-	width: 8px;
-}
-QScrollBar::right-arrow:horizontal:hover {/* 当鼠标放到向下箭头上的时候 */
- 	border-image:url(:/triangle_right.png);
-}
-
-
-</string>
+/*Tab widget的主体，qss应当由其本身完成*/</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -748,12 +563,6 @@ QScrollBar::right-arrow:horizontal:hover {/* 当鼠标放到向下箭头上的�
               </property>
               <item>
                <widget class="QWidget" name="page_tab_container" native="true">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>0</height>
-                 </size>
-                </property>
                 <layout class="QVBoxLayout" name="verticalLayout_3">
                  <property name="spacing">
                   <number>0</number>
@@ -772,85 +581,6 @@ QScrollBar::right-arrow:horizontal:hover {/* 当鼠标放到向下箭头上的�
                  </property>
                  <item>
                   <widget class="FlatTabWidget" name="page_tab_widget" native="true"/>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QFrame" name="elec_view_box">
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_2">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QWidget" name="elexc_view_container" native="true">
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_9">
-                    <property name="spacing">
-                     <number>0</number>
-                    </property>
-                    <property name="leftMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="topMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>0</number>
-                    </property>
-                    <item>
-                     <widget class="AmtlGraphicsView" name="elec_view">
-                      <property name="styleSheet">
-                       <string notr="true"/>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Plain</enum>
-                      </property>
-                      <property name="verticalScrollBarPolicy">
-                       <enum>Qt::ScrollBarAlwaysOff</enum>
-                      </property>
-                      <property name="horizontalScrollBarPolicy">
-                       <enum>Qt::ScrollBarAlwaysOff</enum>
-                      </property>
-                      <property name="renderHints">
-                       <set>QPainter::Antialiasing|QPainter::TextAntialiasing|QPainter::VerticalSubpixelPositioning</set>
-                      </property>
-                      <property name="cacheMode">
-                       <set>QGraphicsView::CacheBackground</set>
-                      </property>
-                      <property name="viewportUpdateMode">
-                       <enum>QGraphicsView::SmartViewportUpdate</enum>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -925,11 +655,6 @@ QScrollBar::right-arrow:horizontal:hover {/* 当鼠标放到向下箭头上的�
   </action>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>AmtlGraphicsView</class>
-   <extends>QGraphicsView</extends>
-   <header>./Widgets/Graphics/amtlgraphicsview.h</header>
-  </customwidget>
   <customwidget>
    <class>FlatTabWidget</class>
    <extends>QWidget</extends>

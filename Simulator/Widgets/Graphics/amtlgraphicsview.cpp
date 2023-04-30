@@ -44,16 +44,58 @@ void AmtlGraphicsView::alignTop()
 
 void AmtlGraphicsView::init()
 {
+    _box = new QFrame();
+    _boxLay = new QHBoxLayout();
+    _container = new QWidget();
+    _containerLay = new QHBoxLayout();
+
+    _box->setObjectName("elec_view_box");
+    _box->setLayout(_boxLay);
+
+
+    _boxLay->setObjectName("elec_view_box_lay");
+    _boxLay->setContentsMargins(0,0,0,0);
+    _boxLay->addWidget(_container);
+
+    _container->setObjectName("elec_view_container");
+    _container->setLayout(_containerLay);
+
+    _containerLay->setObjectName("elec_view_container_lay");
+    _containerLay->setContentsMargins(0,0,0,0);
+    _containerLay->addWidget(this);
+
     this->setMouseTracking(true);
 
     initViewControlWidget();
+
+    setObjectName("elec_view");
 
     setDragMode(QGraphicsView::RubberBandDrag);
 
     setCacheMode(QGraphicsView::CacheBackground);
 
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     //目前开启状态，等待解决残影问题--已解决
     //setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::FullViewportUpdate);
+
+//    _box->setStyleSheet("#elec_view_box,elec_view_box_lay{"
+//                        "   background-color: transparent;"
+//                        "   border: 0px;"
+//                        "}"
+//                        "#elec_view_container,elec_view_container_lay{/*Page Container*/"
+//                        "   background-color: transparent;"
+//                        "   border: 0px solid transparent;"
+//                        "   border-radius: 0px;"
+//                        "}"
+//                        "/*特例电路图的样式表*/"
+//                        "#elec_view{"
+//                        "   background-color: rgb(253, 253, 253);"
+//                        "   border: 1px solid transparent;"
+//                        "   border-radius: 6px;"
+//                        "   padding: 4px;"
+//                        "}");
 
 }
 

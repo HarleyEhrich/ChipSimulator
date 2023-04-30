@@ -42,23 +42,23 @@ void AbstractConInterface::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event
     ;
 }
 
-bool AbstractConInterface::isIntial(){return this->_isInitial;}
+//bool AbstractConInterface::isIntial(){return this->_isInitial;}
 
-const QString &AbstractConInterface::getConIid(){return this->_conId;}
+//const QString &AbstractConInterface::getConIid(){return this->_conId;}
 
-const QString &AbstractConInterface::getCreatTime(){return this->_creatTime;}
+//const QString &AbstractConInterface::getCreatTime(){return this->_creatTime;}
 
-const QString &AbstractConInterface::getConName(){return this->_conName;}
+//const QString &AbstractConInterface::getConName(){return this->_conName;}
 
-const QString &AbstractConInterface::getAuthor(){return this->_author;}
+//const QString &AbstractConInterface::getAuthor(){return this->_author;}
 
-const QString &AbstractConInterface::getConImgaePath(){return this->_conImagePath;}
+//const QString &AbstractConInterface::getConImgaePath(){return this->_conImagePath;}
 
-const QPixmap &AbstractConInterface::getConImage(){return this->_conImage;}
+//const QPixmap &AbstractConInterface::getConImage(){return this->_conImage;}
 
-const QString &AbstractConInterface::getConDescribe(){
-    return this->_conDescribeInfo;
-}
+//const QString &AbstractConInterface::getConDescribe(){
+//    return this->_conDescribeInfo;
+//}
 
 bool AbstractConInterface::loadFromTextAbstract(const QString &abText)
 {
@@ -66,7 +66,7 @@ bool AbstractConInterface::loadFromTextAbstract(const QString &abText)
     while(!reader.atEnd()){
         auto type=reader.tokenType();
         //明确为类型的xml内容
-        if(type==QXmlStreamReader::StartElement && reader.name().toString() == this->_conId){
+        if(type==QXmlStreamReader::StartElement && __comId == reader.name().toString()){
             //基本数据
             QXmlStreamAttributes basicAttributes=reader.attributes();
             if(basicAttributes.hasAttribute("sceneId")){
@@ -100,7 +100,7 @@ bool AbstractConInterface::saveToTextAbstract(QString &abText)
     QXmlStreamWriter writer(&abText);
     writer.setAutoFormatting(true);
     writer.writeStartDocument("1.0",true);//写入头
-    writer.writeStartElement(this->_conId);
+    writer.writeStartElement(__comId);
     writer.writeAttribute("sceneId",QString::number(this->_sceneId));
     writer.writeAttribute("scenePosX",QString::number(this->scenePos().x()));
     writer.writeAttribute("scenePosY",QString::number(this->scenePos().y()));
@@ -134,37 +134,122 @@ void AbstractConInterface::setSceneId(long newScenceId)
     _sceneId = newScenceId;
 }
 
-bool AbstractConInterface::innitial(const QString &creatTime, const QString &author, const QString &conName, const QString &conImagePath){
-    if(_isInitial==true) {
-        emit this->newLog(this->getConDescribe(),tr("The virtual conponent has been initialized and should not be initialized again."),AMTL::WARNING);
-        return false;
-    }
+//bool AbstractConInterface::innitial(const QString &creatTime, const QString &author, const QString &conName, const QString &conImagePath){
+//    if(_isInitial==true) {
+//        emit this->newLog(this->getConDescribe(),tr("The virtual conponent has been initialized and should not be initialized again."),AMTL::WARNING);
+//        return false;
+//    }
 
-    this->_creatTime=creatTime;
-    this->_author=author;
-    this->_conName=this->_conNickName=conName;
-    this->_conImagePath=conImagePath;
+//    this->_creatTime=creatTime;
+//    this->_author=author;
+//    this->_conName=this->_conNickName=conName;
+//    this->_conImagePath=conImagePath;
 
-    if(!this->_conImage.load(this->_conImagePath)){
-        emit this->newLog(this->getConDescribe(),tr("The virtual conponent description thumbnail failed to load."),AMTL::ERROR);
-        this->_conImagePath=":/default _electronic_component.png";
-        this->_conImage.load(this->_conImagePath);
-    }
+//    if(!this->_conImage.load(this->_conImagePath)){
+//        emit this->newLog(this->getConDescribe(),tr("The virtual conponent description thumbnail failed to load."),AMTL::ERROR);
+//        this->_conImagePath=":/default _electronic_component.png";
+//        this->_conImage.load(this->_conImagePath);
+//    }
 
-    //gennerate id
-    this->_conId=this->_conName+"-"+this->_author+"-"+this->_creatTime;
+//    //gennerate id
+//    this->_conId=this->_conName+"-"+this->_author+"-"+this->_creatTime;
 
-    //gennerate describe info
-    this->_conDescribeInfo=this->_conId+","+this->_conNickName;
+//    //gennerate describe info
+//    this->_conDescribeInfo=this->_conId+","+this->_conNickName;
 
-    this->_isInitial=true;
+//    this->_isInitial=true;
 
-    //接受鼠标悬浮事件
-    this->setAcceptHoverEvents(true);
-    //可移动，可选择
-    this->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+//    //接受鼠标悬浮事件
+//    this->setAcceptHoverEvents(true);
+//    //可移动，可选择
+//    this->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
 
-    return true;
+//    return true;
+//}
+
+
+
+
+
+
+bool AbstractConInterface::initial()
+{
+    return __initial;
 }
+
+QString AbstractConInterface::comId()
+{
+    return __comId;
+}
+
+QString AbstractConInterface::comName()
+{
+    return __comName;
+}
+
+QString AbstractConInterface::componentDesInfo()
+{
+    return __comDesInfo;
+}
+
+
+QString AbstractConInterface::comAuthor()
+{
+    return __comAuthor;
+}
+
+QString AbstractConInterface::comCreatTimeStr()
+{
+    return __comCreatTimeStr;
+}
+
+QDateTime AbstractConInterface::comCreatTime()
+{
+    return __comCreatTime;
+}
+
+QString AbstractConInterface::comImagePath()
+{
+    return __comImagePath;
+}
+
+QPixmap AbstractConInterface::comImage()
+{
+    return __comImage;
+}
+
+void AbstractConInterface::intialComponentInfo(const QString &cid, const QString &cName, const QString &cDesInfo, const QString &author, const QString &creatTime, const QString &cImagePath, const QString &timeFormat){
+
+    if(true == __initial) return;
+
+    __comId = cid+author+cName;
+
+    __comName = cName;
+
+    __comDesInfo = cDesInfo;
+
+    __comAuthor = author;
+
+
+    __comCreatTime.fromString(creatTime,timeFormat);
+    if(!__comCreatTime.isValid()){
+        __comCreatTime.setDate(QDate{1946,02,04});
+    }
+    __comCreatTimeStr = __comCreatTime.toString("yy-mm-dd");
+
+    __comImagePath = cImagePath;
+    if(!__comImage.load(cImagePath)){
+        qDebug()<<"Load component image fail, target file path: "<<cImagePath;
+        __comImagePath = ":/default _electronic_component.png";
+        __comImage.load(__comImagePath);
+    }
+
+    __initial =true;
+}
+
+
+
+
+
 
 
