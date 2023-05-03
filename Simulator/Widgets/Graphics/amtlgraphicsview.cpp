@@ -364,7 +364,6 @@ void AmtlGraphicsView::setLockViewImpl(const bool &locked)
 
 void AmtlGraphicsView::setModelImpl(const bool &model)
 {
-
     _moveAndSelectModel = model;
 }
 
@@ -410,6 +409,7 @@ void AmtlGraphicsView::mouseReleaseEvent(QMouseEvent *event)
 void AmtlGraphicsView::resizeEvent(QResizeEvent *event)
 {
     QGraphicsView::resizeEvent(event);
+
     //Make the control unit widget stay at the center of the view.
     _cuniWidget->move(event->size().width()/2-_cuniWidget->width()/2,10);
 }

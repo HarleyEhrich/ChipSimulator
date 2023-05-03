@@ -1,50 +1,57 @@
 #include "abstractconinterface.h"
 
-
-
-AbstractConInterface::AbstractConInterface(long sceneID,QGraphicsItem *parent)
-    :QGraphicsItem(parent),
-    _sceneId(sceneID)
+AbstractConInterface::AbstractConInterface(long sceneID,QGraphicsItem *parent,QObject* parentObject)
+    :UniGraphicsItemObject(parentObject,parent),
+    _comNickName(__comName),
+    _sceneId(sceneID),
+    _tickNew(false),
+    _curTickType(TICK_TYPE::NO_TICK)
 {
-
+    init();
 }
 
-QRectF AbstractConInterface::boundingRect() const
+AbstractConInterface::AbstractConInterface(long sceneID, const QString &comName, QGraphicsItem *parent, QObject *parentObject)
+    :UniGraphicsItemObject(parentObject,parent),
+    _comNickName(comName),
+    _sceneId(sceneID),
+    _tickNew(false),
+    _curTickType(TICK_TYPE::NO_TICK)
 {
-    return QRectF{0,0,0,0};
+    init();
 }
 
-void AbstractConInterface::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
+AbstractConInterface::~AbstractConInterface(){
     ;
 }
 
-void AbstractConInterface::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    this->_mousePressed=true;
-    this->_mousePressedPoint=this->scenePos()-event->scenePos();//鼠标点击相对于图元的坐标位置
+bool AbstractConInterface::loadStatusFormXml(QXmlStreamReader *root){
+    return loadFromXmlAbstractImpl(root);
 }
 
-void AbstractConInterface::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    this->_mousePressed=false;
+bool AbstractConInterface::saveStatusToXml(QXmlStreamWriter *root){
+    return saveToXmlAbstractImpl(root);
 }
 
-void AbstractConInterface::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+
+
+
+
+long AbstractConInterface::sceneId() const
 {
-    if(_mousePressed && this->_isMoveable)
-    {
-        this->setPos(event->scenePos()+_mousePressedPoint);
-    }
+    return _sceneId;
 }
 
-void AbstractConInterface::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void AbstractConInterface::setSceneId(long newScenceId)
 {
-    ;
+    _sceneId = newScenceId;
 }
 
+void AbstractConInterface::preTick(TICK_TYPE tickType){
+    Q_UNUSED(tickType);
+}
 
 void AbstractConInterface::tick(TICK_TYPE tickType){
+    preTick(tickType);
     switch (tickType){
     case TICK_TYPE::HIGH_ZERO:{
         run();
@@ -55,8 +62,16 @@ void AbstractConInterface::tick(TICK_TYPE tickType){
         run();
         break;
     }
-
+    case TICK_TYPE::NO_TICK:{
+        run();
+        break;
     }
+    }
+    postTick(tickType);
+}
+
+void AbstractConInterface::postTick(TICK_TYPE tickType){
+    Q_UNUSED(tickType);
 }
 
 bool AbstractConInterface::loadFromXmlAbstractImpl(QXmlStreamReader *root){
@@ -84,7 +99,7 @@ bool AbstractConInterface::loadFromXmlAbstractImpl(QXmlStreamReader *root){
             }
 
             if(attrs.hasAttribute("nick_name")){
-                this->_conNickName=attrs.value("nick_name").toString();
+                this->_comNickName=attrs.value("nick_name").toString();
             }
 
         }
@@ -128,7 +143,7 @@ bool AbstractConInterface::saveToXmlAbstractImpl(QXmlStreamWriter *root){
     root->writeStartElement(ComAbstractLabelName);
     root->writeAttribute("scene_id",QString::number(this->_sceneId));
     root->writeAttribute("scene_pos",QString("%1,%2").arg(scenePos().x(),scenePos().y()));
-    root->writeAttribute("nick_name",_conNickName);
+    root->writeAttribute("nick_name",_comNickName);
 
     root->writeStartElement(ComExtendLabelName);
     if(!saveToXmlExtendImpl(root)){
@@ -138,7 +153,24 @@ bool AbstractConInterface::saveToXmlAbstractImpl(QXmlStreamWriter *root){
     }
 
     root->writeEndElement();
+
+    //todo write connection point info to this xml
+
     root->writeEndElement();
+    return true;
+}
+
+void AbstractConInterface::customInit(){
+
+}
+
+void AbstractConInterface::gnerateItemPainterPath(){
+    _itemPainterPath.addRect(-24,-24,48,48);
+    _boudingRect = _itemPainterPath.boundingRect();
+}
+
+bool AbstractConInterface::loadFromXmlExtendImpl(QXmlStreamReader *root){
+    Q_UNUSED(root);
 
     return true;
 }
@@ -150,28 +182,102 @@ bool AbstractConInterface::saveToXmlExtendImpl(QXmlStreamWriter *root){
     return true;
 }
 
-bool AbstractConInterface::loadFromXmlExtendImpl(QXmlStreamReader *root){
-    Q_UNUSED(root);
+void AbstractConInterface::connectionDataChangeImpl(UniConnectionPoint *changePtr, qsizetype changedIndex, int changeLen){
+    run();
+}
 
-    return true;
+void AbstractConInterface::init(){
+    this->setFlags(ItemSendsGeometryChanges | ItemIsSelectable | ItemIsMovable | ItemIsFocusable);
+
+    MAKE_DEA_SHADOW_EFF(_shadowEffect,this)
+
+    customInit();
+}
+
+int AbstractConInterface::registerConnectionPoint(COOR_POS pos, bool outputPoint, QString pointName, int dataBits, int maxBindItemNumber){
+    int newId= _connectPointVec.size();
+
+    UniConnectionPoint* newPoint = new UniConnectionPoint(newId,
+                                                          pos,
+                                                          outputPoint,
+                                                          pointName,
+                                                          dataBits,
+                                                          maxBindItemNumber,
+                                                          this);
+
+    _connectPointVec.append(newPoint);
+    _pointDataMap[newPoint] = newPoint->getDataPtr();
+
+    //connect data change
+    connect(newPoint,&UniConnectionPoint::tellDataChanged,this,[=](UniConnectionPoint* changePtr,qsizetype changedIndex,int changeLen){
+        connectionDataChangeImpl(changePtr,changedIndex,changeLen);
+    });
+
+    return newId;
 }
 
 
-long AbstractConInterface::sceneId() const
+
+
+
+
+QPointF AbstractConInterface::getRealItemCenterScenePos()
 {
-    return _sceneId;
+    return scenePos();
 }
 
-void AbstractConInterface::setSceneId(long newScenceId)
+QRectF AbstractConInterface::getRealBoudingRect()
 {
-    _sceneId = newScenceId;
+    return getRealBoudingRect();
+}
+
+QRectF AbstractConInterface::boundingRect() const
+{
+    return _boudingRect;
+}
+
+void AbstractConInterface::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    painter->drawPath(_itemPainterPath);
+}
+
+void AbstractConInterface::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    QGraphicsView* view= qobject_cast<QGraphicsView*>(event->widget()->parentWidget());
+    if(view == nullptr){
+        qWarning()<<"The graphics view component does not exist and the context menu cannot be generated.";
+        return;
+    }
+
+
+}
+
+void AbstractConInterface::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    _mousePressed=true;
+    _mousePressedPoint=this->scenePos()-event->scenePos();//鼠标点击相对于图元的坐标位置
+}
+
+void AbstractConInterface::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    _mousePressed=false;
+}
+
+void AbstractConInterface::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if(_mousePressed && _isMoveable)
+    {
+        setPos(mapToParent(mapFromScene(event->scenePos()+_mousePressedPoint)));
+    }
+}
+
+void AbstractConInterface::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    ;
 }
 
 
-
-
-
-bool AbstractConInterface::initial()
+bool AbstractConInterface::staInitial()
 {
     return __initial;
 }
@@ -243,6 +349,10 @@ void AbstractConInterface::intialComponentInfo(const QString &cid, const QString
     }
 
     __initial =true;
+}
+
+int AbstractConInterface::registerConnectionPoint(AbstractConInterface *targetCom, COOR_POS pos, bool outputPoint, QString pointName, int dataBits, int maxBindItemNumber){
+    return targetCom->registerConnectionPoint(pos,outputPoint,pointName,dataBits,maxBindItemNumber);
 }
 
 
@@ -354,3 +464,9 @@ void AbstractConInterface::intialComponentInfo(const QString &cid, const QString
 
 //    return true;
 //}
+
+
+
+
+
+

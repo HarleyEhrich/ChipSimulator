@@ -10,16 +10,18 @@
 #include "BasicSDK_global.h"
 #include "UniGraphicsItemObject.h"
 
-#ifdef QT_DEBUG
-#define DEBUGINFO qPrintable(QDateTime::currentDateTime().toString("[ yy/MM/dd hh:mm:ss ]("))<<QT_MESSAGELOG_FILE<<":"<<QT_MESSAGELOG_LINE<<"@"<<QT_MESSAGELOG_FUNC<<"):"
-#else
+//#ifdef QT_DEBUG
+//#define DEBUGINFO qPrintable(QDateTime::currentDateTime().toString("[ yy/MM/dd hh:mm:ss ]("))<<QT_MESSAGELOG_FILE<<":"<<QT_MESSAGELOG_LINE<<"@"<<QT_MESSAGELOG_FUNC<<"):"
+//#else
+//#define DEBUGINFO ""
+//#endif
 
-#define DEBUGINFO ""
-
-#endif
-
-
-
+#define MAKE_DEA_SHADOW_EFF(shadowPtr,target)           \
+    shadowPtr=new QGraphicsDropShadowEffect(target);    \
+    shadowPtr->setColor(Qt::gray);                      \
+    shadowPtr->setOffset(0,0);                          \
+    shadowPtr->setBlurRadius(8);                        \
+    target->setGraphicsEffect(shadowPtr);               \
 
 
 namespace AMTL {//Enum

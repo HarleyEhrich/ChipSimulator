@@ -1,11 +1,15 @@
 #ifndef ABSTRACTCONINTERFACE_H
 #define ABSTRACTCONINTERFACE_H
 
-#include "AbstractConInterface_global.h"
 
 #include <QDateTime>
+#include <QDomNode>
+#include <QGraphicsDropShadowEffect>
 #include <QGraphicsItem>
+#include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsView>
+#include <QMap>
 #include <QObject>
 #include <QPixmap>
 #include <QPointF>
@@ -15,13 +19,15 @@
 #include <QWidget>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
-#include <QDomNode>
 
-namespace AMTL {
-//    enum MSGTYPE{DEAFAULT,WARNING,ERROR};
-}
 
-class ABSTRACTCONINTERFACE_EXPORT AbstractConInterface : public QObject ,public QGraphicsItem
+#include "AbstractConInterface_global.h"
+
+#include "UniGraphicsItemObject.h"
+#include "UniConnectionPoint.h"
+
+
+class ABSTRACTCONINTERFACE_EXPORT AbstractConInterface : public UniGraphicsItemObject
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
@@ -33,28 +39,23 @@ public:
     /// \brief The global time tick type
     enum class TICK_TYPE{
         ZERO_HIGH,
-        HIGH_ZERO
+        HIGH_ZERO,
+        NO_TICK
     };
 
 public:
-    explicit AbstractConInterface(long sceneID, QGraphicsItem *parent = nullptr);
-    virtual ~AbstractConInterface(){;}
+    explicit AbstractConInterface(long sceneID, QGraphicsItem *parent = nullptr,QObject* parentObject=nullptr);
+    explicit AbstractConInterface(long sceneID, const QString& conName,QGraphicsItem *parent = nullptr,QObject* parentObject=nullptr);
+    virtual ~AbstractConInterface();
 
 signals:
     //显示新的窗口
-    void newPannelWidget(const QString& senderMsg, const QString& pannelTitle, QWidget* pannel);
+    void newPannelWidget(QWidget* pannel, const QString& senderMsg);//Maybe just show a widget with parent nullptr is ok.
 
     //Function which can be override by all kinds of plugin
 public slots:
-
-
     //运行函数，使用run来统一管理控件状态的更新入口，对外界传递该函数来使该控件可被其它控件调用，每次调用必须根据此完成状态更新
     virtual void run()=0;
-
-    //运行保存，读取机制，通过将控件状态转为文本，以供下次读取，注意到图元基本信息，诸如位置等应有Abstarct 接口完成，理论上不推荐自主实现，但是也可以自主实现
-    virtual bool loadStatusFormText(const QString& text) = 0;
-    virtual bool saveStatusToText(QString& text) = 0;
-
 
     //获取控件的设置控件组，主界面处理控件删除后设置控件的删除，不需要控件自行处理。
     virtual QVector<QWidget*> getSetWidgetsVec() = 0;
@@ -63,24 +64,20 @@ public slots:
     virtual QWidget* getSettingPannel() = 0;
 
 
-    // QGraphicsItem interface
-public:
-    virtual QRectF boundingRect() const override;
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-
-protected:
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-
+    //运行保存，读取机制，通过将控件状态转为文本，以供下次读取，注意到图元基本信息，诸如位置等由Abstarct 接口完成
+    bool loadStatusFormXml(QXmlStreamReader* root);
+    bool saveStatusToXml(QXmlStreamWriter* root);
 
     // Class function
 public:
     long sceneId() const;
     void setSceneId(long newScenceId);
 
+    virtual void preTick(TICK_TYPE tickType);
+
     void tick(TICK_TYPE tickType);
+
+    virtual void postTick(TICK_TYPE tickType);
 
     /// \brief 创建接口，返回该实例
     /// \brief Creat a new instance, and return this new instance
@@ -90,25 +87,47 @@ protected:
     bool loadFromXmlAbstractImpl(QXmlStreamReader* root);
     bool saveToXmlAbstractImpl(QXmlStreamWriter* root);
 
+    virtual void customInit();
+
+    virtual void gnerateItemPainterPath();
+
+    virtual bool loadFromXmlExtendImpl(QXmlStreamReader * root);
     virtual bool saveToXmlExtendImpl(QXmlStreamWriter* root);
-    virtual bool loadFromXmlExtendImpl(QXmlStreamReader* root);
 
 
-//    //从文本内加载控件信息
-//    bool loadFromTextAbstarctImpl(const QString& abText);
-//    //将文本信息加载到控件内
-//    bool saveToTextAbstarctImpl(QString& abText);
+    virtual void connectionDataChangeImpl(UniConnectionPoint* changePtr,qsizetype changedIndex,int changeLen);
+
 
 private:
+    void init();
+
+    int registerConnectionPoint(COOR_POS pos,
+                                bool outputPoint,
+                                QString pointName,
+                                int dataBits,
+                                int maxBindItemNumber);
+
+protected:
+    //Painter releate variable
+    QPainterPath _itemPainterPath;
+    QRectF _boudingRect;
+    QGraphicsDropShadowEffect* _shadowEffect;
+
     //控件别名
-    QString _conNickName;
-
+    QString _comNickName;
     //控件设置
-    long _sceneId=-1;
+    long _sceneId;
 
-    bool _tickNew = false;
-
+    //Tick status
+    bool _tickNew;
     TICK_TYPE _curTickType;
+
+private:
+    //ConnectionPoint
+    QVector<UniConnectionPoint*> _connectPointVec;
+    QMap<UniConnectionPoint*,QWeakPointer<const QBitArray>> _pointDataMap;
+
+
 
 
     //是否可移动--默认可移动
@@ -120,7 +139,23 @@ private:
 
 
 public:
-    static bool initial();
+    // UniGraphicsItemObject interface
+    virtual QPointF getRealItemCenterScenePos() override;
+    virtual QRectF getRealBoudingRect() override;
+
+    // QGraphicsItem interface
+    virtual QRectF boundingRect() const override;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+protected:
+    virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+
+
+public:
+    static bool staInitial();
     static QString comId();
     static QString comName();
     static QString componentDesInfo();
@@ -140,6 +175,8 @@ protected:
         const QString& cImagePath,
         const QString& timeFormat="yyyy-mm-dd");
 
+    static int registerConnectionPoint(AbstractConInterface* targetCom,COOR_POS pos,bool outputPoint,QString pointName,int dataBits =1,int maxBindItemNumber=1);
+
 protected:
     inline static bool __initial=false;//是否初始化，未初始化不允许加载入。
 
@@ -155,6 +192,12 @@ protected:
     inline static QString __comImagePath;
     inline static QPixmap __comImage;//组件图片
 };
+
+
+//    //从文本内加载控件信息
+//    bool loadFromTextAbstarctImpl(const QString& abText);
+//    //将文本信息加载到控件内
+//    bool saveToTextAbstarctImpl(QString& abText);
 
 //    //注册设置按钮，提供按钮名称，以及对应的设置函数，注意到该函数仅能接收到点击事件产生的true，false，两个值
 //    bool registerSetBtn(const QString& btnName,std::function<void(int)> setFunction, bool btndefaultValue=false);

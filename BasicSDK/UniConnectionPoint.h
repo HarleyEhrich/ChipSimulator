@@ -23,14 +23,6 @@
 #define REQUEST_LINK true
 #define UNREQUEST_LINK false
 
-
-//#define TOAST_INFO(title,info,autoHide,showPos,infoType) \
-//    if(scene()){\
-//        dynamic_cast<AmtlGraphicsScene*>(scene())->makeToastInfo(title,info,autoHide,showPos,infoType);\
-//    }else{ \
-//        qWarning()<<"The scene does not exist and the Toast info request cannot be initiated.";\
-//    }
-
 class UniConnectionPoint;
 
 using TextDriection = AMTL::DIRECTION;
@@ -242,10 +234,6 @@ private:
     inline static QBrush __centerCircleBrush;//画刷
     inline static QPen __textPen;//画笔
     inline static QBrush __textBrush;//画刷
-
-
-
-
 };
 
 
