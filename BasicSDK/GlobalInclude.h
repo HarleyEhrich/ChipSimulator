@@ -89,23 +89,20 @@ namespace AMTL{//class
 class UniqueNumberGenerator : QObject
 {
     //__ Macro && Friend && Other__//
-
+    Q_OBJECT
 
     //__ Construct && Destroy__//
 private:
     UniqueNumberGenerator(size_t maxIdNumber = 10000);
     ~UniqueNumberGenerator();
 
-
-    //__ Signals && Slots __//
-
-
-
     //__ Class Functions __//
 public:
     long operator()(long idStartOffset=0);
 
     long getNewId(long idStartOffset=0);
+
+    long getNewIdForObj(QObject* obj, long id = -1);
 
 private:
     long findUseableId(long idStartOffsets=0);
@@ -121,6 +118,7 @@ private:
     size_t _maxBits;
     size_t _lastUsedIdOffsetBits;
     char* _usedBitsMap;//80000个可用ID
+
     QMap<size_t,QWeakPointer<QObject>> _idToObjMap;
 
     //__ Static Varable && Functions __//

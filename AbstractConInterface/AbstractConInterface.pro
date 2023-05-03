@@ -1,5 +1,6 @@
 QT += gui
 QT += widgets
+QT += xml
 
 TEMPLATE = lib
 DEFINES += ABSTRACTCONINTERFACE_LIBRARY
