@@ -118,7 +118,8 @@ bool AmtlGraphicsScene::registerUniConnectionPoint(UniConnectionPoint *target)
 {
     if(target == nullptr) return false;
 
-    connect(target,&UniConnectionPoint::tellBindStatusChange,this,&AmtlGraphicsScene::pairUniConnectionPoint);
+    //todo register
+//    connect(target,&UniConnectionPoint::tellBindStatusChange,this,&AmtlGraphicsScene::pairUniConnectionPoint);
     return true;
 }
 

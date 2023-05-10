@@ -4,17 +4,12 @@
 
 #include <QColor>
 #include <QPointF>
-#include <QTime>
-#include <QDateTime>
+#include <QRect>
 
 #include "BasicSDK_global.h"
 #include "UniGraphicsItemObject.h"
 
-//#ifdef QT_DEBUG
-//#define DEBUGINFO qPrintable(QDateTime::currentDateTime().toString("[ yy/MM/dd hh:mm:ss ]("))<<QT_MESSAGELOG_FILE<<":"<<QT_MESSAGELOG_LINE<<"@"<<QT_MESSAGELOG_FUNC<<"):"
-//#else
-//#define DEBUGINFO ""
-//#endif
+#define DEBUGINFO Q_FUNC_INFO
 
 #define MAKE_DEA_SHADOW_EFF(shadowPtr,target)           \
     shadowPtr=new QGraphicsDropShadowEffect(target);    \
@@ -22,7 +17,9 @@
     shadowPtr->setOffset(0,0);                          \
     shadowPtr->setBlurRadius(8);                        \
     target->setGraphicsEffect(shadowPtr);               \
+ \
 
+#define RENDER_HINT_ANT(painterPtr) painterPtr->setRenderHint(QPainter::Antialiasing);
 
 namespace AMTL {//Enum
 
@@ -83,9 +80,12 @@ const QColor NOTIFY_COLOR_DARK{22, 133, 169};//石青-#1685a9
 
 }
 
+namespace AMTL {//function
+
+
+}
+
 namespace AMTL{//class
-
-
 /// count with 8 times
 #define ComponentMaxId 10000
 class UniqueNumberGenerator : QObject
@@ -125,10 +125,10 @@ private:
 
     //__ Static Varable && Functions __//
 public:
-    static bool typeExits(const QString& typeName);
-    static int getTypeIdByName(const QString& typeName);
-    static int registerType(const QString& typeName,size_t maxIdNumber);
-    static UniqueNumberGenerator *instance(int type = int(UniqueIDType::Component));
+    static bool TypeExits(const QString& typeName);
+    static int GetTypeIdByName(const QString& typeName);
+    static int RegisterType(const QString& typeName,size_t maxIdNumber);
+    static UniqueNumberGenerator *Instance(int type = int(UniqueIDType::Component));
 
 private:
     inline static int curTypeId =0;

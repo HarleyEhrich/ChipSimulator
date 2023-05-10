@@ -7,13 +7,15 @@
 #include <QMainWindow>
 #include <QTextBrowser>
 #include <QWidget>
-
-#include "include/ProjectInclude.h"
-
-#include "Widgets/Graphics/AmtlGraphicsScene.h"
-#include "Widgets/Graphics/AmtlGraphicsView.h"
+#include <QFileDialog>
 
 #include "Widgets/FloatWidgets/ToastInfoWidget.h"
+#include "include/ProjectInclude.h"
+
+#include "ControlObj/ElecGraphicsControllor.h"
+
+
+#include "abstractconinterface.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,6 +33,8 @@ private slots:
     void on_page_info_spliter_splitterMoved(int pos, int index);
 
 
+    void on_component_tbtn_clicked();
+
 private:
     void init();
 
@@ -39,7 +43,6 @@ private:
 private:
     Ui::MainWindow *ui;
 
-//    QGraphicsDropShadowEffect* _sidebarShadow;
-//    QGraphicsDropShadowEffect* _pageStackWidgetContainerShadow;
+    QVector<ElecGraphicsControllor*> _controlVec;
 };
 #endif // MAINWINDOW_H

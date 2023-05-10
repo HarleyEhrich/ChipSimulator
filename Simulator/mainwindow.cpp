@@ -11,34 +11,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     init();
 
-//    ToastInfoWidget* testInfo = new ToastInfoWidget(this);
-//    testInfo->move(10,50);
-//    testInfo->show();
+    ElecGraphicsControllor* newCon = new ElecGraphicsControllor(this);
+    _controlVec.push_back(newCon);
+    AmtlGraphicsView* newView = newCon->getNewView();
 
 
-    AmtlGraphicsView* newView = new AmtlGraphicsView();
-    AmtlGraphicsScene* newScene=new AmtlGraphicsScene;
 
-    newScene->setObjectName("scene");
-    UniConnectionPoint* pointLinkItem = new UniConnectionPoint(2,COOR_POS::RIGHT,true,"输出连接点",1,2);
-    newScene->addItem(pointLinkItem);
-    newScene->registerUniConnectionPoint(pointLinkItem);
-    pointLinkItem->show();
-    UniConnectionPoint* pointLinkItem1 = new UniConnectionPoint(1,COOR_POS::LEFT,false,"输入连接点1");
-    newScene->addItem(pointLinkItem1);
-    newScene->registerUniConnectionPoint(pointLinkItem1);
-    pointLinkItem1->setPos(-140,50);
-    pointLinkItem1->show();
-    UniConnectionPoint* pointLinkItem2 = new UniConnectionPoint(1,COOR_POS::LEFT,false,"输入连接点2");
-    newScene->addItem(pointLinkItem2);
-    newScene->registerUniConnectionPoint(pointLinkItem2);
-    pointLinkItem2->setPos(150,130);
-    pointLinkItem2->show();
-
-    newView->setScene(newScene);
-    newScene->setSceneRect(-500,-500,1000,1000);
     newView->show();
-
     ui->page_tab_widget->addPage(newView->getViewBox(),"电路图");
 }
 
@@ -52,7 +31,7 @@ void MainWindow::on_page_info_spliter_splitterMoved(int pos, int index)
 {
     Q_UNUSED(index)
 
-    //事实证明在视觉上是可行的方案，记得考虑一下如何处理能更节省资源
+    //todo 事实证明在视觉上是可行的方案，记得考虑一下如何处理能更节省资源
     if(ui->page_info_spliter->handleWidth() && pos == ui->page_info_spliter->height() - ui->page_info_spliter->handleWidth()){
         //Time to hide the handle
         ui->page_info_spliter->setHandleWidth(0);
@@ -80,6 +59,10 @@ void MainWindow::init()
 //    _sidebarShadow->setBlurRadius(8);
 //    _sidebarShadow->setOffset(0,0);
 //    ui->sidebar_container->setGraphicsEffect(_sidebarShadow);
+
+
+
+
 
     QTextBrowser* tb =new QTextBrowser();
     tb->setText("2023-04-13 16:38:10-[Debug]{viewcontrollunit.cpp:75, void __cdecl"
@@ -132,4 +115,68 @@ void MainWindow::initMenu()
     }
 
 }
+
+
+void MainWindow::on_component_tbtn_clicked()
+{
+    //Load
+    //todo 在此处测试，后期删除
+    QString pluginFilePath=QFileDialog::getOpenFileName(this,"","");
+    qDebug()<<"DLL path:" <<pluginFilePath<<"\n";
+
+    QPluginLoader loader(pluginFilePath);
+    if (loader.load())
+    {
+        QObject *obj = loader.instance();
+        obj->setObjectName(obj->metaObject()->className());
+        if (obj)
+        {
+            auto pluginIn = qobject_cast<AbstractConInterface*>(obj);
+            if (pluginIn)
+            {
+
+                auto* led= pluginIn->instance(1,nullptr);
+                auto info = led->getComInfo();
+
+                qDebug()<<DEBUGINFO<<info.comId<<info.comName<<info.comAuthor<<info.comImagePath;
+
+                ElecGraphicsControllor* con = _controlVec[0];
+                con->scene()->addItem(led);
+
+                auto widgets = led->getComponentWidgtes();
+
+
+                widgets[0]._widgetSPtr->show();
+
+
+            }else{
+                qDebug()<<"Not me";
+            }
+        }
+    }else{
+        qDebug()<<loader.errorString()<<"Load fail";
+    }
+}
+
+
+//    AmtlGraphicsView* newView = newCon->getNewView();
+//    AmtlGraphicsScene* newScene=newCon->scene();
+
+//    newScene->setObjectName("scene");
+//    UniConnectionPoint* pointLinkItem = new UniConnectionPoint(2,COOR_POS::RIGHT,true,"输出连接点",1,2);
+//    newScene->addItem(pointLinkItem);
+//    newScene->registerUniConnectionPoint(pointLinkItem);
+//    pointLinkItem->show();
+//    UniConnectionPoint* pointLinkItem1 = new UniConnectionPoint(1,COOR_POS::LEFT,false,"输入连接点1");
+//    newScene->addItem(pointLinkItem1);
+//    newScene->registerUniConnectionPoint(pointLinkItem1);
+//    pointLinkItem1->setPos(-140,50);
+//    pointLinkItem1->show();
+//    UniConnectionPoint* pointLinkItem2 = new UniConnectionPoint(1,COOR_POS::LEFT,false,"输入连接点2");
+//    newScene->addItem(pointLinkItem2);
+//    newScene->registerUniConnectionPoint(pointLinkItem2);
+//    pointLinkItem2->setPos(150,130);
+//    pointLinkItem2->show();
+//    newView->setScene(newScene);
+//    newScene->setSceneRect(-500,-500,1000,1000);
 

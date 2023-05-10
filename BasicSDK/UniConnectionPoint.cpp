@@ -13,12 +13,19 @@ UniConnectionPoint::UniConnectionPoint(int id, COOR_POS pos, bool outputPoint, Q
     _maxBindItemNumber(maxBindItemNumber),
     _linkStautes(UNREQUEST_LINK)//This deafault is fine
 {
-    innit();
+    initial();
 }
 
 UniConnectionPoint::~UniConnectionPoint()
 {
+    if(nullptr != _shadowEffect) delete _shadowEffect;
+    _shadowEffect = nullptr;
 
+    while(_bindPointVec.size()){
+
+        //Unbind all the connection, make sure it will not be any uniconnection connect to a unvalid connection point.
+        unBindConnectionPointImpl(_bindPointVec.back());
+    }
 }
 
 
@@ -59,6 +66,16 @@ void UniConnectionPoint::linkLineRequestUnbind(UniLinkLine *targetLineHead)
 QWeakPointer<const QBitArray> UniConnectionPoint::getDataPtr()
 {
     return QWeakPointer{_dataPtrSelf};
+}
+
+bool UniConnectionPoint::getDataValue(qsizetype index, bool *ok){
+    if(_dataPtrSelf->size() <= index){
+        if(nullptr != ok) *ok =false;
+        return false;
+    }
+
+    if(nullptr != ok) *ok =true;
+    return _dataPtrSelf->testBit(index);
 }
 
 //Only allow data changed here, if change will notify the parent item to do some jobs;
@@ -139,6 +156,11 @@ void UniConnectionPoint::setPointName(const QString &newPointName)
     gneratePainterPath();
 }
 
+int UniConnectionPoint::id() const
+{
+    return _id;
+}
+
 COOR_POS UniConnectionPoint::selfPos() const
 {
     return _selfPos;
@@ -199,7 +221,7 @@ void UniConnectionPoint::setBindStautes(bool newLinkStautes)
 {
     if(newLinkStautes == _linkStautes) return;
     _linkStautes = newLinkStautes;
-    emit tellBindStatusChange(_linkStautes, _selfSharedPtr);
+    emit tellParentBindStatusChange(_linkStautes,this);
     update();
 }
 
@@ -398,22 +420,16 @@ QList<QPoint> UniConnectionPoint::gnerateLinePointList(UniConnectionPoint *targe
     return res;
 }
 
-void UniConnectionPoint::innit()
+void UniConnectionPoint::initial()
 {
-    innitSta();
-
-    _selfSharedPtr.reset(this);
+    InitiaStaticVar();
 
     //Shadow
-    _shadowEffect = new QGraphicsDropShadowEffect(this);
-    _shadowEffect->setColor(__shadowColor);
-    _shadowEffect->setOffset(ZERO_POINT);
-    _shadowEffect->setBlurRadius(4);
-
-    this->setGraphicsEffect(_shadowEffect);
+    MAKE_DEA_SHADOW_EFF(_shadowEffect,this)
+    setGraphicsEffect(_shadowEffect);
 
     //Data
-    _dataPtrSelf.reset(new QBitArray[_dataBitsLen]);
+    _dataPtrSelf.reset(new QBitArray{_dataBitsLen});
 
     //Sig connect
     //Make sure every sig will be update
@@ -460,7 +476,6 @@ void UniConnectionPoint::gneratePainterPath()
     _boudingRect.moveTopLeft({_boudingRect.x()-6,_boudingRect.y()-8});
     _boudingRect.setHeight(_boudingRect.height()+16);
     _boudingRect.setWidth(_boudingRect.width()+12);
-    //    _itemPainterPath.addRect(rectAfterExpandForBorder);
 
     //Update this graphics item.
     this->update();
@@ -680,6 +695,8 @@ bool UniConnectionPoint::unBindConnectionPointInputImpl(UniConnectionPoint *targ
 
 
 
+
+
 /************************************************
 *
 * Class Interface and override function definition
@@ -693,7 +710,25 @@ QPointF UniConnectionPoint::getRealItemCenterScenePos()
 }
 QRectF UniConnectionPoint::getRealBoudingRect()
 {
-    return __mainBodyRect;
+    QPainterPath path;
+    QRectF realBouding;
+
+    path.moveTo(ZERO_POINT);
+    path.addRect(__mainBodyRectCll);
+
+    //Text
+    if(Q_LIKELY(_showPointName)){
+        path.addText(_finalTextBLPos,_textFont, _finalText);
+    }
+
+    //other
+    //Expand this border make sure every thing can be coverd.
+    realBouding = path.boundingRect();
+    realBouding.moveTopLeft({realBouding.x()-6,realBouding.y()-8});
+    realBouding.setHeight(realBouding.height()+16);
+    realBouding.setWidth(realBouding.width()+12);
+
+    return realBouding;
 }
 
 QRectF UniConnectionPoint::boundingRect() const
@@ -713,11 +748,6 @@ void UniConnectionPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem
         painter->setPen(Qt::DashDotLine);
         painter->drawRoundedRect(_boudingRect,8,8);
     }
-
-//    painter->setPen(Qt::green);
-//    painter->drawRect(_boudingRect);
-//    painter->setPen(Qt::blue);
-//    painter->drawRect(__mainBodyRectCll);
 
     if(_linkStautes){
         painter->setPen(Qt::DashLine);
@@ -800,7 +830,12 @@ void UniConnectionPoint::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 * Class static function definition
 *
 *************************************************/
-void UniConnectionPoint::innitSta()
+int UniConnectionPoint::mainBodyWH()
+{
+    return __mainBodyWH;
+}
+
+void UniConnectionPoint::InitiaStaticVar()
 {
     static bool init=false;
 
@@ -822,7 +857,6 @@ void UniConnectionPoint::innitSta()
     __centerCircleColor = NOTIFY_COLOR;
     __centerCircleBorderColor = NOTIFY_COLOR.darker(24);
 
-    __shadowColor = COLOR::SHADOW_COLOR;
 
     __mainBodyRect.setTopLeft(QPointF{(qreal)(-__mainBodyWH /2),(qreal)(-__mainBodyWH/2)});
     __mainBodyRect.setWidth(__mainBodyWH);
@@ -863,6 +897,7 @@ void UniConnectionPoint::innitSta()
 
     init=true;
 }
+
 
 //int UniConnectionPoint::__mainBodyWH;//主体长宽
 //int UniConnectionPoint::__centerCircleWH;//中心圆的大小

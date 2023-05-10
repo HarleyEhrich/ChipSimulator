@@ -17,10 +17,13 @@
 #include <QLayout>
 #include <QSharedPointer>
 #include <QWeakPointer>
+#include <QPluginLoader>
 
 #include "Include/ProjectInclude.h"
 #include "MultiplexedScendaryWidget/ViewControlUnitWidget.h"
 #include "AmtlGraphicsScene.h"
+#include "abstractconinterface.h"
+
 
 class AmtlGraphicsView : public QGraphicsView
 {

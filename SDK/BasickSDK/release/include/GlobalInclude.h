@@ -1,21 +1,26 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
-
-#include "BasicSDK_global.h"
+#pragma once
 
 #include <QColor>
 #include <QPointF>
 #include <QTime>
 #include <QDateTime>
+#include <QRect>
+#include <QFontMetrics>
 
-#ifdef QT_DEBUG
-#define DEBUGINFO qPrintable(QDateTime::currentDateTime().toString("[ yy/MM/dd hh:mm:ss ]("))<<QT_MESSAGELOG_FILE<<":"<<QT_MESSAGELOG_LINE<<"@"<<QT_MESSAGELOG_FUNC<<"):"
-#else
+#include "BasicSDK_global.h"
+#include "UniGraphicsItemObject.h"
 
-#define DEBUGINFO ""
+#define MAKE_DEA_SHADOW_EFF(shadowPtr,target)           \
+    shadowPtr=new QGraphicsDropShadowEffect(target);    \
+    shadowPtr->setColor(Qt::gray);                      \
+    shadowPtr->setOffset(0,0);                          \
+    shadowPtr->setBlurRadius(8);                        \
+    target->setGraphicsEffect(shadowPtr);               \
 
-#endif
-namespace AMTL {
+
+namespace AMTL {//Enum
 
 enum class DIRECTION{
     ABOVE,
@@ -41,10 +46,23 @@ enum class ToastInfoType{
     TIP_ERROR//错误信息: 可能会导致系统崩溃的信息
 };
 
-//Const and static var
+enum class UniqueIDType{
+    Component,
+    UserDefined,
+    Default//默认的编号
+};
+
+
+}
+
+
+namespace AMTL {
+
+
 const QPoint ZERO_POINT{0,0};
 const QPointF ZERO_POINTF{0.f,0.f};
 
+namespace COLOR{
 //Color
 const QColor SHADOW_COLOR{66, 80, 102};
 
@@ -59,5 +77,66 @@ const QColor NOTIFY_COLOR_DARK{22, 133, 169};//石青-#1685a9
 
 }
 
+}
+
+namespace AMTL {//function
+
+}
+
+namespace AMTL{//class
+/// count with 8 times
+#define ComponentMaxId 10000
+class UniqueNumberGenerator : QObject
+{
+    //__ Macro && Friend && Other__//
+    Q_OBJECT
+
+    //__ Construct && Destroy__//
+private:
+    UniqueNumberGenerator(size_t maxIdNumber = 10000);
+    ~UniqueNumberGenerator();
+
+    //__ Class Functions __//
+public:
+    long operator()(long idStartOffset=0);
+
+    long getNewId(long idStartOffset=0);
+
+    long getNewIdForObj(QObject* obj, long id = -1);
+
+private:
+    long findUseableId(long idStartOffsets=0);
+
+    bool setValue(size_t offsetBits, bool value);
+
+    bool isTrue(size_t offsetBits, bool* ok =nullptr);
+
+
+    //__ Class Variable __//
+private:
+    size_t _maxIndex;
+    size_t _maxBits;
+    size_t _lastUsedIdOffsetBits;
+    char* _usedBitsMap;//80000个可用ID
+
+    QMap<size_t,QWeakPointer<QObject>> _idToObjMap;
+
+    //__ Static Varable && Functions __//
+public:
+    static bool TypeExits(const QString& typeName);
+    static int GetTypeIdByName(const QString& typeName);
+    static int RegisterType(const QString& typeName,size_t maxIdNumber);
+    static UniqueNumberGenerator *Instance(int type = int(UniqueIDType::Component));
+
+private:
+    inline static int curTypeId =0;
+    inline static QMap<int,QString> typeIdToNameMap;
+    inline static QMap<QString,int> typeNameToIdMap;
+
+    inline static QMap<int,UniqueNumberGenerator*> instanceMap;
+
+};using UniGener = UniqueNumberGenerator;
+
+}
 
 #endif // GLOBAL_H

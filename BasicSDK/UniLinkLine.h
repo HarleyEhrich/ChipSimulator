@@ -186,7 +186,7 @@ public:
 
     //private static function
 private:
-    static void initialSta();
+    static void InitialStaticVar();
 
 private:
     inline static int __norLineWitdh;//连线常规宽度

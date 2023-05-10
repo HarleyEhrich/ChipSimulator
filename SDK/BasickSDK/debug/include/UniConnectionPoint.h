@@ -28,8 +28,9 @@ class UniConnectionPoint;
 using TextDriection = AMTL::DIRECTION;
 using COOR_POS = AMTL::DIRECTION;
 using UniConnectionPointPtr = QWeakPointer<UniConnectionPoint>;
+using UniConnectionPointSPtr = QSharedPointer<UniConnectionPoint>;
 
-class BASICSDK_EXPORT UniConnectionPoint : public UniGraphicsItemObject /*public QObject, public QGraphicsItem*/
+class BASICSDK_EXPORT UniConnectionPoint : public UniGraphicsItemObject
 {
     Q_OBJECT
 
@@ -49,7 +50,10 @@ signals:
 
 //告知信息的信号--内部不准准绑定
     //通知scene准备链接或者取消链接
-    void tellBindStatusChange(bool newStatus, UniConnectionPointPtr targetObj);
+//    void tellBindStatusChange(bool newStatus, UniConnectionPointPtr targetObj);
+
+    //通知父亲Item准备链接或者取消链接--直接上抛，将裸指针转为弱引用
+    void tellParentBindStatusChange(bool newStatus, UniConnectionPoint* targetCCPoint);
 
     //告知数据变化
     void tellDataChanged(UniConnectionPoint* changePtr,qsizetype changedIndex,int changeLen=1);//Just to remind thie father that the data been changed, please do something
@@ -80,13 +84,20 @@ public slots:
 //----nor function
 public:
 //Implement of get and set function
+
     //Data parts.Make sured the data can only be changed in setDataValue function
     //For father item quick access data
     QWeakPointer<const QBitArray> getDataPtr();
+
+    //快速获取数据值
+    bool getDataValue(qsizetype index,bool* ok=nullptr);
     //return the data changed bits number
     qsizetype setDataValue(const QBitArray& value, qsizetype indexStart=0);
 
     bool getLinkStautes() const;
+
+    //在组件中的id
+    int id() const;
 
     COOR_POS selfPos() const;
     void setSelfPos(COOR_POS newSelfPos);
@@ -122,7 +133,7 @@ protected:
 
 
 private:
-    void innit();
+    void initial();
 
     //For painterPath
     void gneratePainterPath();//重新生成形状
@@ -142,8 +153,6 @@ private:
 
 //----nor var
 private:
-    QSharedPointer<UniConnectionPoint> _selfSharedPtr;
-
     //Identification info
     int _id=-1;//独一id，可以在没有名称的是否根据id查找--必须要设置，在后期json读取进入时需要这个
     COOR_POS _selfPos;//必须设置的位置
@@ -161,6 +170,7 @@ private:
     bool _linkStautes;
 
     //Data
+    //此处的指针一定不会是野指针，在对象析构前会将链接状态清除
     QVector<UniConnectionPoint*> _bindPointVec;    //Try to make the head and the tail will be earse and insert at the same time.
     QVector<UniLinkLine*> _lineHeadVec;//Store the link line item's head here.
     QVector<UniLinkLine*> _lineTailVec;//store the link line item's tail here.
@@ -197,12 +207,17 @@ protected:
 
 
 //----static var and function
+public:
+    static int mainBodyWH();
+
+
+
 private:
-    void innitSta();
+    static void InitiaStaticVar();
+
 
 
 private:
-
     inline static bool __useLineToPointBind = true;
 
     inline static int __mainBodyWH;//主体长宽
@@ -218,7 +233,6 @@ private:
     inline static QColor __mainBodyBorderColor;//主要主体边界颜色
     inline static QColor __centerCircleColor;//中心圆主体颜色
     inline static QColor __centerCircleBorderColor;//中心圆边界颜色
-    inline static QColor __shadowColor;
 
     inline static QRectF __mainBodyRect;//整体圆
     inline static QRectF __mainBodyRectCll;//主体圆的碰撞区域
