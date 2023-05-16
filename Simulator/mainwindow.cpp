@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QGroupBox>
+
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -11,9 +13,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     init();
 
+<<<<<<< HEAD
 //    ToastInfoWidget* testInfo = new ToastInfoWidget(this);
 //    testInfo->move(10,50);
 //    testInfo->show();
+=======
+    ElecGraphicsControllor* newCon = new ElecGraphicsControllor(this);
+    _controlVec.push_back(newCon);
+    AmtlGraphicsView* newView = newCon->getNewView().lock().data();
+>>>>>>> 6b02597 (修改基础库)
 
 
     AmtlGraphicsView* newView = new AmtlGraphicsView();
@@ -133,3 +141,80 @@ void MainWindow::initMenu()
 
 }
 
+<<<<<<< HEAD
+=======
+
+void MainWindow::on_component_tbtn_clicked()
+{
+    //Load
+    //todo 在此处测试，后期删除
+    QString pluginFilePath=QFileDialog::getOpenFileName(this,"","");
+    qDebug()<<"DLL path:" <<pluginFilePath<<"\n";
+
+    QPluginLoader loader(pluginFilePath);
+    if (loader.load())
+    {
+        QObject *obj = loader.instance();
+        obj->setObjectName(obj->metaObject()->className());
+        qDebug()<<loader.metaData().value("MetaData").toObject();
+        if (obj)
+        {
+            auto pluginIn = qobject_cast<AbstractConInterface*>(obj);
+            if (pluginIn)
+            {
+
+                auto* led= pluginIn->instance(1,nullptr);
+                auto info = led->getComInfo();
+
+                qDebug()<<DEBUGINFO<<info.comId<<info.comName<<info.comAuthor<<info.comImagePath;
+
+                ElecGraphicsControllor* con = _controlVec[0];
+                con->scene()->addItem(led);
+
+                connect(led,&AbstractConInterface::tellCCPointBindStatusChanged,con->scene(),&AmtlGraphicsScene::pairUniConnectionPoint);
+
+
+                auto widgets = led->getComponentWidgtes();
+
+
+                QFrame* box = new QFrame();
+                QVBoxLayout* boxLay = new QVBoxLayout(box);
+
+                for(auto& items : widgets){
+                    boxLay->addWidget(items._widgetSPtr.data());
+                }
+
+                box->show();
+
+            }else{
+                qDebug()<<"Not me";
+            }
+        }
+    }else{
+        qDebug()<<loader.errorString()<<"Load fail";
+    }
+}
+
+
+//    AmtlGraphicsView* newView = newCon->getNewView();
+//    AmtlGraphicsScene* newScene=newCon->scene();
+
+//    newScene->setObjectName("scene");
+//    UniConnectionPoint* pointLinkItem = new UniConnectionPoint(2,COOR_POS::RIGHT,true,"输出连接点",1,2);
+//    newScene->addItem(pointLinkItem);
+//    newScene->registerUniConnectionPoint(pointLinkItem);
+//    pointLinkItem->show();
+//    UniConnectionPoint* pointLinkItem1 = new UniConnectionPoint(1,COOR_POS::LEFT,false,"输入连接点1");
+//    newScene->addItem(pointLinkItem1);
+//    newScene->registerUniConnectionPoint(pointLinkItem1);
+//    pointLinkItem1->setPos(-140,50);
+//    pointLinkItem1->show();
+//    UniConnectionPoint* pointLinkItem2 = new UniConnectionPoint(1,COOR_POS::LEFT,false,"输入连接点2");
+//    newScene->addItem(pointLinkItem2);
+//    newScene->registerUniConnectionPoint(pointLinkItem2);
+//    pointLinkItem2->setPos(150,130);
+//    pointLinkItem2->show();
+//    newView->setScene(newScene);
+//    newScene->setSceneRect(-500,-500,1000,1000);
+
+>>>>>>> 6b02597 (修改基础库)

@@ -1,5 +1,45 @@
 #include "abstractconinterface.h"
 
+<<<<<<< HEAD
+=======
+ComponentInfoStruct::ComponentInfoStruct(){
+    comCreatTimeFormat = "yy-mm-dd";
+}
+
+ComponentInfoStruct::ComponentInfoStruct(const ComponentInfoStruct &other){
+    *this= other;
+}
+
+ComponentInfoStruct &ComponentInfoStruct::operator=(const ComponentInfoStruct &other){
+    comId = other.comId;//component的唯一编号
+    comName = other.comName;//组件默认名称
+
+    comDesInfo = other.comDesInfo;//组件的描述信息
+    comAuthor = other.comAuthor;//组件作者
+
+    comCreatTimeStr = other.comCreatTimeStr;//时间字符串
+    comCreatTimeFormat = other.comCreatTimeFormat;
+    comCreatTime = other.comCreatTime;//组件创建时间
+
+    comImagePath = other.comImagePath;//组件图片
+    comImage = new QPixmap(*other.comImage);//组件图片
+
+    return *this;
+}
+
+
+AbstractConInterface::AbstractConInterface()
+    : UniGraphicsItemObject(nullptr,nullptr){
+    initial();
+
+}
+
+AbstractConInterface::AbstractConInterface(const ComponentInfoStruct &cInfo){
+    initial();
+    intialComponentInfoImpl(cInfo);
+}
+
+>>>>>>> 6b02597 (修改基础库)
 AbstractConInterface::AbstractConInterface(long sceneID,QGraphicsItem *parent,QObject* parentObject)
     :UniGraphicsItemObject(parentObject,parent),
     _comNickName(__comName),
@@ -191,7 +231,35 @@ void AbstractConInterface::init(){
 
     MAKE_DEA_SHADOW_EFF(_shadowEffect,this)
 
+<<<<<<< HEAD
     customInit();
+=======
+    //Nick name widget
+    QFrame* box = new QFrame();
+    QHBoxLayout* boxLay=new QHBoxLayout(box);
+    QLabel* nickLab = new QLabel();
+    QLineEdit* nickNameEditor = new QLineEdit();
+    nickLab->setText(tr("元件名称"));
+    nickNameEditor->setText(_comNickName);
+    boxLay->addWidget(nickLab);
+    boxLay->addWidget(nickNameEditor);
+    boxLay->setStretch(0,3);
+    boxLay->setStretch(1,7);
+
+    connect(nickNameEditor,&QLineEdit::textChanged,this,[=](const QString& text){
+        setComNickName(text);
+    });
+
+    //Auto set text when this was change;
+    connect(this,&AbstractConInterface::tellComNickNameChange,nickNameEditor,&QLineEdit::setText);
+
+    QSharedPointer<QWidget> nickBoxSPtr{box};
+    RegisterComWidget(this,
+                      nickBoxSPtr,
+                      false,
+                      false);
+
+>>>>>>> 6b02597 (修改基础库)
 }
 
 int AbstractConInterface::registerConnectionPoint(COOR_POS pos, bool outputPoint, QString pointName, int dataBits, int maxBindItemNumber){
@@ -205,7 +273,12 @@ int AbstractConInterface::registerConnectionPoint(COOR_POS pos, bool outputPoint
                                                           maxBindItemNumber,
                                                           this);
 
+<<<<<<< HEAD
     _connectPointVec.append(newPoint);
+=======
+    UniConnectionPointSPtr newCCPointSPtr(newPoint);
+    _connectPointVec.push_back(newCCPointSPtr);
+>>>>>>> 6b02597 (修改基础库)
     _pointDataMap[newPoint] = newPoint->getDataPtr();
 
     //connect data change
@@ -213,8 +286,13 @@ int AbstractConInterface::registerConnectionPoint(COOR_POS pos, bool outputPoint
         connectionDataChangeImpl(changePtr,changedIndex,changeLen);
     });
 
+    connect(newPoint,&UniConnectionPoint::tellParentBindStatusChange,this,[=](bool newStatus,UniConnectionPoint* target){
+        emit tellCCPointBindStatusChanged(newStatus,_connectPointVec[target->id()]);
+    });
+
     return newId;
 }
+
 
 
 
@@ -228,7 +306,7 @@ QPointF AbstractConInterface::getRealItemCenterScenePos()
 
 QRectF AbstractConInterface::getRealBoudingRect()
 {
-    return getRealBoudingRect();
+    return _boudingRect;
 }
 
 QRectF AbstractConInterface::boundingRect() const
@@ -355,6 +433,7 @@ int AbstractConInterface::registerConnectionPoint(AbstractConInterface *targetCo
     return targetCom->registerConnectionPoint(pos,outputPoint,pointName,dataBits,maxBindItemNumber);
 }
 
+<<<<<<< HEAD
 
 
 //bool AbstractConInterface::loadFromTextAbstarctImpl(const QString &abText)
@@ -468,5 +547,19 @@ int AbstractConInterface::registerConnectionPoint(AbstractConInterface *targetCo
 
 
 
+=======
+bool AbstractConInterface::RegisterComWidget(
+    AbstractConInterface *targetCom,
+    QSharedPointer<QWidget> widget,
+    bool pannel,
+    bool manualReleaseWidget
+    ){
+    if(nullptr == targetCom){
+        return false;
+    }
+    targetCom->registerComWidgetImpl(widget,pannel,manualReleaseWidget);
+    return true;
+}
+>>>>>>> 6b02597 (修改基础库)
 
 

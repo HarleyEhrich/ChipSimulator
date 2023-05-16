@@ -9,6 +9,12 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
+<<<<<<< HEAD
+=======
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+>>>>>>> 6b02597 (修改基础库)
 #include <QMap>
 #include <QObject>
 #include <QPixmap>
@@ -27,6 +33,52 @@
 #include "UniConnectionPoint.h"
 
 
+<<<<<<< HEAD
+=======
+#define ComAbstractLabelName "AbstractComponet"
+#define ComExtendLabelName "ExtendComponent"
+
+class AbstractConInterface;
+using AbstractConInterfacePtr = QWeakPointer<AbstractConInterface>;
+
+struct ABSTRACTCONINTERFACE_EXPORT ComponentWidget{
+    AbstractConInterface* _widgetComponentPtr;
+    QSharedPointer<QWidget> _widgetSPtr;
+    bool _pannelFloat;
+    bool _manualReleaseWidget;
+};
+
+struct ABSTRACTCONINTERFACE_EXPORT ComponentInfoStruct{
+    QString comId;//component的唯一编号
+    QString comName;//组件默认名称
+
+    QString comDesInfo;//组件的描述信息
+    QString comAuthor;//组件作者
+
+    QString comCreatTimeStr;//时间字符串
+    QString comCreatTimeFormat;
+    QDateTime comCreatTime;//组件创建时间
+
+    QString comImagePath;//组件图片
+    QPixmap* comImage;//组件图片
+
+public:
+    ComponentInfoStruct();
+
+    ComponentInfoStruct(const ComponentInfoStruct& other);
+
+    ComponentInfoStruct &operator=(const ComponentInfoStruct& other);
+};
+
+
+/// \brief The global time tick type
+enum class TICK_TYPE{
+    ZERO_HIGH,
+    HIGH_ZERO,
+    NO_TICK
+};
+
+>>>>>>> 6b02597 (修改基础库)
 class ABSTRACTCONINTERFACE_EXPORT AbstractConInterface : public UniGraphicsItemObject
 {
     Q_OBJECT
@@ -52,7 +104,12 @@ signals:
     //显示新的窗口
     void newPannelWidget(QWidget* pannel, const QString& senderMsg);//Maybe just show a widget with parent nullptr is ok.
 
+<<<<<<< HEAD
     //Function which can be override by all kinds of plugin
+=======
+    void tellCCPointBindStatusChanged(bool newStatus, UniConnectionPointPtr target);
+
+>>>>>>> 6b02597 (修改基础库)
 public slots:
     //运行函数，使用run来统一管理控件状态的更新入口，对外界传递该函数来使该控件可被其它控件调用，每次调用必须根据此完成状态更新
     virtual void run()=0;
@@ -63,12 +120,17 @@ public slots:
     //获取控件设置面板，控件每次需要创建示例，注意到不应当管理创建之后的控件生存周期的管理，主界面将会处理。
     virtual QWidget* getSettingPannel() = 0;
 
+<<<<<<< HEAD
 
     //运行保存，读取机制，通过将控件状态转为文本，以供下次读取，注意到图元基本信息，诸如位置等由Abstarct 接口完成
     bool loadStatusFormXml(QXmlStreamReader* root);
     bool saveStatusToXml(QXmlStreamWriter* root);
 
     // Class function
+=======
+//-----------------------------------CFN--------------------------------------//
+// Class function
+>>>>>>> 6b02597 (修改基础库)
 public:
     long sceneId() const;
     void setSceneId(long newScenceId);
@@ -107,6 +169,21 @@ private:
                                 int dataBits,
                                 int maxBindItemNumber);
 
+<<<<<<< HEAD
+=======
+    bool unRegisterConnectionPointImpl(int size);
+
+    ComponentWidget *registerComWidgetImpl(
+        QSharedPointer<QWidget> widget,
+        bool pannel,
+        bool manualReleaseWidget);
+
+
+//-----------------------------------Var--------------------------------------//
+public:
+
+
+>>>>>>> 6b02597 (修改基础库)
 protected:
     //Painter releate variable
     QPainterPath _itemPainterPath;
@@ -127,6 +204,7 @@ private:
     QVector<UniConnectionPoint*> _connectPointVec;
     QMap<UniConnectionPoint*,QWeakPointer<const QBitArray>> _pointDataMap;
 
+<<<<<<< HEAD
 
 
 
@@ -138,6 +216,10 @@ private:
     QPointF _mousePressedPoint;
 
 
+=======
+//-----------------------------------ITF--------------------------------------//
+//Interface override
+>>>>>>> 6b02597 (修改基础库)
 public:
     // UniGraphicsItemObject interface
     virtual QPointF getRealItemCenterScenePos() override;
@@ -146,6 +228,11 @@ public:
     // QGraphicsItem interface
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 6b02597 (修改基础库)
 protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

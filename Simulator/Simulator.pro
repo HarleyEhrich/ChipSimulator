@@ -9,6 +9,11 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+<<<<<<< HEAD
+=======
+    ControlObj/ElecGraphicsControllor.cpp \
+    ControlObj/PluginLoaderController.cpp \
+>>>>>>> 6b02597 (修改基础库)
     Log/LogHandler.cpp \
     Pages/InfoPages/AmtlInfoWidget.cpp \
     Widgets/FloatWidgets/ToastInfoWidget.cpp \
@@ -19,6 +24,11 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
+<<<<<<< HEAD
+=======
+    ControlObj/ElecGraphicsControllor.h \
+    ControlObj/PluginLoaderController.h \
+>>>>>>> 6b02597 (修改基础库)
     Include/ProjectInclude.h \
     Log/LogHandler.h \
     Pages/InfoPages/AmtlInfoWidget.h \
