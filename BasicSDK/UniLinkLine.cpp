@@ -100,7 +100,7 @@ bool UniLinkLine::sertItemAfterThis(UniLinkLine *item)
 
 void UniLinkLine::initial(){
     //初始化画笔--全局实例
-    this->initialSta();
+    this->InitialStaticVar();
 
     this->setFlags(ItemSendsGeometryChanges | ItemIsSelectable | ItemIsMovable | ItemIsFocusable);
     //initial shape and basic info
@@ -720,7 +720,7 @@ QStringList UniLinkLine::storeLineToText(UniLinkLine *lineHead)
 //------------------------------------------------------------------------
 
 
-void UniLinkLine::initialSta()
+void UniLinkLine::InitialStaticVar()
 {
     static bool painterInitial=false;//画笔数据是否初始化
 

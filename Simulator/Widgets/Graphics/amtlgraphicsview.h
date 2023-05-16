@@ -10,9 +10,22 @@
 #include <QPaintEvent>
 #include <QPushButton>
 #include <QWidget>
+<<<<<<< HEAD
 
 #include "include/project_include.h"
 #include "viewcontrollunit.h"
+=======
+#include <QLayout>
+#include <QSharedPointer>
+#include <QWeakPointer>
+#include <QPluginLoader>
+
+#include "Include/ProjectInclude.h"
+#include "MultiplexedScendaryWidget/ViewControlUnitWidget.h"
+#include "AmtlGraphicsScene.h"
+#include "abstractconinterface.h"
+
+>>>>>>> c344d8f (修改接口)
 
 class AmtlGraphicsView : public QGraphicsView
 {

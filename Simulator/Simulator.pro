@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,6 +9,8 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    ControlObj/ElecGraphicsControllor.cpp \
+    ControlObj/PluginLoaderControllor.cpp \
     Log/LogHandler.cpp \
     Test/DevAssistance.cpp \
     Widgets/Containers/amtldrawerwidget.cpp \
@@ -21,7 +23,13 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
+<<<<<<< HEAD
     Include/project_include.h \
+=======
+    ControlObj/ElecGraphicsControllor.h \
+    ControlObj/PluginLoaderControllor.h \
+    Include/ProjectInclude.h \
+>>>>>>> c344d8f (修改接口)
     Log/LogHandler.h \
     Test/DevAssistance.h \
     Widgets/Containers/amtldrawerwidget.h \

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
+<<<<<<< HEAD
 <!-- Written by QtCreator 9.0.1, 2023-04-13T15:38:36. -->
+=======
+<!-- Written by QtCreator 9.0.1, 2023-05-08T11:47:39. -->
+>>>>>>> c344d8f (修改接口)
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>

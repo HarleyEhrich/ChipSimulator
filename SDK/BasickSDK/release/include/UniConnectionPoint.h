@@ -23,21 +23,17 @@
 #define REQUEST_LINK true
 #define UNREQUEST_LINK false
 
-
-//#define TOAST_INFO(title,info,autoHide,showPos,infoType) \
-//    if(scene()){\
-//        dynamic_cast<AmtlGraphicsScene*>(scene())->makeToastInfo(title,info,autoHide,showPos,infoType);\
-//    }else{ \
-//        qWarning()<<"The scene does not exist and the Toast info request cannot be initiated.";\
-//    }
-
 class UniConnectionPoint;
 
 using TextDriection = AMTL::DIRECTION;
 using COOR_POS = AMTL::DIRECTION;
 using UniConnectionPointPtr = QWeakPointer<UniConnectionPoint>;
 
+<<<<<<< HEAD
 class Q_DECL_EXPORT UniConnectionPoint : public QGraphicsObject
+=======
+class BASICSDK_EXPORT UniConnectionPoint : public UniGraphicsItemObject /*public QObject, public QGraphicsItem*/
+>>>>>>> c344d8f (修改接口)
 {
     Q_OBJECT
 
@@ -187,10 +183,16 @@ private:
 
 
 //----Interface and override
+    // UniGraphicsItemObject interface
+public:
+    virtual QPointF getRealItemCenterScenePos() override;
+    virtual QRectF getRealBoudingRect() override;
+
 public:
     // QGraphicsItem interface
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    virtual QPainterPath shape() const override;
 
 protected:
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
@@ -200,7 +202,7 @@ protected:
 
 //----static var and function
 private:
-    void innitSta();
+    void InitiaStaticVar();
 
 
 private:
@@ -223,6 +225,7 @@ private:
     inline static QColor __shadowColor;
 
     inline static QRectF __mainBodyRect;//整体圆
+    inline static QRectF __mainBodyRectCll;//主体圆的碰撞区域
     inline static QRectF __centerCircleRect;//中心连接中的圆形
 
     inline static QPen __uniNorPen;//通用画笔
