@@ -3,15 +3,34 @@
 using namespace AMTL;
 using namespace AMTL::COLOR;
 
+UniConnectionPoint::UniConnectionPoint()
+    : UniGraphicsItemObject(nullptr,nullptr),
+    _id(-1),
+    _selfPos(COOR_POS::BELOW),
+    _outputConnectionPoint(true),
+    _pointName(""),
+    _linkStautes(UNREQUEST_LINK),//This deafault is fine
+    _highResistance(true),
+    _dataBitsLen(1),
+    _maxBindItemNumber(0),
+    _showPointName(true),
+    _textDirection(TextDriection::BELOW)
+{
+    initial();
+}
+
 UniConnectionPoint::UniConnectionPoint(int id, COOR_POS pos, bool outputPoint, QString pointName,int dataBits ,int maxBindItemNumber, QGraphicsItem *parent)
     : UniGraphicsItemObject(nullptr,parent),
     _id(id),
-    _pointName(pointName),
     _selfPos(pos),
     _outputConnectionPoint(outputPoint),
+    _pointName(pointName),
+    _linkStautes(UNREQUEST_LINK),//This deafault is fine
+    _highResistance(true),
     _dataBitsLen(dataBits),
     _maxBindItemNumber(maxBindItemNumber),
-    _linkStautes(UNREQUEST_LINK)//This deafault is fine
+    _showPointName(true),
+    _textDirection(TextDriection::BELOW)
 {
     initial();
 }
@@ -86,11 +105,11 @@ qsizetype UniConnectionPoint::setDataValue(const QBitArray& value, qsizetype ind
         return -2;
     }
 
-    if(indexStart>_dataPtrSelf->size() || indexStart < 0) return -1;
+    if(indexStart>=_dataPtrSelf->size() || indexStart < 0) return -1;
 
     bool changed=false;
     for(int i=indexStart;i<value.size() && i<_dataPtrSelf->size();++i){
-        if(_dataPtrSelf->testBit(i) == value.testBit(i)) {
+        if(_dataPtrSelf->testBit(i) != value.testBit(i)) {
             changed=true;
             _dataPtrSelf->setBit(i,value.testBit(i));//Trans this bit to the data
         }
@@ -110,6 +129,32 @@ qsizetype UniConnectionPoint::setDataValue(const QBitArray& value, qsizetype ind
     }
 
     return 0;
+}
+
+bool UniConnectionPoint::highResistance() const
+{
+    return _highResistance;
+}
+
+void UniConnectionPoint::setHighResistance(bool newHighResistance)
+{
+    if(newHighResistance == _highResistance){
+        return ;
+    }
+    _highResistance = newHighResistance;
+
+    if(_outputConnectionPoint){
+        //Set all the connection data;
+        for(int i=0;i<_bindPointVec.size();++i){
+            //Only change data when this connection point is a output type point
+            _bindPointVec[i]->setHighResistance(newHighResistance);
+        }
+    }else{
+        if(_highResistance) inputDataValue(QBitArray{_dataPtrSelf->size(),0});
+        else inputDataValue(*_bindPointVec[0]->_dataPtrSelf.data());
+    }
+
+    emit tellHighResistanceStatusChange(_highResistance);
 }
 
 bool UniConnectionPoint::getLinkStautes() const
@@ -217,6 +262,22 @@ bool UniConnectionPoint::unBindConnectionPoint(UniConnectionPoint *targetPoint)
     return unBindConnectionPointImpl(targetPoint);
 }
 
+bool UniConnectionPoint::loadStatusFormXml(QXmlStreamReader *root){
+    return loadStatusFormXmlImpl(root);
+}
+
+bool UniConnectionPoint::saveStatusToXml(QXmlStreamWriter *root){
+    return saveStatusToXmlImpl(root);
+}
+
+bool UniConnectionPoint::loadLinkStatusFormXml(QXmlStreamReader *root){
+    return loadLinkStatusFormXmlImpl(root);
+}
+
+bool UniConnectionPoint::saveLinkStatusToXml(QXmlStreamWriter *root){
+    return saveLinkStatusToXmlImpl(root);
+}
+
 void UniConnectionPoint::setBindStautes(bool newLinkStautes)
 {
     if(newLinkStautes == _linkStautes) return;
@@ -231,7 +292,7 @@ qsizetype UniConnectionPoint::inputDataValue(QBitArray value, qsizetype indexSta
 
     bool changed=false;
     for(int i=indexStart;i<value.size() && i<_dataPtrSelf->size();++i){
-        if(_dataPtrSelf->testBit(i) == value.testBit(i)) {
+        if(_dataPtrSelf->testBit(i) != value.testBit(i)) {
             changed=true;
             _dataPtrSelf->setBit(i,value.testBit(i));//Trans this bit to the data
         }
@@ -426,7 +487,8 @@ void UniConnectionPoint::initial()
 
     //Shadow
     MAKE_DEA_SHADOW_EFF(_shadowEffect,this)
-    setGraphicsEffect(_shadowEffect);
+
+    _highResistance = false;
 
     //Data
     _dataPtrSelf.reset(new QBitArray{_dataBitsLen});
@@ -585,7 +647,7 @@ bool UniConnectionPoint::bindConnectionPointImpl(UniConnectionPoint *targetConne
 
         return false;
     }
-    if((_outputConnectionPoint ==false && _bindPointVec.size())
+    if((_outputConnectionPoint == false && _bindPointVec.size())
         || (targetConnectionPoint->_outputConnectionPoint ==false && targetConnectionPoint->_bindPointVec.size())){
         qWarning()<<"It is not allowed for one input connection point to connect multiple output endpoints.("<< _id <<":" <<_pointName<<")";
 
@@ -627,7 +689,7 @@ bool UniConnectionPoint::bindConnectionPointImpl(UniConnectionPoint *targetConne
 
     qInfo()<<"The data connection point was successfully bound. Output("<<_id<<":"<<_pointName<<")-Input("<<targetConnectionPoint->_id<<":"<<targetConnectionPoint->_pointName<<")";
 
-    _linkStautes = false;
+    _linkStautes = UNREQUEST_LINK;
     gneratePainterPath();
     return true;
 }
@@ -667,6 +729,8 @@ bool UniConnectionPoint::bindConnctionPointInputImpl(UniConnectionPoint *target,
         return false;
     }
 
+    setHighResistance(target->_highResistance);//设定其高阻抗状态为目前连接到的输出点的阻抗状态
+
     _bindPointVec.push_back(target);
     _lineHeadVec.push_back(lineHead);
     _lineTailVec.push_back(lineTail);
@@ -683,6 +747,8 @@ bool UniConnectionPoint::unBindConnectionPointInputImpl(UniConnectionPoint *targ
     int index = findBindConnectionPointIndex(targetPoint);
     if(index==-1) return false;
 
+    setHighResistance(true);//恢复高阻抗状态
+
     //Pop out all resources stored here.
     _bindPointVec.erase(_bindPointVec.constBegin()+index);
     _lineHeadVec.erase(_lineHeadVec.constBegin()+index);
@@ -690,6 +756,41 @@ bool UniConnectionPoint::unBindConnectionPointInputImpl(UniConnectionPoint *targ
 
     gneratePainterPath();
     return true;
+}
+
+bool UniConnectionPoint::loadStatusFormXmlImpl(QXmlStreamReader *root){
+    return false;
+}
+
+bool UniConnectionPoint::saveStatusToXmlImpl(QXmlStreamWriter *root){
+    return false;
+    if(root == nullptr) {
+        qCritical()<<"XMl stream write is a nullptr";
+        return false;
+    }
+
+    root->writeStartElement("ConnectionPoint");
+    root->writeAttribute("id",QString::number(_id));
+    root->writeAttribute("self_pos",QString::number((int)_selfPos));
+    root->writeAttribute("output_connection_point",QString::number(_outputConnectionPoint));
+    root->writeAttribute("point_name",_pointName);
+
+
+    root->writeEndElement();
+
+    //todo write connection point info to this xml
+
+    root->writeEndElement();
+    return true;
+}
+
+bool UniConnectionPoint::loadLinkStatusFormXmlImpl(QXmlStreamReader *root){
+
+    return false;
+}
+
+bool UniConnectionPoint::saveLinkStatusToXmlImpl(QXmlStreamWriter *root){
+    return false;
 }
 
 
@@ -749,11 +850,6 @@ void UniConnectionPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem
         painter->drawRoundedRect(_boudingRect,8,8);
     }
 
-    if(_linkStautes){
-        painter->setPen(Qt::DashLine);
-        painter->drawRoundedRect(__mainBodyRectCll,4,4);
-    }
-
     //Link Line
     painter->setPen(__uniNorPen);
     painter->setBrush(__uniNorBrush);
@@ -770,6 +866,11 @@ void UniConnectionPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem
     painter->setPen(__mainBodyPen);
     painter->setBrush(__mainBodyBrush);
     painter->drawEllipse(__mainBodyRect);
+
+    if(_linkStautes){
+        painter->setPen(Qt::DashLine);
+        painter->drawEllipse(__mainBodyRectCll);
+    }
 
     //when got a link make sure draw a circle in  the center to show the item is alreay been linked.
     if(_bindPointVec.size()){

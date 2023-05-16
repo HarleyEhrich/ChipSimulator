@@ -16,6 +16,7 @@
 #include <QObject>
 #include <QPainterPath>
 #include <QString>
+#include <QXmlStreamReader>
 
 #include "GlobalInclude.h"
 #include "UniLinkLine.h"
@@ -37,6 +38,7 @@ class BASICSDK_EXPORT UniConnectionPoint : public UniGraphicsItemObject
     friend class UniLinkLine;
 
 public:
+    explicit UniConnectionPoint();
     explicit UniConnectionPoint(int id,COOR_POS pos,bool outputPoint,QString pointName=tr("连接点"),int dataBits =1,int maxBindItemNumber=1, QGraphicsItem *parent = nullptr);
     virtual ~UniConnectionPoint();
 
@@ -57,6 +59,8 @@ signals:
 
     //告知数据变化
     void tellDataChanged(UniConnectionPoint* changePtr,qsizetype changedIndex,int changeLen=1);//Just to remind thie father that the data been changed, please do something
+
+    void tellHighResistanceStatusChange(bool newResistance);
 
     //告知名称变化了
     void tellPointNameChange(QString oldName, QString newName);
@@ -84,15 +88,16 @@ public slots:
 //----nor function
 public:
 //Implement of get and set function
-
     //Data parts.Make sured the data can only be changed in setDataValue function
     //For father item quick access data
     QWeakPointer<const QBitArray> getDataPtr();
-
     //快速获取数据值
     bool getDataValue(qsizetype index,bool* ok=nullptr);
     //return the data changed bits number
     qsizetype setDataValue(const QBitArray& value, qsizetype indexStart=0);
+
+    bool highResistance() const;
+    void setHighResistance(bool newHighResistance);
 
     bool getLinkStautes() const;
 
@@ -122,6 +127,12 @@ public:
     // 解绑连接点
     bool unBindConnectionPoint(UniConnectionPoint* targetPoint);
 
+    bool loadStatusFormXml(QXmlStreamReader* root);
+    bool saveStatusToXml(QXmlStreamWriter* root);
+
+    bool loadLinkStatusFormXml(QXmlStreamReader* root);
+    bool saveLinkStatusToXml(QXmlStreamWriter* root);
+
 protected:
     // 等待链接的状态
     void setBindStautes(bool newLinkStautes);
@@ -150,6 +161,11 @@ private:
     inline bool bindConnctionPointInputImpl(UniConnectionPoint* targetConnectionPoint, UniLinkLine* lineHead, UniLinkLine* lineTail);
     inline bool unBindConnectionPointInputImpl(UniConnectionPoint* targetPoint);
 
+    bool loadStatusFormXmlImpl(QXmlStreamReader* root);
+    bool saveStatusToXmlImpl(QXmlStreamWriter* root);
+
+    bool loadLinkStatusFormXmlImpl(QXmlStreamReader* root);
+    bool saveLinkStatusToXmlImpl(QXmlStreamWriter* root);
 
 //----nor var
 private:
@@ -159,12 +175,6 @@ private:
     bool _outputConnectionPoint;//是输出还是输入信号，只有输出和输入才能配对
     QString _pointName;//名称
 
-    //Some ui used var
-    QGraphicsDropShadowEffect* _shadowEffect;//本体的阴影
-    QPainterPath _itemPainterPath;//The item painter path
-    QRectF _boudingRect;
-    QPoint _finalTextBLPos;//最终显示的文本的左上角位置，相对于Item的positon
-    QString _finalText;
 
     //Pair relate
     bool _linkStautes;
@@ -175,17 +185,25 @@ private:
     QVector<UniLinkLine*> _lineHeadVec;//Store the link line item's head here.
     QVector<UniLinkLine*> _lineTailVec;//store the link line item's tail here.
     QSharedPointer<QBitArray> _dataPtrSelf;//Stored the data
+    bool _highResistance;//高阻抗,自动传递到连接的点，默认是true
 
     //Settings here
     //Data setting
     int _dataBitsLen;//BitsArray only accept the same length array
     int _maxBindItemNumber;//-1 means no limit, default 1,and mind input point only can choose 1
 
-    //Ui setting
-    bool _showPointName = true;
-    QFont _textFont;
-    TextDriection _textDirection = TextDriection::BELOW;//Defined where the text will be show
 
+    //Ui setting
+    bool _showPointName;
+    QFont _textFont;
+    TextDriection _textDirection;//Defined where the text will be show
+
+    //Some ui used var
+    QGraphicsDropShadowEffect* _shadowEffect;//本体的阴影
+    QPainterPath _itemPainterPath;//The item painter path
+    QRectF _boudingRect;
+    QPoint _finalTextBLPos;//最终显示的文本的左上角位置，相对于Item的positon
+    QString _finalText;
 
 
 //----Interface and override
@@ -210,12 +228,8 @@ protected:
 public:
     static int mainBodyWH();
 
-
-
 private:
     static void InitiaStaticVar();
-
-
 
 private:
     inline static bool __useLineToPointBind = true;

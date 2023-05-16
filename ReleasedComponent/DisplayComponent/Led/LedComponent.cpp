@@ -116,10 +116,18 @@ void LedComponent::cacheData(int index){
         //Chace all
         _dataCache.resize(_lightBallCount);
         for(int i=0;i<_lightBallCount;++i){
-            _dataCache[i] = getCCPointWPtrById(i).lock()->getDataValue(0);
+            if(getCCPointWPtrById(i).lock()->highResistance() == true){
+                _dataCache[i] = false;
+            }else{
+                _dataCache[i] = getCCPointWPtrById(i).lock()->getDataValue(0);
+            }
         }
     }else{
-        _dataCache[index] = getCCPointWPtrById(index).lock()->getDataValue(0);
+        if(getCCPointWPtrById(index).lock()->highResistance() == true){
+            _dataCache[index] = false;
+        }else{
+            _dataCache[index] = getCCPointWPtrById(index).lock()->getDataValue(0);
+        }
     }
 
     update();
@@ -221,16 +229,8 @@ void LedComponent::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
     RENDER_HINT_ANT(painter)
 
-//    painter->drawPath(_itemPainterPath);
-
     painter->setFont(_textFont);
     painter->drawText(_textLBPos,_comNickName);
-
-//    auto rect= generateTextBouding(_comNickName);
-//    rect.moveBottomLeft(_textLBPos);
-//    painter->drawRect(rect);
-
-    painter->drawRect(_boudingRect);
 
     for(int i=0;i<_lightBallCount;++i){
         drawALightBall(painter,i);
@@ -280,6 +280,11 @@ bool LedComponent::loadFromXmlExtendImpl(QXmlStreamReader *root)
 
 bool LedComponent::saveToXmlExtendImpl(QXmlStreamWriter *root)
 {
+    if(root == nullptr) {
+        qCritical()<<"XMl stream writer is a nullptr";
+        return false;
+    }
+
     root->writeStartElement(__LedXmlLabel);
     root->writeAttribute("light_ball_count",QString::number(_lightBallCount));
     root->writeEndElement();
@@ -291,6 +296,7 @@ void LedComponent::connectionDataChangeImpl(UniConnectionPoint *changePtr, qsize
     Q_UNUSED(changedIndex)
     Q_UNUSED(changeLen)
 
+    qDebug()<<DEBUGINFO<<changePtr->id()<<changedIndex<<changeLen;
     if(nullptr == changePtr) return;
     cacheData(changePtr->id());
 }

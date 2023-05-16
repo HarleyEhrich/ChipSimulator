@@ -7,6 +7,8 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QLineEdit>
 #include <QMap>
 #include <QObject>
@@ -53,30 +55,11 @@ struct ABSTRACTCONINTERFACE_EXPORT ComponentInfoStruct{
     QPixmap* comImage;//组件图片
 
 public:
-    ComponentInfoStruct(){
-        comCreatTimeFormat = "yy-mm-dd";
-    }
+    ComponentInfoStruct();
 
-    ComponentInfoStruct(const ComponentInfoStruct& other){
-        *this= other;
-    }
+    ComponentInfoStruct(const ComponentInfoStruct& other);
 
-    ComponentInfoStruct& operator=(const ComponentInfoStruct& other){
-        comId = other.comId;//component的唯一编号
-        comName = other.comName;//组件默认名称
-
-        comDesInfo = other.comDesInfo;//组件的描述信息
-        comAuthor = other.comAuthor;//组件作者
-
-        comCreatTimeStr = other.comCreatTimeStr;//时间字符串
-        comCreatTimeFormat = other.comCreatTimeFormat;
-        comCreatTime = other.comCreatTime;//组件创建时间
-
-        comImagePath = other.comImagePath;//组件图片
-        comImage = new QPixmap(*other.comImage);//组件图片
-
-        return *this;
-    }
+    ComponentInfoStruct &operator=(const ComponentInfoStruct& other);
 };
 
 
@@ -113,6 +96,8 @@ signals:
 
     void tellTextFontChange();
 
+    void tellCCPointBindStatusChanged(bool newStatus, UniConnectionPointPtr target);
+
 public slots:
     //序列化、反序列化，通过将控件状态转为XML，以供下次读取，注意到图元基本信息，诸如位置等由Abstarct 接口完成
     bool loadStatusFormXml(QXmlStreamReader* root);
@@ -120,8 +105,6 @@ public slots:
 
     //运行函数，使用run来统一管理控件状态的更新入口，对外界传递该函数来使该控件可被其它控件调用，每次调用必须根据此完成状态更新
     virtual void run()=0;
-
-
 
 
 //-----------------------------------CFN--------------------------------------//
@@ -205,9 +188,10 @@ private:
         bool manualReleaseWidget);
 
 
-
-
 //-----------------------------------Var--------------------------------------//
+public:
+
+
 protected:
     //Info
     QSharedPointer<ComponentInfoStruct> _comInfoSPtr;
@@ -234,7 +218,6 @@ private:
     QMap<UniConnectionPoint*,QWeakPointer<const QBitArray>> _pointDataMap;
     QVector<ComponentWidget> _comWidgetVec;
 
-
 //-----------------------------------ITF--------------------------------------//
 //Interface override
 public:
@@ -245,6 +228,7 @@ public:
     // QGraphicsItem interface
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+
 
 protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;

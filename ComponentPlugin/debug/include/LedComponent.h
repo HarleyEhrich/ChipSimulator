@@ -19,9 +19,6 @@ public:
     explicit LedComponent();
     explicit LedComponent(long sceneID, QGraphicsItem *parent = nullptr, QObject* parentObject=nullptr);
 
-
-
-
 signals:
     void tellLedLightBallCountChange(int newCount);
 
@@ -29,15 +26,13 @@ signals:
 public slots:
     virtual void run() override;
 
-
-
-
 public:
     int lightBallCount() const;
 
     void setLightBallCount(int newLedCount);
 
     void updateAllStauts();
+
 private:
     void initial();
 
@@ -56,19 +51,17 @@ private:
     void drawALightBall(QPainter* painter,int indexOfLightBall);
 
 
-
-
 private:
     int _lightBallCount;
 
-    QPoint _textLBPos;
+    QPoint _textLBPos;//昵称的位置
 
     /// \brief 二极管左上角的位置
     QVector<QPoint> _lightBallCenterPosVec;
     //
-    QVector<bool> _dataCache;
+    QVector<bool> _dataCache;//数据缓存
 
-    QSharedPointer<QSpinBox> _ledCountSetWidget;
+    QSharedPointer<QSpinBox> _ledCountSetWidget;//
 
 
 public:

@@ -10,7 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     ControlObj/ElecGraphicsControllor.cpp \
-    ControlObj/PluginLoaderControllor.cpp \
+    ControlObj/PluginLoaderController.cpp \
     Log/LogHandler.cpp \
     Pages/InfoPages/AmtlInfoWidget.cpp \
     Widgets/FloatWidgets/ToastInfoWidget.cpp \
@@ -22,7 +22,7 @@ SOURCES += \
 
 HEADERS += \
     ControlObj/ElecGraphicsControllor.h \
-    ControlObj/PluginLoaderControllor.h \
+    ControlObj/PluginLoaderController.h \
     Include/ProjectInclude.h \
     Log/LogHandler.h \
     Pages/InfoPages/AmtlInfoWidget.h \

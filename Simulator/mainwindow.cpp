@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QGroupBox>
+
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -13,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ElecGraphicsControllor* newCon = new ElecGraphicsControllor(this);
     _controlVec.push_back(newCon);
-    AmtlGraphicsView* newView = newCon->getNewView();
+    AmtlGraphicsView* newView = newCon->getNewView().lock().data();
 
 
 
@@ -129,6 +131,7 @@ void MainWindow::on_component_tbtn_clicked()
     {
         QObject *obj = loader.instance();
         obj->setObjectName(obj->metaObject()->className());
+        qDebug()<<loader.metaData().value("MetaData").toObject();
         if (obj)
         {
             auto pluginIn = qobject_cast<AbstractConInterface*>(obj);
@@ -143,11 +146,20 @@ void MainWindow::on_component_tbtn_clicked()
                 ElecGraphicsControllor* con = _controlVec[0];
                 con->scene()->addItem(led);
 
+                connect(led,&AbstractConInterface::tellCCPointBindStatusChanged,con->scene(),&AmtlGraphicsScene::pairUniConnectionPoint);
+
+
                 auto widgets = led->getComponentWidgtes();
 
 
-                widgets[0]._widgetSPtr->show();
+                QFrame* box = new QFrame();
+                QVBoxLayout* boxLay = new QVBoxLayout(box);
 
+                for(auto& items : widgets){
+                    boxLay->addWidget(items._widgetSPtr.data());
+                }
+
+                box->show();
 
             }else{
                 qDebug()<<"Not me";
