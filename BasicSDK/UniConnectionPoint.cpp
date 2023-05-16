@@ -151,7 +151,7 @@ void UniConnectionPoint::setHighResistance(bool newHighResistance)
         }
     }else{
         if(_highResistance) inputDataValue(QBitArray{_dataPtrSelf->size(),0});
-        else inputDataValue(*_bindPointVec[0]->_dataPtrSelf.data());
+//        else inputDataValue(*_bindPointVec[0]->_dataPtrSelf.data());
     }
 
     emit tellHighResistanceStatusChange(_highResistance);
@@ -673,6 +673,7 @@ bool UniConnectionPoint::bindConnectionPointImpl(UniConnectionPoint *targetConne
 
             //Make sure target save all the info
             if(Q_LIKELY(targetConnectionPoint->bindConnctionPointInputImpl(this,lineHead,lineTail))){
+                targetConnectionPoint->inputDataValue(*_dataPtrSelf.data());
                 ;
             }else{
                 assert("Please check head and tail is create?");

@@ -295,8 +295,6 @@ void LedComponent::connectionDataChangeImpl(UniConnectionPoint *changePtr, qsize
 {
     Q_UNUSED(changedIndex)
     Q_UNUSED(changeLen)
-
-    qDebug()<<DEBUGINFO<<changePtr->id()<<changedIndex<<changeLen;
     if(nullptr == changePtr) return;
     cacheData(changePtr->id());
 }
