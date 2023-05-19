@@ -21,26 +21,61 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
+
+#include <GlobalInclude.h>
+#include <UniGraphicsItemObject.h>
+#include <UniLinkLine.h>
+#include <UniConnectionPoint.h>
+
 #include "AbstractConInterface_global.h"
 
-#include "UniGraphicsItemObject.h"
-#include "UniConnectionPoint.h"
+
+/*
+//Component
+<ComponetXmlLabel>
+    <ComponentExtendXmlLabel>
+        //Some data usr stored
+    </ComponentExtendXmlLabel>
+    <ComponentCCPointXmlLabel>
+        //Start store universal connection points status data
+
+        <UniCCPointXmlLabel>//Start A universal connection point
+            <UniCCPointDataXmlLabel>
+                <UniCCPointBDataXmlLabel />
+            </UniCCPointDataXmlLabel>
+        </UniCCPointXmlLabel>
+
+    </ComponentCCPointXmlLabel>
+</ComponetXmlLabel>
 
 
-#define ComAbstractLabelName "AbstractComponet"
-#define ComExtendLabelName "ExtendComponent"
+//Line
+<ComponentLinkXmlLabel>
+    <UniCCPointLineXmlLabel>
+        //line points text
+    </UniCCPointLineXmlLabel>
+</ComponentLinkXmlLabel>
+*/
+
+#define ComponetXmlLabel "Component"
+#define ComponentExtendXmlLabel "ComponentExtend"
+#define ComponentCCPointXmlLabel "CCPointsStatus"
+
+
+#define ComponentLinkXmlLabel "FromComponent"
 
 class AbstractConInterface;
-using AbstractConInterfacePtr = QWeakPointer<AbstractConInterface>;
 
-struct ABSTRACTCONINTERFACE_EXPORT ComponentWidget{
-    AbstractConInterface* _widgetComponentPtr;
-    QSharedPointer<QWidget> _widgetSPtr;
-    bool _pannelFloat;
-    bool _manualReleaseWidget;
+struct ABSTRACTCONINTERFACE_EXPORT ComponentSettingWidgetInfoStruct{
+    AbstractConInterface* _componentptr;
+    QWidgetSPtr _widgetSPtr;
+
+    bool _pannelFloat;//浮动面板？
+    bool _manualReleaseWidget;//手动释放内存-都不管，直接释放掉智能指针就好了，在组件销毁时将会去掉这个面板全部的内容。
 };
+MAKE_AUTO_PTR(ComponentSettingWidgetInfoStruct);
 
-struct ABSTRACTCONINTERFACE_EXPORT ComponentInfoStruct{
+struct ABSTRACTCONINTERFACE_EXPORT ComponentBasicInfoStruct{
     QString comId;//component的唯一编号
     QString comName;//组件默认名称
 
@@ -52,15 +87,16 @@ struct ABSTRACTCONINTERFACE_EXPORT ComponentInfoStruct{
     QDateTime comCreatTime;//组件创建时间
 
     QString comImagePath;//组件图片
-    QPixmap* comImage;//组件图片
+    QPixmap* comImage;//组件图片--Will auto copy pixmap data rather is pointer
 
 public:
-    ComponentInfoStruct();
+    ComponentBasicInfoStruct();
 
-    ComponentInfoStruct(const ComponentInfoStruct& other);
+    ComponentBasicInfoStruct(const ComponentBasicInfoStruct& other);
 
-    ComponentInfoStruct &operator=(const ComponentInfoStruct& other);
+    ComponentBasicInfoStruct &operator=(const ComponentBasicInfoStruct& other);
 };
+MAKE_AUTO_PTR(ComponentBasicInfoStruct);
 
 
 /// \brief The global time tick type
@@ -70,6 +106,7 @@ enum class TICK_TYPE{
     NO_TICK
 };
 
+
 class ABSTRACTCONINTERFACE_EXPORT AbstractConInterface : public UniGraphicsItemObject
 {
     Q_OBJECT
@@ -77,13 +114,10 @@ class ABSTRACTCONINTERFACE_EXPORT AbstractConInterface : public UniGraphicsItemO
 public:
     //This is the root component construct
     explicit AbstractConInterface();
-    explicit AbstractConInterface(const ComponentInfoStruct& cInfo);
-
+    explicit AbstractConInterface(const ComponentBasicInfoStruct& cInfo);
     explicit AbstractConInterface(long sceneID, QGraphicsItem *parent = nullptr,QObject* parentObject=nullptr);
 
     virtual ~AbstractConInterface();
-
-
 
 
 //-----------------------------------CSS--------------------------------------//
@@ -98,10 +132,17 @@ signals:
 
     void tellCCPointBindStatusChanged(bool newStatus, UniConnectionPointPtr target);
 
+    void tellComAboutDestroy(long comId,AbstractConInterface* com);
+
 public slots:
+    void connectionDataChange(UniConnectionPoint *changePtr, qsizetype changedIndex, int changeLen);
+    void connectionBindStatusChange(bool newStatus, UniConnectionPoint* target);
+
     //序列化、反序列化，通过将控件状态转为XML，以供下次读取，注意到图元基本信息，诸如位置等由Abstarct 接口完成
     bool loadStatusFormXml(QXmlStreamReader* root);
     bool saveStatusToXml(QXmlStreamWriter* root);
+    bool loadLinkFormXml(AbstractConInterface* targetCom,const QString& lineText,long toPointId,long fromPointId);
+    bool saveLinkToXml(QXmlStreamWriter* root);
 
     //运行函数，使用run来统一管理控件状态的更新入口，对外界传递该函数来使该控件可被其它控件调用，每次调用必须根据此完成状态更新
     virtual void run()=0;
@@ -111,18 +152,19 @@ public slots:
 // Class function
 public:
     /// \brief 创建接口，返回该实例
-    /// \brief Creat a new instance, and return this new instance
+    /// \brief Creat a new instance, and return this new instance,
+    /// \brief this will auto copy the basick info data pointer
     AbstractConInterface* instance(long sceneID, QGraphicsItem *parent = nullptr);
 
     //获取组件的信息
-    bool isComInfoInitial();
-    ComponentInfoStruct getComInfo();
-    const QSharedPointer<const ComponentInfoStruct> getComInfoSPtr();
+    bool isComInfoInitial();//If not initialed it will not allowed to use this component
+    ComponentBasicInfoStruct getComInfo();//Get the copy of the component data
+    const QSharedPointer<const ComponentBasicInfoStruct> getComInfoSPtr();//Get the component basic info shared ptr
 
     //获取该控件的场景ID
     long getSceneId() const;
 
-    QString comNickName() const;
+    QString comNickName() const;//Nickname
     void setComNickName(const QString &newComNickName);
 
     QFont textFont() const;
@@ -130,14 +172,13 @@ public:
 
     //获取数据ptr
     inline const QWeakPointer<const QBitArray> &getDataWPtr(UniConnectionPoint* uni);
-
     //通过id来获取数据连接点
     UniConnectionPointPtr getCCPointWPtrById(int id);
-    //获取全部的数据连接点
+    //获取全部的数据连接点--Mainly used for make connect with the scene pair part sig-slot;
     const QVector<UniConnectionPointSPtr>& getCCPointVec() const;
 
-    //获取该控件所有的设置相关Widget
-    const QVector<ComponentWidget>& getComponentWidgtes();
+    //获取该控件所有的设置相关Widget--This will auto delete, but need make sure when this component instance destroy main programe will take destroy the setting part too;
+    const QVector<ComponentSettingWidgetInfoStruct>& getComponentWidgtes();
 
     //时序tick
     virtual void preTick(TICK_TYPE tickType);
@@ -158,13 +199,15 @@ protected:
 
     virtual bool loadFromXmlExtendImpl(QXmlStreamReader * root);
     virtual bool saveToXmlExtendImpl(QXmlStreamWriter* root);
+    bool loadLinkFormXmlImpl(AbstractConInterface* targetCom,const QString& lineText,long toPointId,long fromPointId);
+    bool saveLinkToXmlImpl(QXmlStreamWriter* root);
 
     virtual void connectionDataChangeImpl(UniConnectionPoint* changePtr,qsizetype changedIndex,int changeLen);
 
 private:
     void initial();
 
-    void intialComponentInfoImpl(const ComponentInfoStruct& cInfo);
+    void intialComponentInfoImpl(const ComponentBasicInfoStruct& cInfo);
     void intialComponentInfoImpl(
         const QString& cid,
         const QString& cName,
@@ -182,7 +225,7 @@ private:
 
     bool unRegisterConnectionPointImpl(int size);
 
-    ComponentWidget *registerComWidgetImpl(
+    ComponentSettingWidgetInfoStruct *registerComWidgetImpl(
         QSharedPointer<QWidget> widget,
         bool pannel,
         bool manualReleaseWidget);
@@ -194,7 +237,7 @@ public:
 
 protected:
     //Info
-    QSharedPointer<ComponentInfoStruct> _comInfoSPtr;
+    QSharedPointer<ComponentBasicInfoStruct> _comInfoSPtr;
 
     //Painter releate variable
     QPainterPath _itemPainterPath;
@@ -213,10 +256,13 @@ protected:
     TICK_TYPE _curTickType;
 
 private:
-    //ConnectionPoint
-    QVector<UniConnectionPointSPtr> _connectPointVec;
-    QMap<UniConnectionPoint*,QWeakPointer<const QBitArray>> _pointDataMap;
-    QVector<ComponentWidget> _comWidgetVec;
+    //ConnectionPoint--!!
+    QVector<UniConnectionPointSPtr> _connectPointVec;//连接点结合-find with id, id ==it's index
+
+    QMap<UniConnectionPoint*,QWeakPointer<const QBitArray>> _pointDataMap;//数据快速指针Cache
+
+    //内含一个智能指针保证了其设定使用的widget盒子不会被删除
+    QVector<ComponentSettingWidgetInfoStruct> _comSettingInfoVec;//组件设定控件集合
 
 //-----------------------------------ITF--------------------------------------//
 //Interface override
@@ -232,6 +278,7 @@ public:
 
 protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
+    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
@@ -270,6 +317,8 @@ protected:
         bool manualReleaseWidget
         );
 };
+
+MAKE_AUTO_PTR(AbstractConInterface);
 
 #define AbstractConInterface_iid "com.amtl.plugin.abstractconinterface"
 

@@ -14,11 +14,12 @@
 const int g_logLimitSize = 5;
 #define LOG_FILE_DIR  "log"
 
-struct LogHandlerPrivate {
+class LogHandlerPrivate : public QObject{
 public:
     LogHandlerPrivate();
     ~LogHandlerPrivate();
 
+public:
     // 打开日志文件 log.txt，如果日志文件不是当天创建的，则使用创建日期把其重命名为 yyyy-MM-dd.log，并重新创建一个 log.txt
     void openAndBackupLogFile();
     void checkLogFiles(); // 检测当前日志文件大小
@@ -32,7 +33,6 @@ public:
     QTimer flushLogFileTimer;   // 刷新输出到日志文件的定时器
     QDate  logFileCreatedDate;  // 日志文件创建的时间
 
-
 public:
     // 消息处理函数
     static void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
@@ -41,8 +41,6 @@ public:
     inline static QFile *logFile = nullptr;      // 日志文件
     inline static QTextStream *logOut = nullptr; // 输出日志的 QTextStream，使用静态对象就是为了减少函数调用的开销
     inline static QMutex _logMutex;     // 日志输出锁
-
-
 };
 
 
@@ -58,7 +56,6 @@ public:
 
 private:
     LogHandler();
-
     LogHandlerPrivate *d;
 };
 

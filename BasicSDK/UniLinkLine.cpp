@@ -141,7 +141,7 @@ QPolygon UniLinkLine::gnerateItemLineCllBoundingPoly(const QPointF &newPos){
 //newPos为item内坐标
 void UniLinkLine::gnerateItemPainterPath(const QPointF &newPos)
 {
-    //NOTE 注意到貌似这个会大大增加整个图元的绘制CPU占用率
+    //注意到貌似这个会大大增加整个图元的绘制CPU占用率
     prepareGeometryChange();//Make sure the bouding rect will be right
 
     _shape.clear();
@@ -336,7 +336,6 @@ bool UniLinkLine::isThisItemDeleteableImpl()
 void UniLinkLine::deleteThisItemImpl()
 {
     if(Q_UNLIKELY(!isThisItemDeleteableImpl())){
-        //todo emit a sig tell the connection point to delete this link
         unBind();
         return;
     }
@@ -709,11 +708,11 @@ QList<UniLinkLine *> UniLinkLine::creatLineWithPoints(const QList<QPoint> &posVe
     return res;
 }
 
-QList<UniLinkLine *> UniLinkLine::creatLineWithText(const QStringList &list)
+QList<UniLinkLine *> UniLinkLine::loadLineFromTextList(const QStringList &list)
 {
     QList<QPoint> points;
-//    bool ok;
-    for(auto item=list.begin();item!=list.end();item++){
+
+    for(auto item=list.begin();item!=list.end();++item){
         QPoint t;
         t.setX((*item).toInt());
         ++item;
@@ -724,7 +723,11 @@ QList<UniLinkLine *> UniLinkLine::creatLineWithText(const QStringList &list)
     return creatLineWithPoints(points);
 }
 
-QStringList UniLinkLine::storeLineToText(UniLinkLine *lineHead)
+QList<UniLinkLine *> UniLinkLine::loadLineFromText(const QString &lineText){
+    return loadLineFromTextList(lineText.split(";"));
+}
+
+QStringList UniLinkLine::saveLineToTextList(UniLinkLine *lineHead)
 {
     QStringList res;
     auto tptr=lineHead;
@@ -735,7 +738,26 @@ QStringList UniLinkLine::storeLineToText(UniLinkLine *lineHead)
     return res;
 }
 
-//------------------------------------------------------------------------
+QString UniLinkLine::saveLineToText(UniLinkLine *lineHead){
+    QString res;
+
+    auto tptr=lineHead;
+    while(tptr!=nullptr){
+        res.append(QString::number(tptr->scenePos().toPoint().x()) + ";")
+            .append(QString::number(tptr->scenePos().toPoint().y())+ ";");
+        tptr=tptr->_nextItem;
+    }
+
+
+    auto constIter = res.constEnd();
+    --constIter;
+    res.erase(constIter,res.constEnd());
+    return res;
+}
+
+
+
+    //------------------------------------------------------------------------
 
 
 void UniLinkLine::InitialStaticVar()

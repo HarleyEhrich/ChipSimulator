@@ -7,6 +7,7 @@
 
 #include "GlobalInclude.h"
 
+
 class BASICSDK_EXPORT UniGraphicsItemObject : public QObject, public QGraphicsItem
 {
     Q_OBJECT
@@ -21,5 +22,7 @@ public:
     virtual QPointF getRealItemCenterScenePos() = 0;
     virtual QRectF getRealBoudingRect() = 0;
 };
+
+MAKE_AUTO_PTR(UniGraphicsItemObject);
 
 #endif // UNIGRAPHICSITEMOBJECT_H

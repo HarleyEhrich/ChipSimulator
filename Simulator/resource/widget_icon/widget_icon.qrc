@@ -11,20 +11,19 @@
         <file>toastinfoicon/warning.png</file>
     </qresource>
     <qresource prefix="/vcu_icon">
-        <file>ViewControllUnitIcon/move_model.svg</file>
-        <file>ViewControllUnitIcon/select_model.svg</file>
-        <file>ViewControllUnitIcon/unlock.svg</file>
-        <file>ViewControllUnitIcon/zoom-in.svg</file>
-        <file>ViewControllUnitIcon/zoom-out.svg</file>
         <file>ViewControllUnitIcon/lock_notify.png</file>
-        <file>ViewControllUnitIcon/lock.svg</file>
-        <file>ViewControllUnitIcon/align-bottom.svg</file>
-        <file>ViewControllUnitIcon/align-center.svg</file>
-        <file>ViewControllUnitIcon/align-end.svg</file>
-        <file>ViewControllUnitIcon/align-middle.svg</file>
-        <file>ViewControllUnitIcon/align-start.svg</file>
-        <file>ViewControllUnitIcon/align-top.svg</file>
-        <file>ViewControllUnitIcon/lock_withe.svg</file>
+        <file>ViewControllUnitIcon/move_model.png</file>
+        <file>ViewControllUnitIcon/select_model.png</file>
+        <file>ViewControllUnitIcon/unlock.png</file>
+        <file>ViewControllUnitIcon/zoom-in.png</file>
+        <file>ViewControllUnitIcon/zoom-out.png</file>
+        <file>ViewControllUnitIcon/lock.png</file>
+        <file>ViewControllUnitIcon/align_bottom.png</file>
+        <file>ViewControllUnitIcon/align_mid.png</file>
+        <file>ViewControllUnitIcon/align_right.png</file>
+        <file>ViewControllUnitIcon/align_center.png</file>
+        <file>ViewControllUnitIcon/align_left.png</file>
+        <file>ViewControllUnitIcon/aligin_top.png</file>
     </qresource>
     <qresource prefix="/tab_widget">
         <file>TabWidget/add_ori.svg</file>

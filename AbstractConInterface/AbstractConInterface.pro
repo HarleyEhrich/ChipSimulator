@@ -25,7 +25,7 @@ TRANSLATIONS += \
     AbstractConInterface_zh_CN.ts
 
 #---------Import basic lib----------------------
-unix|win32{
+unix|win32|macx{
     CONFIG(debug, debug|release){
         LIBS += -L$$PWD/../SDK/BasickSDK/debug/bin/ -lBasicSDK
         INCLUDEPATH += $$PWD/../SDK/BasickSDK/debug/include
@@ -54,7 +54,7 @@ COPY_DEST = $$PWD/../SDK/AbstractConInterfaceSDK
 SRC_HEAD_FILES = $$PWD/*.h
 SRC_HEAD_FILES = $$replace(SRC_HEAD_FILES,/,\\)
 
-win32{
+win32|macx{
     CONFIG(debug, debug|release){
         #Header files copy dest dir
         COPY_HEAD_DIR = $${COPY_DEST}/debug/include/

@@ -12,7 +12,11 @@
 #include "Widgets/FloatWidgets/ToastInfoWidget.h"
 #include "include/ProjectInclude.h"
 
-#include "ControlObj/ElecGraphicsControllor.h"
+#include "ControlObj/PluginLoaderController.h"
+
+#include "Pages/ElecPages/ElecPage.h"
+#include "Pages/ElecPages/ComponentListPage.h"
+
 
 
 #include "abstractconinterface.h"
@@ -33,7 +37,9 @@ private slots:
     void on_page_info_spliter_splitterMoved(int pos, int index);
 
 
-    void on_component_tbtn_clicked();
+    void on_component_tbtn_clicked(bool checked);
+
+    void on_open_file_tbtn_clicked();
 
 private:
     void init();
@@ -42,7 +48,8 @@ private:
 
 private:
     Ui::MainWindow *ui;
-
-    QVector<ElecGraphicsControllor*> _controlVec;
+    PluginLoaderController* _comLoader;
+    ComponentListPage* _listPage;
+    ElecPageGener* _elecPageGener;
 };
 #endif // MAINWINDOW_H

@@ -21,7 +21,7 @@ DISTFILES += Led.json
 
 
 #---------Import basic lib----------------------
-unix|win32{
+unix|win32|macx{
     CONFIG(debug, debug|release){
         LIBS += -L$$PWD/../../../SDK/BasickSDK/debug/bin/ -lBasicSDK
         INCLUDEPATH += $$PWD/../../../SDK/BasickSDK/debug/include
@@ -39,7 +39,7 @@ unix|win32{
 
 
 #---------Import abstractconinterface lib----------------------
-unix|win32{
+unix|win32|macx{
     CONFIG(debug, debug|release){
         LIBS += -L$$PWD/../../../SDK/AbstractConInterfaceSDK/debug/bin/ -lAbstractConInterface
         INCLUDEPATH += $$PWD/../../../SDK/AbstractConInterfaceSDK/debug/include
@@ -52,11 +52,10 @@ unix|win32{
     }
 }
 
-
-# Default rules for deployment.
-unix {
-    target.path = $$[QT_INSTALL_PLUGINS]/generic
-}
+## Default rules for deployment.
+#unix {
+#    target.path = $$[QT_INSTALL_PLUGINS]/generic
+#}
 
 #---------------Eeport lib and head--------------------
 config += debug_and_release
@@ -66,7 +65,7 @@ COPY_DEST = $$PWD/../../../ComponentPlugin/
 SRC_HEAD_FILES = $$PWD/*.h
 SRC_HEAD_FILES = $$replace(SRC_HEAD_FILES,/,\\)
 
-win32{
+win32|macx{
     CONFIG(debug, debug|release){
         #Header files copy dest dir
         COPY_HEAD_DIR = $${COPY_DEST}/debug/include/
@@ -88,3 +87,5 @@ win32{
 }
 
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES +=

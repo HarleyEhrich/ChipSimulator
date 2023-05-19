@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Chip Simulator</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow{
@@ -580,7 +580,7 @@ padding: 4px;
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="FlatTabWidget" name="page_tab_widget" native="true"/>
+                  <widget class="TabPagesWidget" name="page_tab_widget" native="true"/>
                  </item>
                 </layout>
                </widget>
@@ -626,7 +626,7 @@ padding: 4px;
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="FlatTabWidget" name="info_tab_widget" native="true"/>
+                  <widget class="TabPagesWidget" name="info_tab_widget" native="true"/>
                  </item>
                 </layout>
                </widget>
@@ -656,9 +656,9 @@ padding: 4px;
  </widget>
  <customwidgets>
   <customwidget>
-   <class>FlatTabWidget</class>
+   <class>TabPagesWidget</class>
    <extends>QWidget</extends>
-   <header>flattabwidget.h</header>
+   <header>Widgets/PageWidget/TabPagesWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

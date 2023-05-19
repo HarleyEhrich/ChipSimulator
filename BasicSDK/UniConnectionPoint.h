@@ -19,20 +19,24 @@
 #include <QXmlStreamReader>
 
 #include "GlobalInclude.h"
+#include "UniGraphicsItemObject.h"
 #include "UniLinkLine.h"
 
 #define REQUEST_LINK true
 #define UNREQUEST_LINK false
 
+#define UniCCPointXmlLabel "ConnectionPoint"
+#define UniCCPointDataXmlLabel "ConnectionPointData"
+#define UniCCPointBDataXmlLabel "data"
+
+#define UniCCPointLineXmlLabel "CCPointLine"
+
 class UniConnectionPoint;
 
 using TextDriection = AMTL::DIRECTION;
 using COOR_POS = AMTL::DIRECTION;
-using UniConnectionPointPtr = QWeakPointer<UniConnectionPoint>;
-using UniConnectionPointSPtr = QSharedPointer<UniConnectionPoint>;
 
-class BASICSDK_EXPORT UniConnectionPoint : public UniGraphicsItemObject
-{
+class BASICSDK_EXPORT UniConnectionPoint : public UniGraphicsItemObject {
     Q_OBJECT
 
     friend class UniLinkLine;
@@ -101,6 +105,9 @@ public:
 
     bool getLinkStautes() const;
 
+    long parentItemSceneId() const;
+    void setParentItemSceneId(long newParentItemSceneId);
+
     //在组件中的id
     int id() const;
 
@@ -127,11 +134,10 @@ public:
     // 解绑连接点
     bool unBindConnectionPoint(UniConnectionPoint* targetPoint);
 
-    bool loadStatusFormXml(QXmlStreamReader* root);
-    bool saveStatusToXml(QXmlStreamWriter* root);
-
-    bool loadLinkStatusFormXml(QXmlStreamReader* root);
-    bool saveLinkStatusToXml(QXmlStreamWriter* root);
+    bool loadFormXml(QXmlStreamReader* root);
+    bool saveToXml(QXmlStreamWriter* root);
+    bool loadLinkFormXml(UniConnectionPoint* targetPoint, const QString& lineText);
+    bool saveLinkToXml(QXmlStreamWriter* root);
 
 protected:
     // 等待链接的状态
@@ -155,20 +161,21 @@ private:
 
     // 绑定连接点
     inline bool bindConnectionPointImpl(UniConnectionPoint* targetConnectionPoint);
+    inline bool bindConnectionPointWithLineTextImpl(UniConnectionPoint *targetConnectionPoint, const QString &lineText);
     // 解绑连接点
     inline bool unBindConnectionPointImpl(UniConnectionPoint* targetConnectionPoint);
     //Bind and unbind for input connection point
     inline bool bindConnctionPointInputImpl(UniConnectionPoint* targetConnectionPoint, UniLinkLine* lineHead, UniLinkLine* lineTail);
     inline bool unBindConnectionPointInputImpl(UniConnectionPoint* targetPoint);
 
-    bool loadStatusFormXmlImpl(QXmlStreamReader* root);
-    bool saveStatusToXmlImpl(QXmlStreamWriter* root);
-
-    bool loadLinkStatusFormXmlImpl(QXmlStreamReader* root);
-    bool saveLinkStatusToXmlImpl(QXmlStreamWriter* root);
+    bool loadFormXmlImpl(QXmlStreamReader* root);
+    bool saveToXmlImpl(QXmlStreamWriter* root);
+    bool loadLinkFormXmlImpl(UniConnectionPoint* targetPoint, const QString& lineText);
+    bool saveLinkSToXmlImpl(QXmlStreamWriter* root);
 
 //----nor var
 private:
+    long _parentItemSceneId;
     //Identification info
     int _id=-1;//独一id，可以在没有名称的是否根据id查找--必须要设置，在后期json读取进入时需要这个
     COOR_POS _selfPos;//必须设置的位置
@@ -213,12 +220,14 @@ public:
     virtual QRectF getRealBoudingRect() override;
 
 public:
+
     // QGraphicsItem interface
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     virtual QPainterPath shape() const override;
 
 protected:
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
@@ -227,6 +236,7 @@ protected:
 //----static var and function
 public:
     static int mainBodyWH();
+
 
 private:
     static void InitiaStaticVar();
@@ -264,6 +274,6 @@ private:
     inline static QBrush __textBrush;//画刷
 };
 
-
+MAKE_AUTO_PTR(UniConnectionPoint)
 
 #endif // UNICONNECTIONPOINT_H

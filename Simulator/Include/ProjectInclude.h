@@ -1,7 +1,6 @@
 #ifndef PROJECTINCLUDE_H
 #define PROJECTINCLUDE_H
 
-#include <BasicSDKInclude.h>
-#include <flattabwidget.h>
+#include <GlobalInclude.h>
 
 #endif // PROJECTINCLUDE_H

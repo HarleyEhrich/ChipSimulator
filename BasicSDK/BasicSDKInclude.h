@@ -8,5 +8,4 @@
 #include "UniConnectionPoint.h"
 
 
-
 #endif // BASICSDKINCLUDE_H

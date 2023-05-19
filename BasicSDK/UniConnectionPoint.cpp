@@ -37,14 +37,17 @@ UniConnectionPoint::UniConnectionPoint(int id, COOR_POS pos, bool outputPoint, Q
 
 UniConnectionPoint::~UniConnectionPoint()
 {
-    if(nullptr != _shadowEffect) delete _shadowEffect;
+    if(nullptr != _shadowEffect) _shadowEffect->deleteLater();
     _shadowEffect = nullptr;
 
-    while(_bindPointVec.size()){
 
+    blockSignals(true);//信号大多还是只和本组件相关，所以直接断掉--在析构期间全是垃圾信号
+
+    while(_bindPointVec.size()){
         //Unbind all the connection, make sure it will not be any uniconnection connect to a unvalid connection point.
-        unBindConnectionPointImpl(_bindPointVec.back());
+        unBindConnectionPointImpl(_bindPointVec.back());//This will automaticly make sure bind point vec no longer contain this connection point.
     }
+
 }
 
 
@@ -58,7 +61,7 @@ void UniConnectionPoint::linkLineItemPoschange(const QPointF& oldPos,const QPoin
     Q_UNUSED(oldPos);
     Q_UNUSED(newPos);
 
-    //此路径存在问题，由于未完全更新完成，在获取到的pos内仍是九坐标
+    //此路径存在问题，由于未完全更新完成，在获取到的pos内仍是旧坐标
 }
 
 void UniConnectionPoint::linkLineItemPosHasChanged()
@@ -141,6 +144,7 @@ void UniConnectionPoint::setHighResistance(bool newHighResistance)
     if(newHighResistance == _highResistance){
         return ;
     }
+
     _highResistance = newHighResistance;
 
     if(_outputConnectionPoint){
@@ -150,10 +154,11 @@ void UniConnectionPoint::setHighResistance(bool newHighResistance)
             _bindPointVec[i]->setHighResistance(newHighResistance);
         }
     }else{
+        //恢复高阻抗时，恢复数据为0，注意到这里会导致产生一个数据变化的信号，在该连接点析构时该信号会被屏蔽，避免将信号发送到了不存在的父对象。
         if(_highResistance) inputDataValue(QBitArray{_dataPtrSelf->size(),0});
-//        else inputDataValue(*_bindPointVec[0]->_dataPtrSelf.data());
     }
 
+    //该信号自由订阅，目前未有使用
     emit tellHighResistanceStatusChange(_highResistance);
 }
 
@@ -199,6 +204,16 @@ void UniConnectionPoint::setPointName(const QString &newPointName)
     emit tellPointNameChange(_pointName,newPointName);
     _pointName = newPointName;
     gneratePainterPath();
+}
+
+long UniConnectionPoint::parentItemSceneId() const
+{
+    return _parentItemSceneId;
+}
+
+void UniConnectionPoint::setParentItemSceneId(long newParentItemSceneId)
+{
+    _parentItemSceneId = newParentItemSceneId;
 }
 
 int UniConnectionPoint::id() const
@@ -262,20 +277,20 @@ bool UniConnectionPoint::unBindConnectionPoint(UniConnectionPoint *targetPoint)
     return unBindConnectionPointImpl(targetPoint);
 }
 
-bool UniConnectionPoint::loadStatusFormXml(QXmlStreamReader *root){
-    return loadStatusFormXmlImpl(root);
+bool UniConnectionPoint::loadFormXml(QXmlStreamReader *root){
+    return loadFormXmlImpl(root);
 }
 
-bool UniConnectionPoint::saveStatusToXml(QXmlStreamWriter *root){
-    return saveStatusToXmlImpl(root);
+bool UniConnectionPoint::saveToXml(QXmlStreamWriter *root){
+    return saveToXmlImpl(root);
 }
 
-bool UniConnectionPoint::loadLinkStatusFormXml(QXmlStreamReader *root){
-    return loadLinkStatusFormXmlImpl(root);
+bool UniConnectionPoint::loadLinkFormXml(UniConnectionPoint* targetPoint, const QString& lineText){
+    return loadLinkFormXmlImpl(targetPoint,lineText);
 }
 
-bool UniConnectionPoint::saveLinkStatusToXml(QXmlStreamWriter *root){
-    return saveLinkStatusToXmlImpl(root);
+bool UniConnectionPoint::saveLinkToXml(QXmlStreamWriter *root){
+    return saveLinkSToXmlImpl(root);
 }
 
 void UniConnectionPoint::setBindStautes(bool newLinkStautes)
@@ -311,10 +326,14 @@ QList<QPoint> UniConnectionPoint::gnerateLinePointList(UniConnectionPoint *targe
 {
     if(target == nullptr) return {};
 
+    static const int spacer = 40;
+
     QList<QPoint> res;
     QPoint thisPos= this->scenePos().toPoint();
     QPoint targetPos= target->scenePos().toPoint();
 
+
+    //同向
     if(_selfPos == target->_selfPos){
         //Same direction
         switch(_selfPos){
@@ -344,6 +363,7 @@ QList<QPoint> UniConnectionPoint::gnerateLinePointList(UniConnectionPoint *targe
         return res;
     }
 
+    //
     if((_selfPos == COOR_POS::ABOVE && target->_selfPos == COOR_POS::BELOW)
         || (_selfPos == COOR_POS::LEFT && target->_selfPos == COOR_POS::RIGHT)
         || (target->_selfPos == COOR_POS::ABOVE && _selfPos == COOR_POS::BELOW)
@@ -405,80 +425,102 @@ QList<QPoint> UniConnectionPoint::gnerateLinePointList(UniConnectionPoint *targe
         return res;
     }
 
+
+
+
+
+
+    QPoint tempPoint = thisPos;
+
+//    if(thisPos.x() == targetPos.x()){
+//        if(thisPos.y() == targetPos.y()){
+//            tempPoint.setX((thisPos.x() + targetPos.x())/2);
+//            tempPoint.setY((thisPos.y() + targetPos.y())/2);
+
+//            res.push_back(tempPoint);
+//        }else{
+//            res.push_back(targetPos);
+//        }
+
+//        return res;
+//    }else{
+//        if(thisPos.y() == targetPos.y()){
+//            res.push_back(targetPos);
+//        }else{
+//            if(takeXFirst){
+//                res.push_back({thisPos.x(),targetPos.y()});
+//            }else{
+//                res.push_back({targetPos.x(),thisPos.y()});
+//            }
+//            res.push_back(targetPos);
+//        }
+//    }
+//    return res;
+
+
     bool takeXFirst =false;
     switch(_selfPos){
     case COOR_POS::ABOVE:{
-        thisPos.setY(thisPos.y()-40);
-        res.push_back(thisPos);
+        tempPoint.setY(thisPos.y()-spacer);
+        res.push_back(tempPoint);
         takeXFirst=false;
         break;
     }
     case COOR_POS::BELOW:{
-        thisPos.setY(thisPos.y()+40);
-        res.push_back(thisPos);
+        tempPoint.setY(thisPos.y()+spacer);
+        res.push_back(tempPoint);
         takeXFirst=false;
         break;
     }
     case COOR_POS::LEFT:{
-        thisPos.setX(thisPos.x()-40);
-        res.push_back(thisPos);
+        tempPoint.setX(thisPos.x()-spacer);
+        res.push_back(tempPoint);
         takeXFirst=true;
         break;
     }
     case COOR_POS::RIGHT:{
-        thisPos.setX(thisPos.x()+40);
-        res.push_back(thisPos);
+        tempPoint.setX(thisPos.x()+spacer);
+        res.push_back(tempPoint);
         takeXFirst=true;
         break;
     }
     }
 
+    tempPoint = targetPos;
     switch(target->_selfPos){
     case COOR_POS::ABOVE:{
-        targetPos.setY(targetPos.y()-40);
-        res.push_back(targetPos);
+        tempPoint.setY(targetPos.y()-spacer);
+        res.push_back(tempPoint);
+        tempPoint.setX(targetPos.x());
+        res.push_back(tempPoint);
         break;
     }
     case COOR_POS::BELOW:{
-        targetPos.setY(targetPos.y()+40);
-        res.push_back(targetPos);
+        tempPoint.setY(targetPos.y()+spacer);
+        res.push_back(tempPoint);
+        tempPoint.setX(targetPos.x());
+        res.push_back(tempPoint);
         break;
     }
     case COOR_POS::LEFT:{
-        targetPos.setX(targetPos.x()-40);
-        res.push_back(targetPos);
+        tempPoint.setX(targetPos.x()-spacer);
+        res.push_back(tempPoint);
+        tempPoint.setY(targetPos.y());
+        res.push_back(tempPoint);
         break;
     }
     case COOR_POS::RIGHT:{
-        targetPos.setX(targetPos.x()+40);
-        res.push_back(targetPos);
+        tempPoint.setX(targetPos.x()+spacer);
+        res.push_back(tempPoint);
+        tempPoint.setY(targetPos.y());
+        res.push_back(tempPoint);
         break;
     }
     }
-    res.push_back(thisPos);
-
-    if(thisPos.x() == targetPos.x()){
-        if(thisPos.y() == targetPos.y()){
-            //One Point is enough
-            ;
-        }else{
-            res.push_back(targetPos);
-        }
-    }else{
-        if(thisPos.y() == targetPos.y()){
-            res.push_back(targetPos);
-        }else{
-            if(takeXFirst){
-                res.push_back({thisPos.x(),targetPos.y()});
-            }else{
-                res.push_back({targetPos.x(),thisPos.y()});
-            }
-            res.push_back(targetPos);
-        }
-    }
-
-
     return res;
+
+
+
 }
 
 void UniConnectionPoint::initial()
@@ -495,7 +537,7 @@ void UniConnectionPoint::initial()
 
     //Sig connect
     //Make sure every sig will be update
-    connect(this,&UniConnectionPoint::requestGenratePath,this,&UniConnectionPoint::gneratePainterPath);//todo this should be delete, it should not be connect by this.
+    connect(this,&UniConnectionPoint::requestGenratePath,this,&UniConnectionPoint::gneratePainterPath);//note this should be delete, it should not be connect by this.
 
     //After init gnerate the first painter path.
     gneratePainterPath();
@@ -540,14 +582,18 @@ void UniConnectionPoint::gneratePainterPath()
     _boudingRect.setWidth(_boudingRect.width()+12);
 
     //Update this graphics item.
-    this->update();
+    update();
 }
 
 void UniConnectionPoint::gnerateText()
 {
-    _finalText = _pointName + ((_maxBindItemNumber ==1) ? \
-                                                           QString(" (%1)").arg(_dataBitsLen) : \
-                                                           QString(" (%1,%2/%3)").arg(_dataBitsLen).arg(_bindPointVec.size()).arg(_maxBindItemNumber));
+
+    _finalText = _pointName + QString::number(_dataBitsLen);
+
+    /* + ((_maxBindItemNumber ==1) ? \
+     * QString(" (%1)").arg(_dataBitsLen) : \
+     * QString(" (%1,%2/%3)").arg(_dataBitsLen).arg(_bindPointVec.size()).arg(_maxBindItemNumber));
+    */
 
     QFontMetrics fm{_textFont};
     QRect finalTextBouding = fm.boundingRect(_finalText);
@@ -661,7 +707,7 @@ bool UniConnectionPoint::bindConnectionPointImpl(UniConnectionPoint *targetConne
     if(_bindPointVec.size() >= _maxBindItemNumber) return false;
 
     if(_outputConnectionPoint){
-        auto linePointList  =gnerateLinePointList(targetConnectionPoint);
+        auto linePointList  = gnerateLinePointList(targetConnectionPoint);
         UniLinkLine* lineHead=nullptr,*lineTail=nullptr;
         if(creatNewLine(linePointList,&lineHead,&lineTail)){
             _bindPointVec.push_back(targetConnectionPoint);
@@ -695,6 +741,94 @@ bool UniConnectionPoint::bindConnectionPointImpl(UniConnectionPoint *targetConne
     return true;
 }
 
+bool UniConnectionPoint::bindConnectionPointWithLineTextImpl(UniConnectionPoint *targetConnectionPoint,const QString& lineText){
+    //sig connect
+    //link line position change
+    //data change--Will be set when data been set and changed
+    //Data set function .this must be the same bits array.--Maybe some time later could add
+    //target point deleted sig--Will auotmatic unbind all link relation, no need to care
+    if(targetConnectionPoint==nullptr) return false;
+    if(isBindThisConnnectionPoint(targetConnectionPoint))return true;
+    if(targetConnectionPoint->_outputConnectionPoint == _outputConnectionPoint){
+        qWarning()<<"It is not allowed to connect two points with the same input/output attributes together.";
+
+        emit toastInfo(tr("注意"),
+                       tr("不允许将具有相同输入/输出的数据连接点连接到一起。"),
+                       true,
+                       AMTL::ToastInfoPosition::TIP_RIGHT_BOTTOM,
+                       AMTL::ToastInfoType::TIP_WARNING);
+
+        targetConnectionPoint->update();
+
+        update();
+        return false;
+    }
+
+    if((_outputConnectionPoint == false && _bindPointVec.size())
+        || (targetConnectionPoint->_outputConnectionPoint ==false && targetConnectionPoint->_bindPointVec.size())){
+
+        qWarning()<<"It is not allowed for one input connection point to connect multiple output endpoints.("<< _id <<":" <<_pointName<<")";
+
+        targetConnectionPoint->update();
+
+        update();
+        return false;
+    }
+    if(_bindPointVec.size() >= _maxBindItemNumber) return false;
+
+    if(_outputConnectionPoint){
+
+        UniLinkLine* lineHead=nullptr,*lineTail=nullptr;
+        auto line = UniLinkLine::loadLineFromText(lineText);
+
+        if(line.size()!=2){
+            //line creat fail
+            qFatal("创建连接点失败，检查输入参数");
+            assert("line should be two");
+            return false;
+        }
+
+        lineHead = line[0];
+        lineTail = line[1];
+
+        if(scene() != nullptr){
+            auto ptr = lineHead;
+            auto scenePtr=scene();
+
+            while(ptr!=lineTail){
+                scenePtr->addItem(ptr);
+                ptr=ptr->getNextItem();
+            }
+            scenePtr->addItem(ptr);
+        }
+
+        _bindPointVec.push_back(targetConnectionPoint);
+        _lineHeadVec.push_back(lineHead);
+        _lineTailVec.push_back(lineTail);
+
+        connect(lineHead,&UniLinkLine::positionChange,this,&UniConnectionPoint::linkLineItemPoschange);
+        connect(lineHead,&UniLinkLine::positionHasChanged,this,&UniConnectionPoint::linkLineItemPosHasChanged);
+        connect(lineHead,&UniLinkLine::tellUnbind,this,&UniConnectionPoint::linkLineRequestUnbind);
+
+        //Make sure target save all the info
+        if(Q_LIKELY(targetConnectionPoint->bindConnctionPointInputImpl(this,lineHead,lineTail))){
+            targetConnectionPoint->inputDataValue(*_dataPtrSelf.data());
+            ;
+        }else{
+            assert("Please check head and tail is create?");
+        }
+
+    }else{
+        //Give control rights to target point;
+        return targetConnectionPoint->bindConnectionPointWithLineTextImpl(this,lineText);
+    }
+
+    qInfo()<<"The data connection point was successfully bound. Output("<<_id<<":"<<_pointName<<")-Input("<<targetConnectionPoint->_id<<":"<<targetConnectionPoint->_pointName<<")";
+
+    gneratePainterPath();
+    return true;
+}
+
 bool UniConnectionPoint::unBindConnectionPointImpl(UniConnectionPoint *targetConnectionPoint)
 {
     if(targetConnectionPoint == nullptr) return false;
@@ -707,14 +841,25 @@ bool UniConnectionPoint::unBindConnectionPointImpl(UniConnectionPoint *targetCon
         lineHead = _lineHeadVec[index];
         lineTail = _lineTailVec[index];
 
-        //Pop out all resources stored here.
-        _bindPointVec.erase(_bindPointVec.begin()+index);
-        _lineHeadVec.erase(_lineHeadVec.begin()+index);
-        _lineTailVec.erase(_lineTailVec.begin()+index);
+        //Pop out all resources stored here.-safe
 
+        _bindPointVec.erase(_bindPointVec.constBegin()+index);
+        _lineHeadVec.erase(_lineHeadVec.constBegin()+index);
+        _lineTailVec.erase(_lineTailVec.constBegin()+index);
+//        auto bindStart = _bindPointVec.constBegin();
+//        auto lineHeadStart = _lineHeadVec.constBegin();
+//        auto lineTailStart = _lineTailVec.constBegin();
+//        _bindPointVec.erase(bindStart+index);
+//        _lineHeadVec.erase(lineHeadStart+index);
+//        _lineTailVec.erase(lineTailStart+index);
+
+        //release all the line elements;-safe
         deleteLine(lineHead,lineTail);
+
+        //The target link to unload the data, note here it might be a input point strat a unbind and back here, but now it's parent component might be delete so it will be a nullptr problem.
         targetConnectionPoint->unBindConnectionPointInputImpl(this);
     }else{
+        //Dame this is the problem
         //Give control rights to output points;
         return targetConnectionPoint->unBindConnectionPointImpl(this);
     }
@@ -745,6 +890,7 @@ bool UniConnectionPoint::bindConnctionPointInputImpl(UniConnectionPoint *target,
 
 bool UniConnectionPoint::unBindConnectionPointInputImpl(UniConnectionPoint *targetPoint)
 {
+    //找到目标解绑的连接点
     int index = findBindConnectionPointIndex(targetPoint);
     if(index==-1) return false;
 
@@ -755,43 +901,144 @@ bool UniConnectionPoint::unBindConnectionPointInputImpl(UniConnectionPoint *targ
     _lineHeadVec.erase(_lineHeadVec.constBegin()+index);
     _lineTailVec.erase(_lineTailVec.constBegin()+index);
 
+    //重新生成路径
     gneratePainterPath();
     return true;
 }
 
-bool UniConnectionPoint::loadStatusFormXmlImpl(QXmlStreamReader *root){
-    return false;
-}
-
-bool UniConnectionPoint::saveStatusToXmlImpl(QXmlStreamWriter *root){
-    return false;
+bool UniConnectionPoint::loadFormXmlImpl(QXmlStreamReader *root){
     if(root == nullptr) {
         qCritical()<<"XMl stream write is a nullptr";
         return false;
     }
 
-    root->writeStartElement("ConnectionPoint");
+    while(!root->atEnd()){
+
+        //UniConnectionPoint Part read
+        if(root->tokenType() == QXmlStreamReader::TokenType::StartElement
+            && UniCCPointXmlLabel == root->name().toString()){
+            //UniConnectionPoint xml part
+
+            //Basic info just ignore
+            if(root->tokenType() == QXmlStreamReader::TokenType::StartElement
+                && UniCCPointXmlLabel == root->name().toString()){
+                QXmlStreamAttributes attr = root->attributes();
+                if(attr.hasAttribute("high_resistance")){
+                    _highResistance = attr.value("high_resistance").toInt();
+                }
+            }
+
+            //Data
+            if(root->tokenType() == QXmlStreamReader::TokenType::StartElement
+                && UniCCPointDataXmlLabel == root->name().toString()){
+
+                QXmlStreamAttributes attrs = root->attributes();
+                long bits_len= -1 ;
+                if(attrs.hasAttribute("data_bits_len")){
+                    bits_len = attrs.value("data_bits_len").toLong();
+                }
+                if(bits_len != _dataBitsLen){
+                    assert("data bits len should be the same");
+                    return false;
+                }
+
+                //Start read uniconnection data
+                root->readNext();
+                for(int i=0;i<bits_len && !root->atEnd() ;){
+                    if(root->tokenType() == QXmlStreamReader::TokenType::StartElement
+                        && UniCCPointBDataXmlLabel == root->name().toString()){
+                        attrs = root->attributes();
+                        if(attrs.hasAttribute("data")){
+                            _dataPtrSelf->setBit(i,(bool)attrs.value("value").toInt());
+                        }
+                    }
+
+                    if(root->tokenType() == QXmlStreamReader::TokenType::EndElement
+                        && UniCCPointBDataXmlLabel == root->name().toString()){
+                        ++i;
+                    }
+
+                    root->readNext();
+                }//Read end;
+
+            }
+
+        }
+
+        if(root->tokenType() == QXmlStreamReader::TokenType::EndElement
+            && UniCCPointXmlLabel == root->name().toString()){
+            break;
+        }
+
+        root->readNext();
+    }
+
+    return true;
+}
+
+bool UniConnectionPoint::saveToXmlImpl(QXmlStreamWriter *root){
+    if(root == nullptr) {
+        qCritical()<<"XMl stream write is a nullptr";
+        return false;
+    }
+
+    root->writeStartElement(UniCCPointXmlLabel);
+
     root->writeAttribute("id",QString::number(_id));
     root->writeAttribute("self_pos",QString::number((int)_selfPos));
     root->writeAttribute("output_connection_point",QString::number(_outputConnectionPoint));
     root->writeAttribute("point_name",_pointName);
+    root->writeAttribute("high_resistance",QString::number(_highResistance));
 
+    {//Data-bits start
+        root->writeStartElement(UniCCPointDataXmlLabel);
+        root->writeAttribute("data_bits_len",QString::number(_dataBitsLen));
+        for(int i=0;i<_dataBitsLen; ++i){
+            root->writeStartElement(UniCCPointBDataXmlLabel);
+            root->writeAttribute("value",QString::number(_dataPtrSelf->testBit(i)));
+            root->writeEndElement();
+        }
+        root->writeEndElement();
+    }//UNiCCPoint data end;
 
-    root->writeEndElement();
+    root->writeEndElement();//UniCCPoint end;
 
-    //todo write connection point info to this xml
-
-    root->writeEndElement();
     return true;
 }
 
-bool UniConnectionPoint::loadLinkStatusFormXmlImpl(QXmlStreamReader *root){
+bool UniConnectionPoint::loadLinkFormXmlImpl(UniConnectionPoint* targetPoint, const QString& lineText){
+    if(nullptr == targetPoint) {return false;}
 
-    return false;
+    return bindConnectionPointWithLineTextImpl(targetPoint,lineText);
 }
 
-bool UniConnectionPoint::saveLinkStatusToXmlImpl(QXmlStreamWriter *root){
-    return false;
+bool UniConnectionPoint::saveLinkSToXmlImpl(QXmlStreamWriter *root){
+    if(root == nullptr) {
+        qCritical()<<"XMl stream write is a nullptr";
+        return false;
+    }
+
+    root->writeStartElement(UniCCPointLineXmlLabel);
+    if(_outputConnectionPoint){
+        root->writeAttribute("parent_scene_id",QString::number(_parentItemSceneId));
+        root->writeAttribute("line_num",QString::number(_bindPointVec.size()));
+        for(int i = 0;i<_bindPointVec.size();++i){
+            root->writeStartElement("line");
+            root->writeAttribute("from_connection_point_id",QString::number(_id));
+
+            root->writeAttribute("target_parent_scene_id",QString::number(_bindPointVec[i]->_parentItemSceneId));
+            root->writeAttribute("target_connection_point_id",QString::number(_bindPointVec[i]->_id));
+            root->writeCharacters(UniLinkLine::saveLineToText(_lineHeadVec[i]));
+            root->writeEndElement();
+        }
+    }else{
+        root->writeAttribute("parent_scene_id",QString::number(_parentItemSceneId));
+        root->writeAttribute("line_num",QString::number(0));
+    }
+
+    root->writeEndElement();
+
+    return true;
 }
 
 
@@ -846,10 +1093,10 @@ void UniConnectionPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing);//抗锯齿
 
-    if(isSelected()){
-        painter->setPen(Qt::DashDotLine);
-        painter->drawRoundedRect(_boudingRect,8,8);
-    }
+//    if(isSelected()){
+//        painter->setPen(Qt::DashDotLine);
+//        painter->drawRoundedRect(_boudingRect,8,8);
+//    }
 
     //Link Line
     painter->setPen(__uniNorPen);
@@ -894,6 +1141,53 @@ void UniConnectionPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem
 QPainterPath UniConnectionPoint::shape() const
 {
     return _itemPainterPath;
+}
+
+void UniConnectionPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
+    QGraphicsView* view= qobject_cast<QGraphicsView*>(event->widget()->parentWidget());
+    if(view == nullptr){
+        qWarning()<<"The graphics view component does not exist and the context menu cannot be generated.";
+        return;
+    }
+
+    QMenu* menu=new QMenu(view);
+    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(menu);
+
+    shadow->setOffset(0, 0);
+    shadow->setColor(QColor(68, 68, 68));
+    shadow->setBlurRadius(10);
+    menu->setToolTipsVisible(true);
+    menu->setToolTipDuration(2000);
+    menu->setWindowFlags(menu->windowFlags()  | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+    menu->setAttribute(Qt::WA_TranslucentBackground,true);
+    menu->setGraphicsEffect(shadow);
+    menu->setStyleSheet("QMenu{color:black;background-color:white; border-radius:4px;padding:6px;margin:8px;}"
+                        "QMenu::item:text{ padding-left:8px;padding-right:8px; padding-top: 8px; padding-bottom: 8px;}"
+                        "QMenu::item:selected{ color:#ffffff;background-color: #ea5455; border-radius:4px;}"
+                        "QMenu::separator{height:1px;background:#bbbbbb;margin:5px;margin-left:10px;margin-right:10px;}");
+
+    if(_outputConnectionPoint){
+        menu->addAction("输出连接点");
+    }else{
+        menu->addAction("输入连接点");
+    }
+    menu->addAction(_pointName);
+    menu->addSeparator();
+    menu->addAction("Data Bits Len "+ QString::number(_dataBitsLen));
+    menu->addAction("Data max link num " + QString::number(_maxBindItemNumber));
+    menu->addAction("Cur link num " + QString::number(_bindPointVec.size()));
+    menu->addSeparator();
+    for(int i=0;i<_dataBitsLen && i<5 ;++i){
+        menu->addMenu("Data "+QString::number(i)+"-"+QString::number(_dataPtrSelf->testBit(i)));
+    }
+    if(_dataBitsLen >5 ){
+        menu->addAction("...");
+    }
+
+    connect(menu,&QMenu::aboutToHide,menu,&QMenu::deleteLater);
+
+    //Bug will out put UpdateLayeredWindowIndirect failed for ptDst=(868, 552), size=(123x121), dirty=(143x141 -10, -10) (参数错误。)
+    menu->exec(QCursor::pos());
 }
 
 QVariant UniConnectionPoint::itemChange(GraphicsItemChange change, const QVariant &value)

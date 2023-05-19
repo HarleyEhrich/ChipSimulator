@@ -37,6 +37,33 @@ void ToastInfoWidget::init()
 
 void ToastInfoWidget::initAni()
 {
+    switch (_pos) {
+    case AMTL::ToastInfoPosition::TIP_RIGHT_TOP:{
+        break;
+    }
+    case AMTL::ToastInfoPosition::TIP_RIGHT_BOTTOM:{
+
+
+        break;
+    }
+    case AMTL::ToastInfoPosition::TIP_LEFT_TOP:{
+
+        break;
+    }
+    case AMTL::ToastInfoPosition::TIP_LEFT_BOTTOM:{
+        break;
+    }
+    case AMTL::ToastInfoPosition::TIP_MID_TOP:{
+        break;
+    }
+    case AMTL::ToastInfoPosition::TIP_MID_BOTTOM:{
+        break;
+    }
+    default:
+        break;
+    }
+
+
     popOutAni = new QPropertyAnimation(this,"geometry");
     QRect startGeo = geometry();
     QRect endGemo = geometry();

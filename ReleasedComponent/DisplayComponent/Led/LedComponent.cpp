@@ -13,7 +13,7 @@ LedComponent::LedComponent(long sceneID, QGraphicsItem *parent, QObject* parentO
 {
     initial();
 
-    //todo this is a default num
+    //this is a default num
     setLightBallCount(4);
 }
 
@@ -50,13 +50,14 @@ void LedComponent::initial(){
                             "You can use the color to visually observe the value of the data.",
                             "Bulid In",
                             "2023-05-01",
-                            ""//todo image path not set
+                            "rgb.png"
                             );
     }
 
     connect(this,&LedComponent::tellComNickNameChange,this,&LedComponent::updateAllStauts);
 
     _ledCountSetWidget.reset(new QSpinBox(nullptr));
+    _ledCountSetWidget->setMinimum(1);
     connect(_ledCountSetWidget.data(),&QSpinBox::valueChanged,this,[=](int value){
         setLightBallCountImpl(value);
     });

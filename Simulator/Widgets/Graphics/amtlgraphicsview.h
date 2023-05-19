@@ -1,6 +1,14 @@
 #ifndef AMTLGRAPHICSVIEW_H
 #define AMTLGRAPHICSVIEW_H
 
+/**
+*    @file:    AmtlGraphicsView.h
+*    @brief:   视图-不准包含组件loader
+*    @author:  harley_ehrich@outlook.com
+*    @date:    2023-05-18  15:00
+*/
+
+
 #include <QDebug>
 #include <QGraphicsEffect>
 #include <QGraphicsItem>
@@ -17,13 +25,15 @@
 #include <QLayout>
 #include <QSharedPointer>
 #include <QWeakPointer>
-#include <QPluginLoader>
+//#include <QPluginLoader>
+
+
+#include <abstractconinterface.h>
 
 #include "Include/ProjectInclude.h"
+
 #include "MultiplexedScendaryWidget/ViewControlUnitWidget.h"
 #include "AmtlGraphicsScene.h"
-#include "abstractconinterface.h"
-
 
 class AmtlGraphicsView : public QGraphicsView
 {
@@ -31,19 +41,18 @@ class AmtlGraphicsView : public QGraphicsView
     Q_OBJECT
 
 
-
-
     //__ Construct && Destroy__//
 public:
+    using QGraphicsView::setScene;
 
     AmtlGraphicsView(QWidget *parent = nullptr);
     virtual ~AmtlGraphicsView();
 
 
-    using QGraphicsView::setScene;
-
     //__ Signals && Slots __//
+
 public slots:
+
     //水平对齐底部
     void alignBottom();
 
@@ -65,24 +74,12 @@ public slots:
 
     //__ Class Functions __//
 public:
-    QWidget* getViewBox(){
-        return _box;
-    }
-
-    void setScene(AmtlGraphicsScene* scene){
-        _scene = QSharedPointer<AmtlGraphicsScene>::create(scene);
-
-        setScene((QGraphicsScene*)scene);
-    }
+    QWidget *getViewBox();
 
     //Recomended way to set scene.
-    void setScene(const QSharedPointer<AmtlGraphicsScene>& scene){
-        _scene = scene;
-    }
+    void setScene(const AmtlGraphicsSceneSPtr& scene);
+    AmtlGraphicsScenePtr getSceneWPtr();
 
-    QWeakPointer<AmtlGraphicsScene> getScene(){
-        return _scene;
-    }
 private:
     void init();
 
@@ -122,11 +119,12 @@ private:
 
     //__ Class Variable __//
 private:
+    AmtlGraphicsSceneSPtr _scene;//Here's a scene ptr, mind it;
+
     QFrame* _box;
     QHBoxLayout* _boxLay;
     QWidget* _container;
     QHBoxLayout* _containerLay;
-
 
     ViewControlUnitWidget* _cuniWidget =nullptr;
 
@@ -136,8 +134,6 @@ private:
     bool _mousePreessed=false;
     QPoint _mousePressedDownPos;
     QPointF _centerScenePos;
-
-    QSharedPointer<AmtlGraphicsScene> _scene;
 
 
     //__ Interface && Override __//
@@ -154,6 +150,7 @@ protected://QWidget
 
 
 };
+MAKE_AUTO_PTR(AmtlGraphicsView);
 
 #endif // AMTLGRAPHICSVIEW_H
 

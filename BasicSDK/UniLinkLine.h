@@ -35,6 +35,7 @@
 #include <QtMath>
 
 #include "GlobalInclude.h"
+#include "UniGraphicsItemObject.h"
 
 class BASICSDK_EXPORT UniLinkLine : public UniGraphicsItemObject
 {
@@ -153,9 +154,6 @@ private:
 
     QGraphicsDropShadowEffect* _shadowEffect;//本体的阴影
 
-
-
-
 public:
     // UniGraphicsItemObject interface
     virtual QPointF getRealItemCenterScenePos() override;
@@ -181,9 +179,10 @@ protected:
     //public static function
 public:
     static QList<UniLinkLine*> creatLineWithPoints(const QList<QPoint>& posVec);
-    static QList<UniLinkLine*> creatLineWithText(const QStringList& list);
-    static QStringList storeLineToText(UniLinkLine* lineHead);
-
+    static QList<UniLinkLine*> loadLineFromTextList(const QStringList& list);
+    static QList<UniLinkLine*> loadLineFromText(const QString& lineText);
+    static QStringList saveLineToTextList(UniLinkLine* lineHead);
+    static QString saveLineToText(UniLinkLine* lineHead);
     //private static function
 private:
     static void InitialStaticVar();
@@ -213,9 +212,8 @@ private:
     inline static QPen __dotActPen;//连接节点画笔
     inline static QPen __dotPen;//节点活动颜色
     inline static QBrush __dotBrush;//连接节点画刷
-
-
-
 };
+
+MAKE_AUTO_PTR(UniLinkLine)
 
 #endif // DRAGGABLELINE_H

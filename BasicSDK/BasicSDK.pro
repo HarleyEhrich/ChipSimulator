@@ -41,7 +41,7 @@ COPY_DEST = $$PWD/../SDK/BasickSDK
 SRC_HEAD_FILES = $$PWD/*.h
 SRC_HEAD_FILES = $$replace(SRC_HEAD_FILES,/,\\)
 
-win32{
+win32|macx{
     CONFIG(debug, debug|release){
         COPY_HEAD_DIR = $${COPY_DEST}/debug/include/
 

@@ -3,8 +3,7 @@
 AmtlGraphicsView::AmtlGraphicsView(QWidget *parent)
     : QGraphicsView(parent)
 {
-    this->init();
-
+    init();
 }
 
 AmtlGraphicsView::~AmtlGraphicsView()
@@ -52,7 +51,6 @@ void AmtlGraphicsView::init()
     _box->setObjectName("elec_view_box");
     _box->setLayout(_boxLay);
 
-
     _boxLay->setObjectName("elec_view_box_lay");
     _boxLay->setContentsMargins(0,0,0,0);
     _boxLay->addWidget(_container);
@@ -64,39 +62,14 @@ void AmtlGraphicsView::init()
     _containerLay->setContentsMargins(0,0,0,0);
     _containerLay->addWidget(this);
 
-    this->setMouseTracking(true);
-
     initViewControlWidget();
 
     setObjectName("elec_view");
-
+    setMouseTracking(true);
     setDragMode(QGraphicsView::RubberBandDrag);
-
     setCacheMode(QGraphicsView::CacheBackground);
-
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    //目前开启状态，等待解决残影问题--已解决
-    //setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::FullViewportUpdate);
-
-//    _box->setStyleSheet("#elec_view_box,elec_view_box_lay{"
-//                        "   background-color: transparent;"
-//                        "   border: 0px;"
-//                        "}"
-//                        "#elec_view_container,elec_view_container_lay{/*Page Container*/"
-//                        "   background-color: transparent;"
-//                        "   border: 0px solid transparent;"
-//                        "   border-radius: 0px;"
-//                        "}"
-//                        "/*特例电路图的样式表*/"
-//                        "#elec_view{"
-//                        "   background-color: rgb(253, 253, 253);"
-//                        "   border: 1px solid transparent;"
-//                        "   border-radius: 6px;"
-//                        "   padding: 4px;"
-//                        "}");
-
 }
 
 void AmtlGraphicsView::initViewControlWidget()
@@ -185,7 +158,7 @@ void AmtlGraphicsView::alignBottomImpl()
         }
 
         if(moveItemToPos(selectItem,newScenePos)==false){
-            qDebug()<<DEBUGINFO<<"During the alignment operation, the target item or its parent node cannot be moved, and the alignment fails.";
+            qDebug().noquote()DEBUGINFO<<"During the alignment operation, the target item or its parent node cannot be moved, and the alignment fails";
         }
     }
 }
@@ -215,7 +188,7 @@ void AmtlGraphicsView::alignCenterImpl()
         }
 
         if(moveItemToPos(selectItem,newScenePos)==false){
-            qDebug()<<DEBUGINFO<<"During the alignment operation, the target item or its parent node cannot be moved, and the alignment fails.";
+            qDebug().noquote()DEBUGINFO<<"During the alignment operation, the target item or its parent node cannot be moved, and the alignment fails";
         }
     }
 }
@@ -250,7 +223,7 @@ void AmtlGraphicsView::alignEndImpl()
         }
 
         if(moveItemToPos(selectItem,newScenePos)==false){
-            qDebug()<<DEBUGINFO<<"During the alignment operation, the target item or its parent node cannot be moved, and the alignment fails.";
+            qDebug().noquote()DEBUGINFO<<"During the alignment operation, the target item or its parent node cannot be moved, and the alignment fails";
         }
     }
 }
@@ -280,7 +253,7 @@ void AmtlGraphicsView::alignMiddleImpl()
         }
 
         if(moveItemToPos(selectItem,newScenePos)==false){
-            qDebug()<<DEBUGINFO<<"During the alignment operation, the target item or its parent node cannot be moved, and the alignment fails.";
+            qDebug().noquote()DEBUGINFO<<"During the alignment operation, the target item or its parent node cannot be moved, and the alignment fails";
         }
     }
 }
@@ -315,7 +288,7 @@ void AmtlGraphicsView::alignStartImpl()
         }
 
         if(moveItemToPos(selectItem,newScenePos)==false){
-            qDebug()<<DEBUGINFO<<"During the alignment operation, the target item or its parent node cannot be moved, and the alignment fails.";
+            qDebug().noquote()DEBUGINFO<<"During the alignment operation, the target item or its parent node cannot be moved, and the alignment fails";
         }
     }
 }
@@ -350,7 +323,7 @@ void AmtlGraphicsView::alignTopImpl()
         }
 
         if(moveItemToPos(selectItem,newScenePos)==false){
-            qDebug()<<DEBUGINFO<<"During the alignment operation, the target item or its parent node cannot be moved, and the alignment fails.";
+            qDebug().noquote()DEBUGINFO<<"During the alignment operation, the target item or its parent node cannot be moved, and the alignment fails";
         }
     }
 }
@@ -412,4 +385,17 @@ void AmtlGraphicsView::resizeEvent(QResizeEvent *event)
 
     //Make the control unit widget stay at the center of the view.
     _cuniWidget->move(event->size().width()/2-_cuniWidget->width()/2,10);
+}
+
+QWidget *AmtlGraphicsView::getViewBox(){
+    return _box;
+}
+
+void AmtlGraphicsView::setScene(const AmtlGraphicsSceneSPtr &scene){
+    _scene = scene;
+    setScene(scene.data());
+}
+
+AmtlGraphicsScenePtr AmtlGraphicsView::getSceneWPtr(){
+    return _scene;
 }

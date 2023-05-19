@@ -10,17 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
     init();
-
-    ElecGraphicsControllor* newCon = new ElecGraphicsControllor(this);
-    _controlVec.push_back(newCon);
-    AmtlGraphicsView* newView = newCon->getNewView().lock().data();
-
-
-
-    newView->show();
-    ui->page_tab_widget->addPage(newView->getViewBox(),"电路图");
 }
 
 MainWindow::~MainWindow()
@@ -50,38 +40,31 @@ void MainWindow::init()
 {
     initMenu();
 
-//    _sidebarShadow=new QGraphicsDropShadowEffect();
-//    _pageStackWidgetContainerShadow=new QGraphicsDropShadowEffect();
+    _comLoader = PluginLoaderController::instance();
+    _listPage = new ComponentListPage(this);
+    _listPage->show();
+    _listPage->setVisible(false);
+    _listPage->updateList();
 
-//    _pageStackWidgetContainerShadow->setColor(QColor(68, 68, 68));
-//    _pageStackWidgetContainerShadow->setBlurRadius(8);
-//    _pageStackWidgetContainerShadow->setOffset(0,0);
-//    ui->elexc_view_container->setGraphicsEffect(_pageStackWidgetContainerShadow);//remind change this to page_tab_container
-//    _sidebarShadow->setColor(QColor(68, 68, 68));
-//    _sidebarShadow->setBlurRadius(8);
-//    _sidebarShadow->setOffset(0,0);
-//    ui->sidebar_container->setGraphicsEffect(_sidebarShadow);
-
-
-
-
+    _elecPageGener = new ElecPageGener();
+    ui->page_tab_widget->setPageGen(_elecPageGener);
 
     QTextBrowser* tb =new QTextBrowser();
     tb->setText("2023-04-13 16:38:10-[Debug]{viewcontrollunit.cpp:75, void __cdecl"
-"ViewControllUnit::on_lock_btn_clicked(bool)}: on_lock_btn_clicked\n"
-"2023-04-13 16:38:11-[Debug]{viewcontrollunit.cpp:75, void __cdecl"
-"ViewControllUnit::on_lock_btn_clicked(bool)}: on_lock_btn_clicked\n"
-"2023-04-13 16:39:42-[Debug]{viewcontrollunit.cpp:75, void __cdecl"
-"ViewControllUnit::on_lock_btn_clicked(bool)}: on_lock_btn_clicked\n"
-"2023-04-13 16:39:48-[Debug]{viewcontrollunit.cpp:75, void __cdecl"
-"ViewControllUnit::on_lock_btn_clicked(bool)}: on_lock_btn_clicked\n"
-"2023-04-13 16:39:49-[Debug]{viewcontrollunit.cpp:75, void __cdecl"
-"ViewControllUnit::on_lock_btn_clicked(bool)}: on_lock_btn_clicked\n"
-"2023-04-13 16:39:49-[Debug]{viewcontrollunit.cpp:75, void __cdecl"
-"ViewControllUnit::on_lock_btn_clicked(bool)}: on_lock_btn_clicked");
+                "ViewControllUnit::on_lock_btn_clicked(bool)}: on_lock_btn_clicked\n"
+                "2023-04-13 16:38:11-[Debug]{viewcontrollunit.cpp:75, void __cdecl"
+                "ViewControllUnit::on_lock_btn_clicked(bool)}: on_lock_btn_clicked\n"
+                "2023-04-13 16:39:42-[Debug]{viewcontrollunit.cpp:75, void __cdecl"
+                "ViewControllUnit::on_lock_btn_clicked(bool)}: on_lock_btn_clicked\n"
+                "2023-04-13 16:39:48-[Debug]{viewcontrollunit.cpp:75, void __cdecl"
+                "ViewControllUnit::on_lock_btn_clicked(bool)}: on_lock_btn_clicked\n"
+                "2023-04-13 16:39:49-[Debug]{viewcontrollunit.cpp:75, void __cdecl"
+                "ViewControllUnit::on_lock_btn_clicked(bool)}: on_lock_btn_clicked\n"
+                "2023-04-13 16:39:49-[Debug]{viewcontrollunit.cpp:75, void __cdecl"
+                "ViewControllUnit::on_lock_btn_clicked(bool)}: on_lock_btn_clicked");
 
-    ui->info_tab_widget->addPage(tb,"BUG输出");
-    ui->info_tab_widget->addPage(new QWidget(),"消息");
+    ui->info_tab_widget->addPage(tb);
+    ui->info_tab_widget->addPage(new QWidget());
 
     ui->page_info_spliter->setHandleWidth(0);
     ui->page_info_spliter->handle(1)->setAttribute(Qt::WA_Hover, true);
@@ -91,13 +74,10 @@ void MainWindow::init()
 void MainWindow::initMenu()
 {
     auto menuItems = findChildren<QMenu*>(Qt::FindChildOption::FindChildrenRecursively);
-
-//    qDebug()<<DEBUGINFO<<menuItems.size();
-
     for(auto& menu : menuItems){
-//        QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(menu);
-//        shadow->setOffset(0, 0);
-//        shadow->setColor(QColor(68, 68, 68));
+        //        QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(menu);
+        //        shadow->setOffset(0, 0);
+        //        shadow->setColor(QColor(68, 68, 68));
         //        shadow->setBlurRadius(8);
         menu->setToolTipsVisible(true);
         menu->setToolTipDuration(2000);
@@ -119,76 +99,24 @@ void MainWindow::initMenu()
 }
 
 
-void MainWindow::on_component_tbtn_clicked()
+void MainWindow::on_component_tbtn_clicked(bool checked)
 {
-    //Load
-    //todo 在此处测试，后期删除
-    QString pluginFilePath=QFileDialog::getOpenFileName(this,"","");
-    qDebug()<<"DLL path:" <<pluginFilePath<<"\n";
-
-    QPluginLoader loader(pluginFilePath);
-    if (loader.load())
-    {
-        QObject *obj = loader.instance();
-        obj->setObjectName(obj->metaObject()->className());
-        qDebug()<<loader.metaData().value("MetaData").toObject();
-        if (obj)
-        {
-            auto pluginIn = qobject_cast<AbstractConInterface*>(obj);
-            if (pluginIn)
-            {
-
-                auto* led= pluginIn->instance(1,nullptr);
-                auto info = led->getComInfo();
-
-                qDebug()<<DEBUGINFO<<info.comId<<info.comName<<info.comAuthor<<info.comImagePath;
-
-                ElecGraphicsControllor* con = _controlVec[0];
-                con->scene()->addItem(led);
-
-                connect(led,&AbstractConInterface::tellCCPointBindStatusChanged,con->scene(),&AmtlGraphicsScene::pairUniConnectionPoint);
-
-
-                auto widgets = led->getComponentWidgtes();
-
-
-                QFrame* box = new QFrame();
-                QVBoxLayout* boxLay = new QVBoxLayout(box);
-
-                for(auto& items : widgets){
-                    boxLay->addWidget(items._widgetSPtr.data());
-                }
-
-                box->show();
-
-            }else{
-                qDebug()<<"Not me";
-            }
+    if(_listPage){
+        if(checked){
+            _listPage->updateList();
+            _listPage->move(ui->component_tbtn->pos().x()+ui->component_tbtn->size().width()+16,16);
         }
-    }else{
-        qDebug()<<loader.errorString()<<"Load fail";
+        _listPage->setVisible(checked);
     }
 }
 
 
-//    AmtlGraphicsView* newView = newCon->getNewView();
-//    AmtlGraphicsScene* newScene=newCon->scene();
-
-//    newScene->setObjectName("scene");
-//    UniConnectionPoint* pointLinkItem = new UniConnectionPoint(2,COOR_POS::RIGHT,true,"输出连接点",1,2);
-//    newScene->addItem(pointLinkItem);
-//    newScene->registerUniConnectionPoint(pointLinkItem);
-//    pointLinkItem->show();
-//    UniConnectionPoint* pointLinkItem1 = new UniConnectionPoint(1,COOR_POS::LEFT,false,"输入连接点1");
-//    newScene->addItem(pointLinkItem1);
-//    newScene->registerUniConnectionPoint(pointLinkItem1);
-//    pointLinkItem1->setPos(-140,50);
-//    pointLinkItem1->show();
-//    UniConnectionPoint* pointLinkItem2 = new UniConnectionPoint(1,COOR_POS::LEFT,false,"输入连接点2");
-//    newScene->addItem(pointLinkItem2);
-//    newScene->registerUniConnectionPoint(pointLinkItem2);
-//    pointLinkItem2->setPos(150,130);
-//    pointLinkItem2->show();
-//    newView->setScene(newScene);
-//    newScene->setSceneRect(-500,-500,1000,1000);
+void MainWindow::on_open_file_tbtn_clicked()
+{
+    auto curPage = ElecPageController::getCurActPage();
+    if(curPage.isNull()){
+        return;
+    }
+    curPage->saveGraphicsToXMl();
+}
 
