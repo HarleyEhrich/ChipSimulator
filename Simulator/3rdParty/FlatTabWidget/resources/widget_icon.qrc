@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/tab_icon">
+        <file>add_grey.svg</file>
+        <file>add_ori.svg</file>
+        <file>close_grey.svg</file>
+        <file>close_ori.svg</file>
+    </qresource>
+</RCC>

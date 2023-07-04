@@ -52,7 +52,7 @@ AbstractConInterface::AbstractConInterface(long sceneID,QGraphicsItem *parent,QO
 }
 
 AbstractConInterface::~AbstractConInterface(){
-    emit tellComAboutDestroy(_sceneId,this);
+//    emit tellComAboutDestroy(_sceneId,this);
 
     _shadowEffect->deleteLater();
 
@@ -236,6 +236,7 @@ bool AbstractConInterface::loadFromXmlAbstractImpl(QXmlStreamReader *root){
     }
 
     while(!root->atEnd()){
+
         //Basic info
         if(root->tokenType() == QXmlStreamReader::TokenType::StartElement
             && ComponetXmlLabel == root->name().toString() ){
@@ -266,8 +267,7 @@ bool AbstractConInterface::loadFromXmlAbstractImpl(QXmlStreamReader *root){
             if(Q_UNLIKELY(root->atEnd())){
                 qCritical()<<"Missing tags in xml file @"<<ComponentExtendXmlLabel;
             }
-            if(root->tokenType() != QXmlStreamReader::TokenType::EndElement
-                && ComponentExtendXmlLabel == root->name().toString()){
+            if(root->tokenType() != QXmlStreamReader::TokenType::EndElement){
                 //如果下一节点不为扩展节点end，就进入读取
                 //got in extend part
                 loadFromXmlExtendImpl(root);
@@ -474,13 +474,13 @@ void AbstractConInterface::intialComponentInfoImpl(const QString &cid, const QSt
 
 
 #ifdef QT_DEBUG
-//#ifdef AVAILABLE_MAC_OS_X_VERSION_10_10_AND_LATER
-//        newStruct->comImagePath = "/Users/lee/Documents/Projects/QT/ChipSimulator/ChipSimulator/ComponentPlugin/debug/bin/" +cImagePath;
 
+    //note macox
+//#ifdef Q_OS_MACOS
+//    newStruct->comImagePath = "/Users/lee/Documents/Projects/QT/ChipSimulator/ChipSimulator/ComponentPlugin/debug/bin/" +cImagePath;
 //#elif
         newStruct->comImagePath = "C:/Users/Lee/Documents/Project/Qt/ChipSimulator/ChipSimulator/ComponentPlugin/debug/bin/" +cImagePath;
 //#endif
-
 
 #elif
     newStruct->comImagePath = "./Resources/Plugin/" + cImagePath;

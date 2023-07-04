@@ -264,6 +264,7 @@ bool LedComponent::loadFromXmlExtendImpl(QXmlStreamReader *root)
             //read attrs
             if(attrs.hasAttribute("light_ball_count")){
                 int lightBallCount=attrs.value("light_ball_count").toInt();
+                qDebug().noquote()<<lightBallCount;
                 setLightBallCount(lightBallCount);
             }
         }

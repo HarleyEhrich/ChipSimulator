@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
+    Calculator/Alu \
     DisplayComponent/Led \
     Gate/AndGate \
     Gate/AndReverseGate \
@@ -10,4 +11,10 @@ SUBDIRS += \
     Gate/TriStateGate \
     Gate/XNORGate \
     Gate/XORGate \
-    InputComponent/Switch
+    InputComponent/Switch \
+    StoreComponent/74Ls374Register \
+    StoreComponent/DFlipFlop \
+    StoreComponent/Ram \
+    StoreComponent/RegisterZHTickUpdate
+#    StoreComponent/RegisterHTickOutput
+

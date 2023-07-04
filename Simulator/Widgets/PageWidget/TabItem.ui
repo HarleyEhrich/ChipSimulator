@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TabItem</class>
+ <widget class="QWidget" name="TabItem">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>109</width>
+    <height>33</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#box{
+	background-color: #f3f3f3;
+	border: 0px;
+	border-radius:4px;
+	margin: 2px;
+	padding: 2px;
+}
+
+#box:hover{
+	background-color: rgba(0, 43, 91, 180);
+	color: rgb(238, 238, 238);
+}
+
+
+#container .QToolButton{
+	background-color: transparent;
+	border: 1px transparent;
+	border-radius: 2px;
+	padding: 2px 2px 2px 2px;
+}
+
+#container .QToolButton:hover{
+	background-color: rgba(231, 231, 231,220);
+}
+
+#title{
+	font: 400 10pt &quot;思源黑体 CN Normal&quot;;
+	min-width: 48px;
+}</string>
+  </property>
+  <layout class="QHBoxLayout" name="tab_matser_lay">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="box">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="tab_box_lay">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="container" native="true">
+        <layout class="QHBoxLayout" name="tab_container_lay">
+         <property name="spacing">
+          <number>4</number>
+         </property>
+         <property name="leftMargin">
+          <number>8</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>8</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="title">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="lineWidth">
+            <number>0</number>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="close_tbtn">
+           <property name="toolTip">
+            <string>关闭该页面</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../Resource/widget_icon/widget_icon.qrc">
+             <normaloff>:/tab_widget/TabWidget/close_grey.svg</normaloff>:/tab_widget/TabWidget/close_grey.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>18</width>
+             <height>18</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../Resource/widget_icon/widget_icon.qrc"/>
+ </resources>
+ <connections/>
+</ui>

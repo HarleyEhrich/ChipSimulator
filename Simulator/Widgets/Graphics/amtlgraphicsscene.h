@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QMap>
 #include <QObject>
 #include <QPainter>
 #include <QPen>
@@ -31,17 +32,34 @@ class AmtlGraphicsScene : public QGraphicsScene
 public:
     explicit AmtlGraphicsScene(QObject *parent = nullptr);
 
-//Sig and slots
+    virtual ~AmtlGraphicsScene();
+
+    //Sig and slots
 signals:
     void requestToastInfo(QString infoTitle,
-                   QString info,
-                   bool autoHide=true,
-                   AMTL::ToastInfoPosition showPos = AMTL::ToastInfoPosition::TIP_RIGHT_BOTTOM,
-                   AMTL::ToastInfoType infoType = AMTL::ToastInfoType::TIP_DEFAULT);
+                          QString info,
+                          bool autoHide=true,
+                          AMTL::ToastInfoPosition showPos = AMTL::ToastInfoPosition::TIP_RIGHT_BOTTOM,
+                          AMTL::ToastInfoType infoType = AMTL::ToastInfoType::TIP_DEFAULT);
 
 public slots:
     void pairUniConnectionPoint(bool linkStatus,UniConnectionPointPtr target);
 
+    void tickOneTime(bool tickZH){
+        if(tickZH){
+            //make a zero-high tick
+            auto iter = _comSceneIdMap.begin();
+            while(iter != _comSceneIdMap.end()){
+                iter.key()->tick(TICK_TYPE::HIGH_ZERO);
+            }
+        }else{
+            //make a zero-high tick
+            auto iter = _comSceneIdMap.begin();
+            while(iter != _comSceneIdMap.end()){
+                iter.key()->tick(TICK_TYPE::ZERO_HIGH);
+            }
+        }
+    }
 public:
     bool loadGraphicFromXMl(const QString& filePath, QVector<AbstractConInterface*>& comVec);
 
@@ -49,10 +67,10 @@ public:
 
     //创建一个toast info
     void makeToastInfo(QString infoTitle,
-                        QString info,
-                        bool autoHide=true,
-                        AMTL::ToastInfoPosition showPos = AMTL::ToastInfoPosition::TIP_RIGHT_BOTTOM,
-                        AMTL::ToastInfoType infoType = AMTL::ToastInfoType::TIP_DEFAULT);
+                       QString info,
+                       bool autoHide=true,
+                       AMTL::ToastInfoPosition showPos = AMTL::ToastInfoPosition::TIP_RIGHT_BOTTOM,
+                       AMTL::ToastInfoType infoType = AMTL::ToastInfoType::TIP_DEFAULT);
 
 
 public:
@@ -61,8 +79,16 @@ public:
 
 protected:
     AbstractConInterface* addComponentImpl(AbstractConInterface* comItem);
-    void removeComponentImpl(long sceneId,AbstractConInterface* comptr);
+    void removeComponentImpl(QObject *objPtr);
     AbstractConInterface* creatComponentImpl(AbstractConInterface* factory);
+
+private:
+    bool loadGraphicFromXmlImpl(const QString& filePath, QVector<AbstractConInterface*>& comVec);
+    bool loadLinks(QXmlStreamReader& reader);
+    bool loadComAllConnectionLinks(QXmlStreamReader& reader,AbstractConInterface* startElement);
+    bool loadConnectionPointLine(QXmlStreamReader& reader,AbstractConInterface* startElement,long curCCPId,int lineNum);
+
+    bool saveGraphicToXMLImpl(const QString &filePath);
 
 private:
     UniConnectionPointPtr _firstPair;
@@ -75,10 +101,10 @@ private:
     //interface
 protected:
     virtual void drawBackground(QPainter *painter, const QRectF &rect) override;
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 };
 MAKE_AUTO_PTR(AmtlGraphicsScene);
 

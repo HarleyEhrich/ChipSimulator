@@ -132,7 +132,7 @@ signals:
 
     void tellCCPointBindStatusChanged(bool newStatus, UniConnectionPointPtr target);
 
-    void tellComAboutDestroy(long comId,AbstractConInterface* com);
+//    void tellComAboutDestroy(long comId,AbstractConInterface* com);
 
 public slots:
     void connectionDataChange(UniConnectionPoint *changePtr, qsizetype changedIndex, int changeLen);

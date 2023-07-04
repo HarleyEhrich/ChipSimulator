@@ -5,9 +5,18 @@
 
 AmtlGraphicsScene::AmtlGraphicsScene(QObject *parent)
     : QGraphicsScene{parent},
-    _curScneId(0)
-{
+    _curScneId(0){
 
+}
+
+AmtlGraphicsScene::~AmtlGraphicsScene(){
+    _firstPair.clear();
+    for(auto iter = _comSceneIdMap.begin();iter != _comSceneIdMap.end();++iter){
+        iter.key()->deleteLater();
+        //Release the com resources;
+    }
+    _comSceneIdMap.clear();
+    _sceneIdComMap.clear();
 }
 
 void AmtlGraphicsScene::pairUniConnectionPoint(bool linkStatus, UniConnectionPointPtr target)
@@ -40,6 +49,74 @@ void AmtlGraphicsScene::pairUniConnectionPoint(bool linkStatus, UniConnectionPoi
 }
 
 bool AmtlGraphicsScene::loadGraphicFromXMl(const QString &filePath, QVector<AbstractConInterface *> &comVec){
+    return loadGraphicFromXmlImpl(filePath,comVec);
+}
+
+bool AmtlGraphicsScene::saveGraphicToXML(const QString &filePath){
+    return saveGraphicToXMLImpl(filePath);
+}
+
+
+void AmtlGraphicsScene::makeToastInfo(QString infoTitle, QString info, bool autoHide, AMTL::ToastInfoPosition showPos, AMTL::ToastInfoType infoType)
+{
+    //Re pos this to mainwindow to show this toast info
+    emit requestToastInfo(infoTitle,info,autoHide,showPos,infoType);
+}
+
+AbstractConInterface *AmtlGraphicsScene::addComponent(AbstractConInterface *comItem){
+    return addComponentImpl(comItem);
+}
+
+AbstractConInterface* AmtlGraphicsScene::creatComponent(AbstractConInterface* factory){
+    return creatComponentImpl(factory);
+}
+
+AbstractConInterface *AmtlGraphicsScene::addComponentImpl(AbstractConInterface *comItem){
+    qDebug().noquote()DEBUGINFO<<tr("Component component @")<<comItem->getComInfoSPtr()->comName<<"/"<<comItem->getSceneId();
+
+    _sceneIdComMap[comItem->getSceneId()] = comItem;
+    _comSceneIdMap[comItem] = comItem->getSceneId();
+    addItem(comItem);
+    comItem->show();
+
+    //Bind
+    connect(comItem,&AbstractConInterface::tellCCPointBindStatusChanged,this,&AmtlGraphicsScene::pairUniConnectionPoint);
+    //Remove the com when com was delete
+    connect(comItem,&AbstractConInterface::destroyed,this,&AmtlGraphicsScene::removeComponentImpl);
+
+    return comItem;
+}
+
+void AmtlGraphicsScene::removeComponentImpl(QObject *objPtr){
+
+    AbstractConInterface* comptr = (AbstractConInterface*)objPtr;
+
+    if(!_comSceneIdMap.contains(comptr)){
+        return ;
+    }
+
+    long sceneId = _comSceneIdMap[comptr];
+    //remind here can't make any ptr opration;
+    _sceneIdComMap[sceneId] = nullptr;
+    _sceneIdComMap.erase(_sceneIdComMap.constFind(sceneId));
+
+    _comSceneIdMap[comptr] = -1;
+    _comSceneIdMap.erase(_comSceneIdMap.constFind(comptr));
+}
+
+AbstractConInterface* AmtlGraphicsScene::creatComponentImpl(AbstractConInterface *factory){
+    if(nullptr==factory){
+        qWarning().noquote()DEBUGINFO<<tr("The target type component does not exist or is not loaded");
+        return nullptr;
+    }
+
+    AbstractConInterface* com = factory->instance(_curScneId);
+    addComponentImpl(com);
+    ++_curScneId;
+    return com;
+}
+
+bool AmtlGraphicsScene::loadGraphicFromXmlImpl(const QString &filePath, QVector<AbstractConInterface *> &comVec){
     QFile xmlFile{filePath};
     if(!xmlFile.open(QIODevice::ReadOnly)){
         //todo tip file open fail;
@@ -93,10 +170,10 @@ bool AmtlGraphicsScene::loadGraphicFromXMl(const QString &filePath, QVector<Abst
 
             if(nullptr != factory){
                 newComInstance = factory->instance(-1);
+
                 newComInstance->loadStatusFormXml(&reader);
 
                 addComponentImpl(newComInstance);
-
 
                 //New add com
                 comVec.push_back(newComInstance);
@@ -106,137 +183,9 @@ bool AmtlGraphicsScene::loadGraphicFromXMl(const QString &filePath, QVector<Abst
         //Link Info
         if(reader.tokenType() == QXmlStreamReader::TokenType::StartElement
             && ComponentLinkXmlLabel == reader.name().toString()){
-
-            //A component link info start
-            QXmlStreamAttributes attrs = reader.attributes();
-
-            //---Read component info start
-            long comSceneId = -1;
-            if(attrs.hasAttribute("from_com_id")){
-                comSceneId = attrs.value("from_com_id").toLong();
+            if(!loadLinks(reader)){
+                return false;
             }
-            AbstractConInterface* startElement=nullptr;
-            if(_sceneIdComMap.contains(comSceneId)){
-                startElement = _sceneIdComMap[comSceneId];
-            }else{
-                qWarning().noquote()DEBUGINFO<<tr("Component info lost, target compoent scene @")<<comSceneId;
-            }
-            //---Read component info end
-
-
-            //---Read connection point start
-            reader.readNext();
-            CHECK_READ_END(reader);//Pass from element.
-
-            int lineNum = -1;
-            long fromPointId = -1;
-            long toComSceneId = -1;
-            long toPointId =-1;
-
-            AbstractConInterface* endElement = nullptr;
-
-            while(!reader.atEnd()){
-
-                //A connection point line info read
-                if(reader.tokenType() == QXmlStreamReader::TokenType::StartElement
-                    && UniCCPointLineXmlLabel == reader.name().toString()){
-                    attrs = reader.attributes();
-                    if(attrs.hasAttribute("line_num")){
-                        lineNum = attrs.value("line_num").toLong();
-                    }
-
-                    reader.readNext();
-                    CHECK_READ_END(reader);//pass the CCPointLine element.
-
-                    //---Read line info strat
-                    for(int i=0;i<lineNum && !reader.atEnd(); ){
-
-                        if(reader.tokenType() == QXmlStreamReader::TokenType::StartElement
-                            && "line" == reader.name().toString()){
-                            //connection point satrt
-                            attrs = reader.attributes();
-
-                            if(attrs.hasAttribute("from_connection_point_id")){
-                                fromPointId = attrs.value("from_connection_point_id").toLong();
-                            }
-
-                            if(attrs.hasAttribute("target_parent_scene_id")){
-                                toComSceneId = attrs.value("target_parent_scene_id").toLong();
-                            }
-
-                            if(attrs.hasAttribute("target_connection_point_id")){
-                                toPointId = attrs.value("target_connection_point_id").toLong();
-                            }
-
-                            if(_sceneIdComMap.contains(toComSceneId)){
-                                endElement = _sceneIdComMap[toComSceneId];
-                            }else{
-                                endElement = nullptr;
-                            }
-
-                            //Point pos
-                            QString lineText = reader.readElementText();
-
-                            if(nullptr == endElement || nullptr == startElement){
-                                qWarning().noquote()DEBUGINFO<<"Lost component(s) information";
-                                reader.readNext();
-                                continue;
-                            }
-
-                            if(!startElement->loadLinkFormXml(endElement,lineText,toPointId,fromPointId)){
-                                qWarning().noquote()DEBUGINFO<<tr("Link line false : ")
-                                                               <<"@"<<startElement->getComInfoSPtr()->comName
-                                                               <<" @"<<startElement->getSceneId()
-                                                               <<" @connection point "
-                                                               <<fromPointId<<"\n"
-                                                               <<"\t@"<<endElement->getComInfoSPtr()->comName
-                                                               <<" @"<<endElement->getSceneId()
-                                                               <<" @connection point "
-                                                               <<toPointId;
-                            }
-
-                            endElement = nullptr;
-                            toPointId = -1;
-                            fromPointId = -1;
-                        }
-
-                        if(reader.tokenType() == QXmlStreamReader::TokenType::EndElement
-                            && "line" == reader.name().toString()){
-                            ++i;
-                        }
-
-                        //Lost infomations.
-                        if(reader.tokenType() == QXmlStreamReader::TokenType::EndElement
-                            && UniCCPointLineXmlLabel == reader.name().toString()){
-
-                            if(i < lineNum){
-                                qWarning()<<tr("There may be loss of information, please check whether your circuit is complete.");
-                            }
-                            break;
-                        }
-                        reader.readNext();
-                    }
-                    //---Read line info end
-
-
-                    if(reader.tokenType() == QXmlStreamReader::TokenType::EndElement
-                        && UniCCPointLineXmlLabel == reader.name().toString()){
-                        break;
-                    }
-                    reader.readNext();
-                }
-
-
-
-                //Component all connection point link info read end.
-                if(reader.tokenType() == QXmlStreamReader::TokenType::EndElement
-                    && ComponentLinkXmlLabel == reader.name().toString()){
-                    //End one component link read;
-                    break;
-                }
-                reader.readNext();
-            }
-            //Read connection point end
         }
 
         reader.readNext();
@@ -245,7 +194,167 @@ bool AmtlGraphicsScene::loadGraphicFromXMl(const QString &filePath, QVector<Abst
     return true;
 }
 
-bool AmtlGraphicsScene::saveGraphicToXML(const QString &filePath){
+bool AmtlGraphicsScene::loadLinks(QXmlStreamReader &reader){
+    //ComponentLinkXmlLabel
+    //A component link info start
+    QXmlStreamAttributes attrs;
+    AbstractConInterface* startElement=nullptr;
+    //---Read start component info start
+    {
+        long comSceneId = -1;
+        attrs = reader.attributes();
+        if(attrs.hasAttribute("from_com_id")){
+            comSceneId = attrs.value("from_com_id").toLong();
+        }
+
+        if(_sceneIdComMap.contains(comSceneId)){
+            startElement = _sceneIdComMap[comSceneId];
+        }else{
+            qWarning().noquote()DEBUGINFO<<tr("Component info lost, target compoent scene @")<<comSceneId;
+        }
+    }//---Read start component info end
+
+    reader.readNext();
+    CHECK_READ_END(reader);//Pass from component element.
+
+    //Load a component all connections point links info.
+    return loadComAllConnectionLinks(reader,startElement);
+}
+
+bool AmtlGraphicsScene::loadComAllConnectionLinks(QXmlStreamReader &reader, AbstractConInterface *startElement){
+    QXmlStreamAttributes attrs;
+
+    int lineNum = -1;
+    long fromPointId = -1;
+
+    while(!reader.atEnd()){
+
+        //A connection point line info read
+        if(reader.tokenType() == QXmlStreamReader::TokenType::StartElement
+            && UniCCPointLineXmlLabel == reader.name().toString()){
+
+            attrs = reader.attributes();
+            if(attrs.hasAttribute("line_num")){
+                lineNum = attrs.value("line_num").toLong();
+            }
+            if(attrs.hasAttribute("ccp_id")){
+                fromPointId = attrs.value("ccp_id").toLong();
+            }
+
+            if(lineNum){
+                reader.readNext();
+                CHECK_READ_END(reader);//pass the CCPointLine element.
+                //This should make the readr move to the line elemnents.
+                loadConnectionPointLine(reader,startElement,fromPointId,lineNum);
+            }
+
+
+            if(reader.tokenType() == QXmlStreamReader::TokenType::EndElement
+                && UniCCPointLineXmlLabel == reader.name().toString()){
+                break;
+            }
+            reader.readNext();
+        }
+
+        //Component all connection point link info read end.
+        if(reader.tokenType() == QXmlStreamReader::TokenType::EndElement
+            && ComponentLinkXmlLabel == reader.name().toString()){
+            //End one component link read;
+            break;
+        }
+        reader.readNext();
+    }
+
+    return true;
+}
+
+bool AmtlGraphicsScene::loadConnectionPointLine(QXmlStreamReader &reader, AbstractConInterface *startElement, long curCCPId, int lineNum){
+
+    QXmlStreamAttributes attrs;
+    AbstractConInterface* endElement = nullptr;
+    long toComSceneId = -1;
+    long toPointId =-1 ;
+
+    //---Read line info strat
+    for(int i=0;i<lineNum && !reader.atEnd(); ){
+
+        //A line element read the line.
+        if(reader.tokenType() == QXmlStreamReader::TokenType::StartElement
+            && "line" == reader.name().toString()){
+
+            qDebug().noquote()DEBUGINFO<<i<<"line element start appear";
+
+            //connection point satrt
+            attrs = reader.attributes();
+
+            if(attrs.hasAttribute("target_parent_scene_id")){
+                toComSceneId = attrs.value("target_parent_scene_id").toLong();
+            }
+
+            if(attrs.hasAttribute("target_connection_point_id")){
+                toPointId = attrs.value("target_connection_point_id").toLong();
+            }
+
+            if(_sceneIdComMap.contains(toComSceneId)){
+                endElement = _sceneIdComMap[toComSceneId];
+            }else{
+                endElement = nullptr;
+            }
+
+            //Point pos
+            QString lineText = reader.readElementText();
+
+            //Try to sert the line
+            {
+                if(nullptr == endElement || nullptr == startElement){
+                    qWarning().noquote()DEBUGINFO<<"Lost component(s) information";
+                    reader.readNext();
+                    continue;
+                }
+
+                if(!startElement->loadLinkFormXml(endElement,lineText,toPointId,curCCPId)){
+                    qWarning().noquote()DEBUGINFO<<tr("Link line false : ")
+                                                   <<"@"<<startElement->getComInfoSPtr()->comName
+                                                   <<" @"<<startElement->getSceneId()
+                                                   <<" @connection point "
+                                                   <<curCCPId<<"\n"
+                                                   <<"\t@"<<endElement->getComInfoSPtr()->comName
+                                                   <<" @"<<endElement->getSceneId()
+                                                   <<" @connection point "
+                                                   <<toPointId;
+                }
+
+                endElement = nullptr;
+                lineText.clear();
+                toPointId = -1;
+            }
+
+        }
+
+        if(reader.tokenType() == QXmlStreamReader::TokenType::EndElement
+            && "line" == reader.name().toString()){
+            ++i;
+        }
+
+        //Lost infomations.
+        if(reader.tokenType() == QXmlStreamReader::TokenType::EndElement
+            && UniCCPointLineXmlLabel == reader.name().toString()){
+
+            if(i < lineNum){
+                qWarning()<<tr("There may be loss of information, please check whether your circuit is complete.");
+            }
+
+            break;
+        }
+
+        reader.readNext();
+    }
+    //---Read line info end
+
+    return true;
+}
+
+bool AmtlGraphicsScene::saveGraphicToXMLImpl(const QString &filePath){
     QFile xmlFile{filePath};
     if(!xmlFile.open(QIODevice::WriteOnly | QIODevice::Truncate)){
         return false;
@@ -371,55 +480,4 @@ void AmtlGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
-void AmtlGraphicsScene::makeToastInfo(QString infoTitle, QString info, bool autoHide, AMTL::ToastInfoPosition showPos, AMTL::ToastInfoType infoType)
-{
-    //Re pos this to mainwindow to show this toast info
-    emit requestToastInfo(infoTitle,info,autoHide,showPos,infoType);
-}
-
-AbstractConInterface *AmtlGraphicsScene::addComponent(AbstractConInterface *comItem){
-    return addComponentImpl(comItem);
-}
-
-AbstractConInterface* AmtlGraphicsScene::creatComponent(AbstractConInterface* factory){
-    return creatComponentImpl(factory);
-}
-
-AbstractConInterface *AmtlGraphicsScene::addComponentImpl(AbstractConInterface *comItem){
-    qDebug().noquote()DEBUGINFO<<tr("Component component @")<<comItem->getComInfoSPtr()->comName<<"/"<<comItem->getSceneId();
-
-    _sceneIdComMap[comItem->getSceneId()] = comItem;
-    _comSceneIdMap[comItem] = comItem->getSceneId();
-    addItem(comItem);
-    comItem->show();
-    //Bind
-    connect(comItem,&AbstractConInterface::tellCCPointBindStatusChanged,this,&AmtlGraphicsScene::pairUniConnectionPoint);
-
-    //remove the com when com was delete
-    connect(comItem,&AbstractConInterface::tellComAboutDestroy,this,&AmtlGraphicsScene::removeComponentImpl);
-
-    return comItem;
-}
-
-void AmtlGraphicsScene::removeComponentImpl(long sceneId, AbstractConInterface *comptr){
-    //remind here can't make any ptr opration;
-    _sceneIdComMap[sceneId] = nullptr;
-    _sceneIdComMap.erase(_sceneIdComMap.constFind(sceneId));
-
-    _comSceneIdMap[comptr] = -1;
-    _comSceneIdMap.erase(_comSceneIdMap.constFind(comptr));
-
-}
-
-AbstractConInterface* AmtlGraphicsScene::creatComponentImpl(AbstractConInterface *factory){
-    if(nullptr==factory){
-        qWarning().noquote()DEBUGINFO<<tr("The target type component does not exist or is not loaded");
-        return nullptr;
-    }
-
-    AbstractConInterface* com = factory->instance(_curScneId);
-    addComponentImpl(com);
-    ++_curScneId;
-    return com;
-}
 

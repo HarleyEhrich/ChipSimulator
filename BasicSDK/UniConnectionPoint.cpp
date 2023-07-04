@@ -122,8 +122,8 @@ qsizetype UniConnectionPoint::setDataValue(const QBitArray& value, qsizetype ind
     if(changed) {
         emit tellDataChanged(this,indexStart,(indexStart+value.size())%_dataPtrSelf->size()-indexStart);
 
-        //Set all the connection data;
-        for(int i=0;i<_bindPointVec.size();++i){
+        //Set all the connection data;Only when not in high resistance.
+        for(int i=0;!_highResistance && i <_bindPointVec.size();++i){
             //Only change data when this connection point is a output type point
             _bindPointVec[i]->inputDataValue(value, indexStart);//This change storm will stop when the data won't change
         }
@@ -152,6 +152,10 @@ void UniConnectionPoint::setHighResistance(bool newHighResistance)
         for(int i=0;i<_bindPointVec.size();++i){
             //Only change data when this connection point is a output type point
             _bindPointVec[i]->setHighResistance(newHighResistance);
+            if(false == _highResistance){
+                //恢复高阻抗时，输入值
+                _bindPointVec[i]->inputDataValue(*_dataPtrSelf.data());
+            }
         }
     }else{
         //恢复高阻抗时，恢复数据为0，注意到这里会导致产生一个数据变化的信号，在该连接点析构时该信号会被屏蔽，避免将信号发送到了不存在的父对象。
@@ -588,7 +592,7 @@ void UniConnectionPoint::gneratePainterPath()
 void UniConnectionPoint::gnerateText()
 {
 
-    _finalText = _pointName + QString::number(_dataBitsLen);
+    _finalText = _pointName+"·"+ QString::number(_dataBitsLen);
 
     /* + ((_maxBindItemNumber ==1) ? \
      * QString(" (%1)").arg(_dataBitsLen) : \
@@ -1019,20 +1023,22 @@ bool UniConnectionPoint::saveLinkSToXmlImpl(QXmlStreamWriter *root){
     }
 
     root->writeStartElement(UniCCPointLineXmlLabel);
+
+    root->writeAttribute("parent_scene_id",QString::number(_parentItemSceneId));
+    root->writeAttribute("ccp_id",QString::number(_id));
     if(_outputConnectionPoint){
-        root->writeAttribute("parent_scene_id",QString::number(_parentItemSceneId));
         root->writeAttribute("line_num",QString::number(_bindPointVec.size()));
+
         for(int i = 0;i<_bindPointVec.size();++i){
             root->writeStartElement("line");
             root->writeAttribute("from_connection_point_id",QString::number(_id));
-
             root->writeAttribute("target_parent_scene_id",QString::number(_bindPointVec[i]->_parentItemSceneId));
             root->writeAttribute("target_connection_point_id",QString::number(_bindPointVec[i]->_id));
             root->writeCharacters(UniLinkLine::saveLineToText(_lineHeadVec[i]));
             root->writeEndElement();
         }
+
     }else{
-        root->writeAttribute("parent_scene_id",QString::number(_parentItemSceneId));
         root->writeAttribute("line_num",QString::number(0));
     }
 
@@ -1177,12 +1183,16 @@ void UniConnectionPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     menu->addAction("Data max link num " + QString::number(_maxBindItemNumber));
     menu->addAction("Cur link num " + QString::number(_bindPointVec.size()));
     menu->addSeparator();
+    QMenu* dataMenu = new QMenu();
     for(int i=0;i<_dataBitsLen && i<5 ;++i){
-        menu->addMenu("Data "+QString::number(i)+"-"+QString::number(_dataPtrSelf->testBit(i)));
+        dataMenu->addAction("Data "+QString::number(i)+"-"+QString::number(_dataPtrSelf->testBit(i)));
     }
     if(_dataBitsLen >5 ){
-        menu->addAction("...");
+        dataMenu->addAction("...");
     }
+    QAction* dataAct = new QAction("Data");
+    dataAct->setMenu(dataMenu);
+    menu->addAction(dataAct);
 
     connect(menu,&QMenu::aboutToHide,menu,&QMenu::deleteLater);
 
