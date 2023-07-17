@@ -860,7 +860,7 @@ bool UniConnectionPoint::unBindConnectionPointImpl(UniConnectionPoint *targetCon
         //release all the line elements;-safe
         deleteLine(lineHead,lineTail);
 
-        //The target link to unload the data, note here it might be a input point strat a unbind and back here, but now it's parent component might be delete so it will be a nullptr problem.
+        //The target link to unload the data, note here it might be a input point start a unbind and back here, but now it's parent component might be deleted so it will be a nullptr problem.
         targetConnectionPoint->unBindConnectionPointInputImpl(this);
     }else{
         //Dame this is the problem
